@@ -47,6 +47,11 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # Translations
 *.mo
 *.pot
