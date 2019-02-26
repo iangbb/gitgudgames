@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <title>
+      GitgudGames - {% block title_block %}{% endblock %}
+    </title>
+    <!-- Bootstrap Stylesheets -->
+    <link href="http://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-toggleable-md fixed-top navbar-inverse bg-inverse">
+      <!-- Collapse button -->
+      <button class="navbar-toggler navbar-toggler-right hidden-lg-up" type="button"
+        data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Brand button -->
+      <a class="navbar-brand px-5" href="{% url 'index' %}">Gitgud</a>
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active"><a href="{% url 'index' %}">Home</a></li>
+          <li class="nav-item"><a href="#">About</a></li><!-- Could make this a dropdown -->
+          <li class="nav-item"><a href="#">Games</a></li>
+          {% if user.is_authenticated %}
+            <li class="nav-item"><a href="#">Logout</a></li>
+          {% else %}
+            <li class="nav-item"><a href="#">Register</a></li>
+            <li class="nav-item"><a href="#">Login</a></li>
+          {% endif %}
+        </ul>
+        <form class="form-inline" role="search">
+          <div class="input-group w-100">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-default" type="submit">Search</button>
+          </div>
+        </form>
+        <ul class="navbar-nav pull-md-right">
+          <li class="nav-item"><a href="#">Profile</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div>
+      {% block body_block %}
+      {% endblock %}
+    </div>
+
+    <!-- FOOTER -->
+    <div>
+      <hr />
+      <h2><em>Footer</em></h2>
+      TODO: Links or something.
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://v4-alpha.getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="http://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

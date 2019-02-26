@@ -1,0 +1,28 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  Welcome
+{% endblock %}
+
+{% block body_block %}
+  <h1>{{ heading }}</h1>
+  {% if user.is_authenticated %}
+    Greetings {{ user.username }}!
+  {% else %}
+    Greetings?
+  {% endif %}
+
+  <div>
+    <h2>Top 5 games:</h2>
+    {% if categories %}
+      <ul>
+        {% for game in games %}
+          <li><a href="#">{{ game.title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <strong>There are no games present.</strong>
+    {% endif %}
+  </div>
+{% endblock %}
