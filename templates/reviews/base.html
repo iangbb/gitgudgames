@@ -29,13 +29,10 @@
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a href="{% url 'index' %}">Home</a></li>
-          <li class="nav-item"><a href="#">About</a></li><!-- Could make this a dropdown -->
-          <li class="nav-item"><a href="#">Games</a></li>
+          <li class="nav-item"><a href="{% url '#' %}">About</a></li><!-- Could make this a dropdown -->
+          <li class="nav-item"><a href="{% url '#' %}">Games</a></li>
           {% if user.is_authenticated %}
-            <li class="nav-item"><a href="#">Logout</a></li>
-          {% else %}
-            <li class="nav-item"><a href="#">Register</a></li>
-            <li class="nav-item"><a href="#">Login</a></li>
+            <li class="nav-item"><a href="{% url '#' %}">Logout</a></li>
           {% endif %}
         </ul>
         <form class="form-inline" role="search">
@@ -44,14 +41,16 @@
             <button class="btn btn-default" type="submit">Search</button>
           </div>
         </form>
-        <ul class="navbar-nav pull-md-right">
-          <li class="nav-item"><a href="#">Profile</a></li>
-        </ul>
+        {% if user.is_authenticated %}
+          <ul class="navbar-nav pull-md-right">
+            <li class="nav-item"><a href="{% url '#' %}">Profile</a></li>
+          </ul>
+        {% endif %}
       </div>
     </nav>
 
     <!-- CONTENT -->
-    <div>
+    <div id="content">
       {% block body_block %}
       {% endblock %}
     </div>
