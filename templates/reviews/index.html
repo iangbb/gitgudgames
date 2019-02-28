@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block body_block %}
+  <!-- Heading and welcome message -->
   <h1>{{ heading }}</h1>
   {% if user.is_authenticated %}
     Greetings {{ user.username }}!
@@ -13,9 +14,10 @@
     Greetings?
   {% endif %}
 
-  <div>
+  <!-- Show top 5 games -->
+  <div style="height:300px">
     <h2>Top 5 games:</h2>
-    {% if categories %}
+    {% if games %}
       <ul>
         {% for game in games %}
           <li><a href="#">{{ game.title }}</a></li>
@@ -25,4 +27,14 @@
       <strong>There are no games present.</strong>
     {% endif %}
   </div>
+
+  <!-- Login/Register -->
+  {% if not user.is_authenticated %}
+    <div class="container w-50 mx-auto px-0">
+      <button class="btn btn-primary" name="register"
+        onclick="{% url '#' %}">Register</button>
+      <button class="btn btn-primary float-right" name="login"
+        onclick="{% url '#' %}">Login</button>
+    </div>
+  {% endif %}
 {% endblock %}

@@ -35,6 +35,16 @@ h1 {
   width: 100%;
 }
 
+/* Main content area */
+#content {
+  min-height: 500px;
+}
+
+/* Button styling */
+.btn {
+  min-width: 200px;
+}
+
 /* Development Tools */
 .debug {
   background-color: pink;
