@@ -1,8 +1,9 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 
-class Game(Model.modles):
+class Game(models.Model):
     PC = 'PC'
     XB1 = 'xb1'
     PS4 = 'ps4'
@@ -26,12 +27,12 @@ class Game(Model.modles):
     )
 
     name = models.CharField(max_length=100, unique=True)
-    description = modles.CharField(max_length=200)
+    description = models.CharField(max_length=200)
     releaseDate = models.DateField()
     publisher = models.CharField(max_length=30)
     developer = models.CharField(max_length=30)
     platform = models.CharField(max_length=3, choices=PLATFORM,default=PC)
-    genre = modles.CharField(max_length=3, choices=GENRE, default=ACTION)
+    genre = models.CharField(max_length=3, choices=GENRE, default=ACTION)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
