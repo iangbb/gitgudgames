@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from reviews.models import Game
+from django.http import HttpResponse, HttpResponseRedirect
+from reviews.models import Game, User, UserProfile
+from reviews.forms import UserForm, UserProfileForm
+from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
@@ -29,10 +32,58 @@ def edit(request):
     return render(request, 'reviews/edit.html', context=context_dict)
 
 def register(request):
-    context_dict = {'heading': "Register"}
+    registered = False
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+
+            if 'profile_image' in request.FILES:
+                profile.profile_image = request.FILES['profile_image']
+
+            profile.save()
+            messages.success("Your account has been created")
+            return HttpResponseRedirect(reverse('login'))
+
+        else:
+            # TODO: proper handling of form errors
+            print(user_form.errors, profile_form.errors)
+
+    else:
+        user_form = UserForm()
+        profile_form = ProfileForm()
+
+    context_dict = {'heading': "Register", 'user_form': user_form,
+                    'profile_form': profile_form, 'registered': registered}
     return render(request, 'reviews/register.html', context=context_dict)
 
 def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                login(request, user)
+                messages.success("Logged in successfully")
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                messages.error("Your account has been disabled")
+                return HttpResponseRedirect(reverse('login'))
+
+        else:
+            messages.error("Incorrect login details")
+            return HttpResponseRedirect(reverse('login'))
+
     context_dict = {'heading': "Login"}
     return render(request, 'reviews/login.html', context=context_dict)
 
