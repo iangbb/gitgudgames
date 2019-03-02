@@ -1,13 +1,21 @@
 /* Global styling */
+* {
+
+}
+
 body {
-  background-color: #999;
+  background-color: #ccc;
   color: #333;
   font-family: sans-serif;
 }
 
-h1 {
+h1, h2 {
   text-align: center;
   padding: 10px 0 10px 0;
+}
+
+a {
+  color: #ccc;
 }
 
 /* Navbar styling */
@@ -21,7 +29,7 @@ h1 {
   color: white;
 }
 
-.navbar-brand, .nav-item a, .form-group {
+.navbar-brand, .nav-item a, .form-group, .navbar-toggler {
   display: inline-block;
   min-width: 100px;
   line-height: 50px;
