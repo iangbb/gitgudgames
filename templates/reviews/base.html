@@ -29,8 +29,8 @@
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a href="{% url 'index' %}">Home</a></li>
-          <li class="nav-item"><a href="{% url '#' %}">About</a></li><!-- Could make this a dropdown -->
-          <li class="nav-item"><a href="{% url '#' %}">Games</a></li>
+          <li class="nav-item"><a href="{% url 'about' %}">About</a></li><!-- Could make this a dropdown -->
+          <li class="nav-item"><a href="{% url 'games' %}">Games</a></li>
           {% if user.is_authenticated %}
             <li class="nav-item"><a href="{% url '#' %}">Logout</a></li>
           {% endif %}
@@ -43,7 +43,7 @@
         </form>
         {% if user.is_authenticated %}
           <ul class="navbar-nav pull-md-right">
-            <li class="nav-item"><a href="{% url '#' %}">Profile</a></li>
+            <li class="nav-item"><a href="{% url 'profile' %}">Profile</a></li>
           </ul>
         {% endif %}
       </div>
