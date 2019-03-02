@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from reviews.models import Game
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
@@ -10,7 +11,9 @@ def about(request):
     return render(request, 'reviews/about.html', context=context_dict)
 
 def games(request):
-    context_dict = {'heading': "Games"}
+    platforms = [platform[1] for platform in Game.PLATFORM]
+    genres = [genre[1] for genre in Game.GENRE]
+    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms}
     return render(request, 'reviews/games.html', context=context_dict)
 
 def game(request):

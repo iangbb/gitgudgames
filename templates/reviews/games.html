@@ -1,0 +1,87 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  Welcome
+{% endblock %}
+
+{% block body_block %}
+  <h1>{{ heading }}</h1>
+  <!-- Filtering options -->
+  <div class="container">
+    <form class="">
+      <div class="form-row clearfix">
+        <!-- Genre -->
+        <div class="col-sm-4 float-left">
+          <h3>Genres:</h3>
+          {% for genre in genres %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"
+                id="check{{ genre }}"/>
+              <label class="form-check-label" for="check{{ genre }}">
+                {{ genre }}</label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Platform -->
+        <div class="col-sm-4 float-left">
+          <h3>Platforms:</h3>
+          {% for platform in platforms %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"
+                id="check{{ platform }}"/>
+              <label class="form-check-label" for="check{{ platform }}">
+                {{ platform }}</label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Order by -->
+        <div class="col-sm-4 float-left">
+          <h3>Order By:</h3>
+          <div class="form-check">
+            <li><input class="form-check-input "type="radio" name="radioOrder"
+              id="radioNameAsc" value="nameAsc" />
+            <label class="form-check-label" for="radioNameAsc">
+              Name Ascending</label></li>
+            <li><input class="form-check-input "type="radio" name="radioOrder"
+              id="radioNameDsc" value="nameDsc" />
+            <label class="form-check-label" for="radioNameDsc">
+              Name Decending</label></li>
+            <li><input class="form-check-input "type="radio" name="radioOrder"
+              id="radioRelAsc" value="relAsc" />
+            <label class="form-check-label" for="radioRelAsc">
+              Release Ascending</label></li>
+            <li><input class="form-check-input "type="radio" name="radioOrder"
+              id="radioRelDsc" value="RelDsc" />
+            <label class="form-check-label" for="radioRelDsc">
+              Release Descending</label></li>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price Slider -->
+      <div class="form-row">
+        <h3>Price:</h3>
+        <label for="rangePrice" class="float-left">£0</label>
+        <label for="rangePrice" class="float-right">£100</label>
+        <input type="range" id="rangePrice" class="w-100"
+          min="0" max="100" value="50" />
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-row clearfix">
+        <button class="btn float-right" type="submit" onClick="alert('Hello World.')">
+              Submit</button>
+      </div>
+    </form>
+  </div> <!-- Container -->
+  <hr />
+  
+  <!-- Games list -->
+  <div class="container">
+    <h3>Results:</h3>
+    <div id="results"></div>
+  </div>
+{% endblock %}
