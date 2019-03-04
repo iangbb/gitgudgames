@@ -52,3 +52,40 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Review(models.Model):
+    ONE_STAR = '1'
+    TWO_STARS = '2'
+    THREE_STARS = '3'
+    FOUR_STARS = '4'
+    FIVE_STARS = '5'
+
+    RATINGS = (
+        (ONE_STAR, '1'),
+        (TWO_STARS, '2'),
+        (THREE_STARS, '3'),
+        (FOUR_STARS, '4'),
+        (FIVE_STARS, '5'),
+    )
+
+    poster = models.ForeignKey(User, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    review_text = models.CharField(max_length=2000)
+    rating = models.CharField(max_length=1, choices=RATINGS, default=ONE_STAR)
+    post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
+    votes = models.IntegerField(default=0)
+
+
+class Comment(models.Model):
+    poster = models.ForeignKey(User, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    comment_text = models.CharField(max_length=200)
+    post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
+    votes = models.IntegerField(default=0)
+
+
+class Image(models.Model):
+    poster = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='game_images')
