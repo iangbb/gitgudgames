@@ -89,3 +89,19 @@ class Image(models.Model):
     poster = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='game_images')
+
+
+class AbstractRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    upvote = models.BooleanField()  # false means this is a downvote
+
+    class Meta:
+        abstract = True
+
+
+class CommentRating(AbstractRating):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+
+
+class ReviewRating(AbstractRating):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
