@@ -1,37 +1,44 @@
-{% extends 'review/base.html' %}
+{% extends 'reviews/base.html' %}
 
 {% block title_block %}
-    {{ game.name }}
+{{ game.name }}
 {% endblock %}
 
 {% block body_block %}
+
 <body>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         .gameName {
             padding: 10px 10px 10px;
             border: 1px solid grey;
-            float:left;
+            float: left;
         }
+
         .Stars {
-            float:right;
+            float: right;
         }
+
         /* Styling for checked stars */
         .checked {
             color: orange;
         }
+
         .container-fluid {
             padding: 20px 50px 0px;
         }
-        .jumbotron{
+
+        .jumbotron {
             padding: 20px 50px 20px;
-            background-color:#dddddd;
+            background-color: #dddddd;
         }
-        .carousel{
+
+        .carousel {
             padding: 10px 0px 10px;
         }
-        .profilePic{
-            width:15%;
+
+        .profilePic {
+            width: 15%;
             height: auto;
         }
     </style>
@@ -46,11 +53,11 @@
                 </div>
                 <div class="col">
                     <h1 class="Stars">
-                    <span style="float:right;" class="fa fa-star"></span>
-                    <span style="float:right;" class="fa fa-star"></span>
-                    <span style="float:right;" class="fa fa-star checked"></span>
-                    <span style="float:right;" class="fa fa-star checked"></span>
-                    <span style="float:right;" class="fa fa-star checked"></span>
+                        <span style="float:right;" class="fa fa-star"></span>
+                        <span style="float:right;" class="fa fa-star"></span>
+                        <span style="float:right;" class="fa fa-star checked"></span>
+                        <span style="float:right;" class="fa fa-star checked"></span>
+                        <span style="float:right;" class="fa fa-star checked"></span>
                     </h1>
                 </div>
             </div>
@@ -62,17 +69,17 @@
         <div class="carousel-inner">
             <!-- boxArt -->
             {% if boxArt %}
-                <div class="carousel-item active">
-                    <img class="d-block w-100" src="{{ boxArt }}" alt="box art">
-                </div>
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="{{ boxArt }}" alt="box art">
+            </div>
             {% endif %}
             <!-- ExtraPictures -->
             {% if extraPics %}
-                {% for pic in extraPics %}
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="{{ pic }}">
-                    </div>
-                {% endfor %}
+            {% for pic in extraPics %}
+            <div class="carousel-item">
+                <img class="d-block w-100" src="{{ pic }}">
+            </div>
+            {% endfor %}
             {% endif %}
         </div>
         <!-- Carousel controls -->
@@ -89,38 +96,38 @@
     <!-- Details box -->
     <div class="container-fluid">
         <div class="jumbotron fluid-jumbotron">
-                <h1 class="display-6">Details</h1>
-                <br>
-                <div class="row">
-                    <div class="col-2">Description</div>
-                    <div class="col">{{ game.description }}</div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">Release Date</div>
-                    <div class="col">{{ game.releaseDate }}</div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">Publisher</div>
-                    <div class="col">{{ game.publisher }}</div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">Developer</div>
-                    <div class="col">{{ game.developer }}</div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">Platform</div>
-                    <div class="col">{{ game.platform }}</div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">Genre</div>
-                    <div class="col">{{ game.genre }}</div>
-                </div>
+            <h1 class="display-6">Details</h1>
+            <br>
+            <div class="row">
+                <div class="col-2">Description</div>
+                <div class="col">{{ game.description }}</div>
             </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Release Date</div>
+                <div class="col">{{ game.releaseDate }}</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Publisher</div>
+                <div class="col">{{ game.publisher }}</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Developer</div>
+                <div class="col">{{ game.developer }}</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Platform</div>
+                <div class="col">{{ game.platform }}</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Genre</div>
+                <div class="col">{{ game.genre }}</div>
+            </div>
+        </div>
     </div>
 
     <!-- Reviews -->
@@ -130,28 +137,30 @@
             Reviews
         </h2>
         {% for review in reviews %}
-            <div class="container">
-                <div class="jumbotron">
-                    <div class="row">
-                        <div class="col">
-                                <img class="profilePic" src="{{ review.profilePic }}" alt="review.userName">
-                        </div>
-                        <div class="col">
-                            <h1 class="Stars">
-                            <span style="float:right;" class="fa fa-star"></span>
-                            <span style="float:right;" class="fa fa-star"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                            </h1>
-                        </div>
+        <div class="container">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col">
+                        <img class="profilePic" src="{{ review.profilePic }}" alt="review.userName">
                     </div>
-                    <br>
-                    <p>
-                    {{ review.contents }}
-                    </p>
+                    <div class="col">
+                        <h1 class="Stars">
+                            <span style="float:right;" class="fa fa-star"></span>
+                            <span style="float:right;" class="fa fa-star"></span>
+                            <span style="float:right;" class="fa fa-star checked"></span>
+                            <span style="float:right;" class="fa fa-star checked"></span>
+                            <span style="float:right;" class="fa fa-star checked"></span>
+                        </h1>
+                    </div>
                 </div>
+                <br>
+                <p>
+                    {{ review.contents }}
+                </p>
             </div>
-            <br>
+        </div>
+        {% endfor %}
+        <br>
     </div>
-{% endblock %}
+    {% endif %}
+    {% endblock %}
