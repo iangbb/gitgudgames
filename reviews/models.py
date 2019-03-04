@@ -76,6 +76,9 @@ class Review(models.Model):
     post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
     votes = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
+
 
 class Comment(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -84,11 +87,17 @@ class Comment(models.Model):
     post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
     votes = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.poster.username + " - " + self.review.game.name + " - " + str(self.post_datetime)
+
 
 class Image(models.Model):
     poster = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='game_images')
+
+    def __str__(self):
+        return self.poster.username + " - " + self.game.name
 
 
 class AbstractRating(models.Model):
@@ -102,6 +111,12 @@ class AbstractRating(models.Model):
 class CommentRating(AbstractRating):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.username + " - " + str(self.comment.post_datetime)
+
 
 class ReviewRating(AbstractRating):
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + " - " + str(self.review.post_datetime)
