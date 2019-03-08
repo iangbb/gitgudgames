@@ -95,3 +95,8 @@ def restricted(request):
 def review(request):
     context_dict = {'heading': "Review"}
     return render(request, 'reviews/review.html', context=context_dict)
+
+def user_logout(request):
+    logout(request)
+    messages.success(request, "You have logged out")
+    return HttpResponseRedirect(reverse('index'))
