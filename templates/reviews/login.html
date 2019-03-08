@@ -33,7 +33,7 @@
       <p class="">Not registered?</p>
       <div class="form-row clearfix">
         <button class="float-left btn btn-secondary" type="button"
-            onclick="{% url 'register' %}">Register</button>
+            onclick="window.location.href='{% url 'register' %}'">Register</button>
         <button class="float-right btn btn-secondary" type="submit"
           form="loginForm">Log In</button>
       </div>

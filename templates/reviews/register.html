@@ -41,7 +41,7 @@
       <p class="">Got an account?</p>
       <div class="form-row clearfix">
         <button class="float-left btn btn-secondary" type="button"
-            onclick="{% url 'login' %}">Log In</button>
+            onclick="window.location.href='{% url 'login' %}'">Log In</button>
         <button class="float-right btn btn-secondary" type="submit"
           form="registerForm">Register</button>
       </div>

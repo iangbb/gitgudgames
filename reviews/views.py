@@ -35,6 +35,10 @@ def edit(request):
 def register(request):
     registered = False
 
+    if request.user.is_authenticated():
+        messages.warning(request, "You can't register when you're logged in")
+        return HttpResponseRedirect(reverse('index'))
+
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
