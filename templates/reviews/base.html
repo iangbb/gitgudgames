@@ -53,7 +53,7 @@
     <!-- CONTENT -->
     {% if messages %}
       {% for message in messages %}
-        <div class="{{ messages.tags }} my-1" role="alert">
+        <div class="{{ message.tags }} my-1" role="alert">
           {{ message }}
         </div>
       {% endfor %}

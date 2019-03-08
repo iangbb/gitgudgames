@@ -12,7 +12,8 @@
 {% block body_block %}
 <h1>{{ heading }}</h1>
   <div class="container-fluid col-sm-8 p-5 mx-auto">
-    <form action="" method="POST" id="registerForm">
+    <form action="{% url 'register' %}" method="POST" id="registerForm">
+	{% csrf_token %}
       <div class="form-row clearfix">
         <fieldset class="my-5">
           <div class="col-sm-4 px-0 float-left">
@@ -22,7 +23,7 @@
               Email</label>
             <label class="" for="password">
               Password</label>
-            <label class="" for="passwordAgain">
+            <label class="" for="password_confirm">
               Re-enter Password</label>
           </div>
           <div class="col-sm-8 px-0 float-left">
@@ -30,19 +31,19 @@
               name="username" id="username">
             <input class="" type="text"
               name="email" id="email">
-            <input class="" type="text"
+            <input class="" type="password"
               name="password" id="password">
-            <input class="" type="text"
-              name="passwordAgain" id="passwordAgain">
+            <input class="" type="password"
+              name="password_confirm" id="password_confirm">
           </div>
         </fieldset>
       </div>
       <p class="">Got an account?</p>
       <div class="form-row clearfix">
-        <button class="float-left" type="button"
-            onclick="{% url 'login' %}">Login</button>
-        <button class="float-right" type="submit"
-          form="loginForm">Submit</button>
+        <button class="float-left btn btn-secondary" type="button"
+            onclick="{% url 'login' %}">Log In</button>
+        <button class="float-right btn btn-secondary" type="submit"
+          form="registerForm">Register</button>
       </div>
     </form>
   </div>
