@@ -6,4 +6,28 @@
 {% endblock %}
 
 {% block body_block %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/about.css' %}">
+
+<h1>{{ heading }}</h1>
+<!-- About Information -->
+<div class="container-fluid w-75 my-5">
+  <p>This is some text that will describe the nature of this website,
+     it will also contain information about who is in the Development
+     team for this project.</p>
+</div>
+
+<!-- Profiles of developers -->
+<div class="container-fluid w-75">
+  {% if developers %}
+    {% for developer in developers %}
+      <div class="container-fluid w-75 p-3 my-2 clearfix profile">
+        <img src="{{ developer.icon }}" alt="{{ developer.name }} icon"
+          class="float-left" />
+        <a href="{% url 'profile/{{ developer }}' %}">{{ developer.name }}</a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <strong>There are no developers present.</strong>
+  {% endif %}
+</div>
 {% endblock %}
