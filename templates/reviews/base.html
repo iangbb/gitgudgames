@@ -33,7 +33,7 @@
           <li class="nav-item"><a href="{% url 'about' %}">About</a></li><!-- Could make this a dropdown -->
           <li class="nav-item"><a href="{% url 'games' %}">Games</a></li>
           {% if user.is_authenticated %}
-            <li class="nav-item"><a href="{% url '#' %}">Logout</a></li>
+            <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
           {% endif %}
         </ul>
         <form class="form-inline" role="search">
@@ -51,6 +51,14 @@
     </nav>
 
     <!-- CONTENT -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="{{ messages.tags }} my-1" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
     <div id="content">
       {% block body_block %}
       {% endblock %}

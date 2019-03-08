@@ -23,9 +23,9 @@
   {% if developers %}
     {% for developer in developers %}
       <div class="container-fluid w-75 p-3 my-2 clearfix profile">
-        <img src="{{ developer.icon }}" alt="{{ developer.name }} icon"
+        <img src="{{ developer.icon }}" alt="{{ developer.username }} icon"
           class="float-left" />
-        <a href="{% url 'profile/{{ developer }}' %}">{{ developer.name }}</a>
+        <a href="{% url 'profile/{{ developer.username }}' %}">{{ developer.name }}</a>
       </div>
     {% endfor %}
   {% else %}

@@ -13,7 +13,7 @@
   <h1>{{ heading }}</h1>
   <!-- Filtering options -->
   <div class="container-fluid py-5">
-    <form action="" method="GET" id="searchCriteria">
+    <form action="{% url 'form_process' %}" method="POST" id="searchCriteria">
       <div class="form-row mb-5 clearfix">
         <!-- Genre -->
         <div class="col-sm-4 float-left">
