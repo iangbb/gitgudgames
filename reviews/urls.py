@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^edit/$', views.edit, name='edit'),
     url(r'^register/$', views.register, name='register'),
-    url(r'^login/$', views.login, name='login'),
+    url(r'^login/$', views.user_login, name='login'),
     url(r'^restricted/$', views.restricted, name='restricted'),
     url(r'^review/$', views.review, name='review'),
 

@@ -12,7 +12,8 @@
 {% block body_block %}
 <h1>{{ heading }}</h1>
   <div class="container-fluid col-sm-8 p-5 mx-auto">
-    <form action="" method="POST" id="loginForm">
+    <form action="{% url 'login' %}" method="POST" id="loginForm">
+	  {% csrf_token %}
       <div class="form-row clearfix">
         <fieldset class="my-5">
           <div class="col-sm-4 px-0 float-left">
@@ -24,7 +25,7 @@
           <div class="col-sm-8 px-0 float-left">
             <input class="" type="text"
               name="username" id="username">
-            <input class="" type="text"
+            <input class="" type="password"
               name="password" id="password">
           </div>
         </fieldset>
@@ -34,7 +35,7 @@
         <button class="float-left btn btn-secondary" type="button"
             onclick="{% url 'register' %}">Register</button>
         <button class="float-right btn btn-secondary" type="submit"
-          form="loginForm"></button>
+          form="loginForm">Log In</button>
       </div>
     </form>
   </div>

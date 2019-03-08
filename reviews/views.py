@@ -4,6 +4,7 @@ from reviews.models import Game, User, UserProfile
 from reviews.forms import UserForm, UserProfileForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
@@ -50,7 +51,7 @@ def register(request):
                 profile.profile_image = request.FILES['profile_image']
 
             profile.save()
-            messages.success("Your account has been created")
+            messages.success(request, "Your account has been created")
             return HttpResponseRedirect(reverse('login'))
 
         else:
@@ -65,7 +66,7 @@ def register(request):
                     'profile_form': profile_form, 'registered': registered}
     return render(request, 'reviews/register.html', context=context_dict)
 
-def login(request):
+def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -74,14 +75,14 @@ def login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                messages.success("Logged in successfully")
+                messages.success(request, "Logged in successfully")
                 return HttpResponseRedirect(reverse('index'))
             else:
-                messages.error("Your account has been disabled")
+                messages.error(request, "Your account has been disabled")
                 return HttpResponseRedirect(reverse('login'))
 
         else:
-            messages.error("Incorrect login details")
+            messages.error(request, "Incorrect login details")
             return HttpResponseRedirect(reverse('login'))
 
     context_dict = {'heading': "Login"}
