@@ -1,4 +1,5 @@
 {% extends 'reviews/base.html' %}
+{% load staticfiles %}
 
 {% block title_block %}
 {{ game.name }}
@@ -8,40 +9,7 @@
 
 <body>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        .gameName {
-            padding: 10px 10px 10px;
-            border: 1px solid grey;
-            float: left;
-        }
-
-        .Stars {
-            float: right;
-        }
-
-        /* Styling for checked stars */
-        .checked {
-            color: orange;
-        }
-
-        .container-fluid {
-            padding: 20px 50px 0px;
-        }
-
-        .jumbotron {
-            padding: 20px 50px 20px;
-            background-color: #dddddd;
-        }
-
-        .carousel {
-            padding: 10px 0px 10px;
-        }
-
-        .profilePic {
-            width: 15%;
-            height: auto;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/game.css' %}">
 
     <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
@@ -163,4 +131,4 @@
         <br>
     </div>
     {% endif %}
-    {% endblock %}
+{% endblock %}
