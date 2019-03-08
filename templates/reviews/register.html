@@ -2,8 +2,46 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  Welcome
+  Log In.
 {% endblock %}
 
 {% block body_block %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/loginregister.css' %}">
+
+<h1>{{ heading }}</h1>
+  <div class="container-fluid col-sm-8 p-5 mx-auto">
+    <form action="" method="POST" id="registerForm">
+      <div class="form-row clearfix">
+        <fieldset class="my-5">
+          <div class="col-sm-4 px-0 float-left">
+            <label class="" for="usename">
+              Username</label>
+            <label class="" for="email">
+              Email</label>
+            <label class="" for="password">
+              Password</label>
+            <label class="" for="passwordAgain">
+              Re-enter Password</label>
+          </div>
+          <div class="col-sm-8 px-0 float-left">
+            <input class="" type="text"
+              name="username" id="username">
+            <input class="" type="text"
+              name="email" id="email">
+            <input class="" type="text"
+              name="password" id="password">
+            <input class="" type="text"
+              name="passwordAgain" id="passwordAgain">
+          </div>
+        </fieldset>
+      </div>
+      <p class="">Got an account?</p>
+      <div class="form-row clearfix">
+        <button class="float-left" type="button"
+            onclick="{% url 'login' %}">Login</button>
+        <button class="float-right" type="submit"
+          form="loginForm">Submit</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}
