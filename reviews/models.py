@@ -26,6 +26,16 @@ class Game(models.Model):
         (SHOOTER, 'Shooter'),
     )
 
+    AGE_12 = '12'
+    AGE_16 = '16'
+    AGE_18 = '18'
+
+    AGE_RATING = (
+        (AGE_12, '12'),
+        (AGE_16, '16'),
+        (AGE_18, '18'),
+    )
+
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=200)
     releaseDate = models.DateField()
@@ -33,6 +43,8 @@ class Game(models.Model):
     developer = models.CharField(max_length=30)
     platform = models.CharField(max_length=3, choices=PLATFORM,default=PC)
     genre = models.CharField(max_length=3, choices=GENRE, default=ACTION)
+    age_rating = models.CharField(max_length=2, choices=AGE_RATING, null=True, blank=True)
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
