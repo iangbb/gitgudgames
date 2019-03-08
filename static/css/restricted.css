@@ -1,0 +1,12 @@
+h1, p {
+  color: red;
+}
+
+.container-fluid {
+
+}
+
+p {
+  background-color: pink;
+  border: 1px solid red;
+}

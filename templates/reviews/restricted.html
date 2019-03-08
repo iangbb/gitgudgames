@@ -2,8 +2,18 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  Welcome
+  Restricted!
 {% endblock %}
 
 {% block body_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/restricted.css' %}">
+
+  <h1>{{ heading }}</h1>
+
+  <div class="container-fluid text-center w-50">
+    <p class="my-5">Sorry, but you need to log in to access this page!</p>
+
+    <button class="w-25" type="button"
+      onclick="{% url 'login' %}">Log In</button>
+  </div>
 {% endblock %}
