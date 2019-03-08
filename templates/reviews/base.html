@@ -13,6 +13,7 @@
     <link href="http://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
     <!-- Custom Stylesheets -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    {% block stylesheets_block %}{% endblock %}
   </head>
   <body>
     <!-- NAVBAR -->
@@ -38,7 +39,7 @@
         <form class="form-inline" role="search">
           <div class="input-group w-100">
             <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-default" type="submit">Search</button>
+            <button class="btn btn-secondary" type="submit">Search</button>
           </div>
         </form>
         {% if user.is_authenticated %}

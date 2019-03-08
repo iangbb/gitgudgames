@@ -48,9 +48,26 @@ a {
   min-height: 500px;
 }
 
+.container-fluid {
+  background-color: #333;
+  color: #ccc;
+}
+
 /* Button styling */
 .btn {
   min-width: 200px;
+}
+
+.btn-primary {
+  background-color: #333;
+  color: #ccc;
+  border: 1px solid #333;
+}
+
+.btn-secondary {
+  background-color: #ccc;
+  color: #333;
+  border: 1px solid #ccc;
 }
 
 /* Development Tools */

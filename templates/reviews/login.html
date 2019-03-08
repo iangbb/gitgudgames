@@ -5,9 +5,11 @@
   Log In.
 {% endblock %}
 
-{% block body_block %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/loginregister.css' %}">
+{% block stylesheets_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/loginregister.css' %}">
+{% endblock %}
 
+{% block body_block %}
 <h1>{{ heading }}</h1>
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="" method="POST" id="loginForm">
@@ -29,10 +31,10 @@
       </div>
       <p class="">Not registered?</p>
       <div class="form-row clearfix">
-        <button class="float-left" type="button"
+        <button class="float-left btn btn-secondary" type="button"
             onclick="{% url 'register' %}">Register</button>
-        <button class="float-right" type="submit"
-          form="loginForm">Submit</button>
+        <button class="float-right btn btn-secondary" type="submit"
+          form="loginForm"></button>
       </div>
     </form>
   </div>

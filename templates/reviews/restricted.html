@@ -5,9 +5,11 @@
   Restricted!
 {% endblock %}
 
-{% block body_block %}
+{% block stylesheets_block %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/restricted.css' %}">
+{% endblock %}
 
+{% block body_block %}
   <h1>{{ heading }}</h1>
 
   <div class="container-fluid text-center w-50">

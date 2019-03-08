@@ -5,13 +5,15 @@
   Welcome
 {% endblock %}
 
-{% block body_block %}
+{% block stylesheets_block %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/games.css' %}">
+{% endblock %}
 
+{% block body_block %}
   <h1>{{ heading }}</h1>
   <!-- Filtering options -->
-  <div class="container">
-    <form action="" method="GET">
+  <div class="container-fluid py-5">
+    <form action="" method="GET" id="searchCriteria">
       <div class="form-row mb-5 clearfix">
         <!-- Genre -->
         <div class="col-sm-4 float-left">
@@ -73,9 +75,9 @@
       </div>-->
 
       <!-- Submit Button -->
-      <div class="form-row clearfix">
-        <input type="submit" value="Submit" class="btn float-right"
-          onClick="alert('Hello World.')">
+      <div class="form-row text-center clearfix">
+        <button type="submit" class="btn btn-secondary"
+          form="searchCriteria">Submit</button>
       </div>
     </form>
   </div> <!-- Container -->
