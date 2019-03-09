@@ -10,6 +10,13 @@
 {% endblock %}
 
 {% block body_block %}
+<!-- Set active tag -->
+<script type="text/javascript">
+  document.getElementById("homeTab").classList.remove("active");
+  document.getElementById("aboutTab").classList.add("active");
+  document.getElementById("gamesTab").classList.remove("active");
+</script>
+
 <h1>{{ heading }}</h1>
 <!-- About Information -->
 <div class="container-fluid w-75 my-5">

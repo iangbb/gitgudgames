@@ -6,6 +6,13 @@
 {% endblock %}
 
 {% block body_block %}
+  <!-- Set active tag -->
+  <script type="text/javascript">
+    document.getElementById("homeTab").classList.add("active");
+    document.getElementById("aboutTab").classList.remove("active");
+    document.getElementById("gamesTab").classList.remove("active");
+  </script>
+
   <!-- Heading and welcome message -->
   <h1>{{ heading }}</h1>
   {% if user.is_authenticated %}
@@ -45,10 +52,10 @@
   <!-- Login/Register -->
   {% if not user.is_authenticated %}
     <div class="container w-50 mx-auto px-0">
-      <button class="btn btn-primary" name="register"
-        onclick="{% url 'register' %}">Register</button>
-      <button class="btn btn-primary float-right" name="login"
-        onclick="{% url 'login' %}">Login</button>
+    <button class="float-left btn btn-primary" type="button"
+      onclick="window.location.href='{% url 'register' %}'">Register</button>
+    <button class="float-right btn btn-primary" type="button"
+      onclick="window.location.href='{% url 'login' %}'">Log In</button>
     </div>
   {% endif %}
 {% endblock %}

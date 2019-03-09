@@ -9,9 +9,14 @@ label, input {
 }
 
 label {
-  margin: 1px 0 1px 0;
+  margin: 1px 0 31px 0;
 }
 
 button {
   width: 20%;
+}
+
+p {
+  margin: 0;
+  padding: 0;
 }
