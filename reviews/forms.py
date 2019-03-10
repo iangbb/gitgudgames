@@ -18,10 +18,22 @@ class UserForm(forms.ModelForm):
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
 
-        if password != password_confirm:
-            raise forms.ValidationError("Passwords don't match")
+        UserForm.validate_password(password, password_confirm)
 
         return cleaned_data
+
+    # Method for performing password validation
+    # Raises a ValidationError if any condition is not met, higher priority conditions go to the top
+    @staticmethod
+    def validate_password(password, confirm):
+        if len(password) < 8:
+            raise forms.ValidationError("Your password must be at least 8 characters long.")
+
+        if not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
+            raise forms.ValidationError("Your password must contain at least one letter and one number.")
+
+        if password != confirm:
+            raise forms.ValidationError("Passwords don't match.")
 
 
 class UserProfileForm(forms.ModelForm):
