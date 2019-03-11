@@ -41,10 +41,12 @@ class Game(models.Model):
     releaseDate = models.DateField()
     publisher = models.CharField(max_length=30)
     developer = models.CharField(max_length=30)
-    platform = models.CharField(max_length=3, choices=PLATFORM,default=PC)
+    platform = models.CharField(max_length=3, choices=PLATFORM, default=PC)
     genre = models.CharField(max_length=3, choices=GENRE, default=ACTION)
     age_rating = models.CharField(max_length=2, choices=AGE_RATING, null=True, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    average_rating = models.DecimalField(max_digits=10, decimal_places=9, default=0)
+    number_ratings = models.IntegerField(default=0)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
