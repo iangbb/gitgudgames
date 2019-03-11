@@ -25,13 +25,11 @@
   <div>
     <h2>Development Pages:</h2>
     <ul style="background-color: #333;">
-      <li><a href="{% url 'game' %}">Game Page</a></li>
       <li><a href="{% url 'profile' %}">Profile Page</a></li>
       <li><a href="{% url 'edit' %}">Profile Edit Page</a></li>
       <li><a href="{% url 'register' %}">Register Page</a></li>
       <li><a href="{% url 'login' %}">Login Page</a></li>
       <li><a href="{% url 'restricted' %}">Restricted Page</a></li>
-      <li><a href="{% url 'review' %}">Review Page</a></li>
     </ul>
   </div>
 
@@ -41,7 +39,6 @@
     {% if games %}
       <ul>
         {% for game in games %}
-          <li><a href="{% url 'game' %}">{{ game.name }}</a></li>
         {% endfor %}
       </ul>
     {% else %}

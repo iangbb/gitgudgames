@@ -1,0 +1,16 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  {{ heading }}
+{% endblock %}
+
+{% block body_block %}
+  <form action="{% url 'add_review' game_slug=slug %}" method="post" id="review">
+    {% csrf_token %}
+    {{ review_form }}
+    <button class="float-right btn btn-secondary" type="submit"
+          form="review">Submit</button>
+  </form>
+{% endblock %}
+

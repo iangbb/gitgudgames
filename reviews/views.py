@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from reviews.models import Game, User, UserProfile
-from reviews.forms import UserForm, UserProfileForm
+from reviews.forms import UserForm, UserProfileForm, ReviewForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -30,7 +30,28 @@ def game(request, game_slug):
 
 
 def add_review(request, game_slug):
-    context_dict = {'heading': "Add Review"}
+    print(request.user)
+    try:
+        game = Game.objects.get(slug=game_slug)
+    except Game.DoesNotExist:
+        print("game doesn't exist")
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST, request.user, game)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.poster = request.user
+            review.game = game
+            review.save()
+            messages.success(request, "Your review has been added")
+            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
+        else:
+            print("bad form")
+    else:
+        review_form = ReviewForm(request.GET, request.user, game)
+
+    context_dict = {'heading': "Add Review", 'review_form': review_form,
+                    'slug': game_slug}
     return render(request, 'reviews/review.html', context=context_dict)
 
 

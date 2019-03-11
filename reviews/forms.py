@@ -1,5 +1,5 @@
 from django import forms
-from reviews.models import User, UserProfile
+from reviews.models import User, UserProfile, Review
 from django.contrib.auth.models import User
 
 
@@ -40,3 +40,16 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('profile_image', 'date_of_birth', 'biography')
+
+
+class ReviewForm(forms.ModelForm):
+    review_text = forms.CharField(widget=forms.Textarea(), max_length=2000)
+
+    def __init__(self, *args, **kwargs):
+        self.poster = args[1]
+        self.game = args[2]
+        super(ReviewForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Review
+        fields = ('rating', 'review_text')
