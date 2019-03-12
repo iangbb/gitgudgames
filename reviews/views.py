@@ -106,9 +106,12 @@ def user_login(request):
     return render(request, 'reviews/login.html', context=context_dict)
 
 
-def restricted(request):
-    context_dict = {'heading': "Restricted"}
-    return render(request, 'reviews/restricted.html', context=context_dict)
+def restricted(request, status=403, message="You are not allowed to access this page"):
+    context_dict = {
+        'heading': "Restricted",
+        'message': message,
+    }
+    return render(request, 'reviews/restricted.html', context=context_dict, status=status)
 
 
 def user_logout(request):
