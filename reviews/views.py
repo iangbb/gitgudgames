@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from reviews.models import Game, Review, User, UserProfile
+from reviews.models import Game, Review, Comment, User, UserProfile
 from reviews.forms import UserForm, UserProfileForm, ReviewForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -70,11 +70,10 @@ def add_review(request, game_slug):
 
 #@login_required
 def profile(request, username):
-    #context_dict = {}
     context_dict = {'heading': username}
 
     try:
-        # Check if user is Anonymous
+        # Check if user is exists
         user = User.objects.get(username=username)
 
         # Obtain user's profile
@@ -102,9 +101,20 @@ def profile(request, username):
     return render(request, 'reviews/profile.html', context=context_dict)
 
 
-def edit_profile(request, user):
+def edit_profile(request, username):
     context_dict = {'heading': "Edit Profile"}
-    context_dict['profile'] = UserProfile.objects.get(user=user)
+
+    try:
+        # Check if user is exists
+        user = User.objects.get(username=username)
+
+        # Obtain user's profile
+        profile = UserProfile.objects.get(user=user)
+        context_dict['profile'] = profile
+
+    except User.DoesNotExist:
+        context_dict['heading'] = "Anonymous"
+        context_dict['profile'] = None
 
     return render(request, 'reviews/edit.html', context=context_dict)
 
