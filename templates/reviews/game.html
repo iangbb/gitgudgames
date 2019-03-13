@@ -7,10 +7,37 @@
 
 {% block body_block %}
 
-<body>
+{% block stylesheets_block %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/game.css' %}">
+    <style>
+    .stars-outer {
+      display: inline-block;
+      position: relative;
+      font-family: FontAwesome;
+    }
 
+    .stars-outer::before {
+      content: "\f006 \f006 \f006 \f006 \f006";
+    }
+
+    .stars-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0%;
+    }
+
+    .stars-inner::before {
+      content: "\f005 \f005 \f005 \f005 \f005";
+      color: #f8ce0b;
+    }
+    </style>
+{% endblock %}
+
+<body>
     <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
@@ -19,13 +46,16 @@
                         {{ game.name }}
                     </h1>
                 </div>
-                <div class="col">
-                    <h1 class="Stars">
-                        <span style="float:right;" class="fa fa-star"></span>
-                        <span style="float:right;" class="fa fa-star"></span>
-                        <span style="float:right;" class="fa fa-star checked"></span>
-                        <span style="float:right;" class="fa fa-star checked"></span>
-                        <span style="float:right;" class="fa fa-star checked"></span>
+                <div style="text-align:right" class="col">
+                    <h1>
+                        <td>
+                          <div class="stars-outer">
+                            <div id="{{ game.average_rating }}" class="stars-inner"></div>
+                          </div>
+                        </td>
+                        <script type="text/javascript">
+                            document.getElementById("{{ game.average_rating }}").style.width = {{ game.average_rating }} + "%";
+                        </script>
                     </h1>
                 </div>
             </div>
@@ -63,41 +93,41 @@
 
     <!-- Details box -->
     <div style="color:#2d2d2d;" class="container-fluid">
-        <div class="jumbotron fluid-jumbotron">
+        <div style="margin:auto" class="jumbotron fluid-jumbotron w-75">
             <h1 class="display-6">Details</h1>
             <br>
-            <div class="row">
-                <div class="col-2">Description</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Description</div>
                 <div class="col">{{ game.description }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Release Date</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Release Date</div>
                 <div class="col">{{ game.releaseDate }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Publisher</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Publisher</div>
                 <div class="col">{{ game.publisher }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Developer</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Developer</div>
                 <div class="col">{{ game.developer }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Platform</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Platform</div>
                 <div class="col">{{ game.platform }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Genre</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Genre</div>
                 <div class="col">{{ game.genre }}</div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-2">Average Rating</div>
+            <div style="margin:auto" class="row w-50">
+                <div style="text-align:right" class="col">Average Rating</div>
                 <div class="col">{{ game.average_rating }}</div>
             </div>
         </div>
@@ -122,13 +152,20 @@
                         <img class="profilePic" src="{{ review.profilePic }}" alt="review.userName">
                     </div>
                     <div class="col">
-                        <h1 class="Stars">
-                            <span style="float:right;" class="fa fa-star"></span>
-                            <span style="float:right;" class="fa fa-star"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                            <span style="float:right;" class="fa fa-star checked"></span>
-                        </h1>
+                        <div style="text-align:right" class="col">
+                            <h3>
+                                <td>
+                                    <div>
+                                      <div class="stars-outer">
+                                        <div id="{{ review.rating }}" class="stars-inner"></div>
+                                      </div>
+                                  </div>
+                                </td>
+                                <script type="text/javascript">
+                                    document.getElementById("{{ review.rating }}").style.width = ({{ review.rating }} * 20) + "%";
+                                </script>
+                            <h3>
+                        </div>
                     </div>
                 </div>
                 <br>
