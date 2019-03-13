@@ -47,7 +47,7 @@
         </form>
         {% if user.is_authenticated %}
           <ul class="navbar-nav pull-md-right">
-            <li class="nav-item"><a href="{% url 'profile' %}">Profile</a></li>
+            <li class="nav-item"><a href="{% url 'profile' user %}">Profile</a></li>
           </ul>
         {% endif %}
       </div>

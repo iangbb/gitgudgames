@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from reviews.models import Game, User, UserProfile
+from reviews.models import Game, Review, User, UserProfile
 from reviews.forms import UserForm, UserProfileForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -9,6 +9,9 @@ from django.contrib.auth import authenticate, login, logout
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
+    # Add top 5 games
+    games = Game.objects.order_by('-average_rating')[:5]
+    context_dict['games'] = games
     return render(request, 'reviews/index.html', context=context_dict)
 
 
@@ -25,7 +28,16 @@ def games(request):
 
 
 def game(request, game_slug):
-    context_dict = {'heading': "Gitgud Games"}
+    context_dict = {}
+    try:
+        game = Game.objects.get(slug=game_slug)
+        # Filter only reviews relevent to this game
+        reviews = Review.objects.filter(game=game)
+        context_dict['heading'] = game.name
+        context_dict['reviews'] = reviews
+    except Game.DoesNotExist:
+        context_dict['heading'] = "Gitgud Games"
+
     return render(request, 'reviews/game.html', context=context_dict)
 
 
@@ -34,13 +46,20 @@ def add_review(request, game_slug):
     return render(request, 'reviews/review.html', context=context_dict)
 
 
-def profile(request):
-    context_dict = {'heading': "Profile"}
+def profile(request, user):
+    context_dict = {}
+    try:
+        profile = UserProfile.objects.get(user=user)
+        context_dict['heading'] = user.username
+    except profile.DoesNotExist:
+        context_dict['heading'] = "Error"
+
     return render(request, 'reviews/profile.html', context=context_dict)
 
 
-def edit(request):
+def edit_profile(request, user):
     context_dict = {'heading': "Edit Profile"}
+    context_dict['profile'] = UserProfile.objects.get(user=user)
     return render(request, 'reviews/edit.html', context=context_dict)
 
 

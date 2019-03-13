@@ -18,6 +18,15 @@ a {
   color: #ccc;
 }
 
+a:hover {
+  color: white;
+  text-decoration: none;
+}
+
+li {
+  list-style-type: none;
+}
+
 /* Navbar styling */
 .navbar {
   padding: 0;
