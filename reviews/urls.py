@@ -6,9 +6,9 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^about/$', views.about, name='about'),
     # Game urls
-    url(r'^games/', views.games, name='games'),
-    url(r'^game/(?P<game_slug>[\w\-]+)/$', views.game, name='game'),
-    url(r'^game/(?P<game_slug>[\w\-]+)/add_review/$', views.add_review, name='add_review'),
+    url(r'^games/$', views.games, name='games'),
+    url(r'^games/(?P<game_slug>[\w\-]+)/$', views.game, name='game'),
+    url(r'^games/(?P<game_slug>[\w\-]+)/add_review/$', views.add_review, name='add_review'),
     # User urls
     url(r'^profile/(?P<username>[\w\-]+)/$', views.profile, name='profile'),
     url(r'^profile/(?P<username>[\w\-]+)/edit/$', views.edit_profile, name='edit_profile'),

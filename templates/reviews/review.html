@@ -1,0 +1,52 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  {{ heading }}
+{% endblock %}
+
+{% block stylesheets_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/loginregister.css' %}">
+{% endblock %}
+
+{% block body_block %}
+  <h1>Add Review - {{ review_form.game.name }}</h1>
+  <div class="container-fluid col-sm-8 p-5 mx-auto">
+    <form action="{% url 'add_review' game_slug=slug %}" method="post" id="review">
+      {% csrf_token %}
+      <div class="form-row clearfix">
+        <fieldset class="my-5">
+          <div class="col-sm-4 px-0 float-left">
+            <label for="{{ review_form.rating.id_for_label }}">Rating</label>
+            <label for="{{ review_form.review_text.id_for_label }}">Review</label>
+          </div>
+          <div class="col-sm-8 px-0 float-left">
+            {{ review_form.rating }}
+            {% if review_form.rating.errors %}
+              <div class="text-danger">
+              {{ review_form.rating.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ review_form.review_text }}
+            {% if review_form.review_text.errors %}
+              <div class="text-danger">
+              {{ review_form.review_text.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="form-row clearfix">
+        <button class="float-right btn btn-secondary" type="submit"
+            form="review">Submit</button>
+      </div>
+  </form>
+  </div>
+{% endblock %}
+

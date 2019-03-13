@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from reviews.models import Game, Review, User, UserProfile
-from reviews.forms import UserForm, UserProfileForm
+from reviews.forms import UserForm, UserProfileForm, ReviewForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
@@ -32,13 +33,8 @@ def game(request, game_slug):
     try:
         game = Game.objects.get(slug=game_slug)
         # Filter only reviews relevent to this game
-<<<<<<< HEAD
         reviews = Review.objects.filter(game=game).order_by('-votes')
         context_dict['heading'] = game.name
-=======
-        reviews = Review.objects.filter(game=game)
-        context_dict['game'] = game
->>>>>>> bda5afb7f0e9fb276d7e9c6547b59986d15209b4
         context_dict['reviews'] = reviews
     except Game.DoesNotExist:
         context_dict['game'] = None
@@ -47,7 +43,28 @@ def game(request, game_slug):
 
 
 def add_review(request, game_slug):
-    context_dict = {'heading': "Add Review"}
+    try:
+        game = Game.objects.get(slug=game_slug)
+    except Game.DoesNotExist:
+        print("game doesn't exist")
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST, request.user, game)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.poster = request.user
+            review.game = game
+            review.save()
+            messages.success(request, "Your review has been added")
+            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
+        else:
+            messages.error(request, "You submitted an invalid review")
+            review_form = ReviewForm(request.GET, request.user, game)
+    else:
+        review_form = ReviewForm(request.GET, request.user, game)
+
+    context_dict = {'heading': "Add Review", 'review_form': review_form,
+                    'slug': game_slug}
     return render(request, 'reviews/review.html', context=context_dict)
 
 
