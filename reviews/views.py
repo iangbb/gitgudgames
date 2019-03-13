@@ -5,7 +5,7 @@ from reviews.forms import UserForm, UserProfileForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     context_dict = {'heading': "Gitgud Games"}
@@ -32,7 +32,7 @@ def game(request, game_slug):
     try:
         game = Game.objects.get(slug=game_slug)
         # Filter only reviews relevent to this game
-        reviews = Review.objects.filter(game=game)
+        reviews = Review.objects.filter(game=game).order_by('-votes')
         context_dict['heading'] = game.name
         context_dict['reviews'] = reviews
     except Game.DoesNotExist:
@@ -46,13 +46,36 @@ def add_review(request, game_slug):
     return render(request, 'reviews/review.html', context=context_dict)
 
 
-def profile(request, user):
-    context_dict = {}
+#@login_required
+def profile(request, username):
+    #context_dict = {}
+    context_dict = {'heading': username}
+
     try:
+        # Check if user is Anonymous
+        user = User.objects.get(username=username)
+
+        # Obtain user's profile
         profile = UserProfile.objects.get(user=user)
-        context_dict['heading'] = user.username
-    except profile.DoesNotExist:
-        context_dict['heading'] = "Error"
+        context_dict['profile'] = profile
+
+        # Add any reviews and comments by user
+        try:
+            reviews = Review.objects.filter(poster=user).order_by('-post_datetime')
+            context_dict['reviews'] = reviews
+        except Review.DoesNotExist:
+            context_dict['reviews'] = None
+        try:
+            comments = Comment.objects.filter(poster=user).order_by('-post_datetime')
+            context_dict['comments'] = comments
+        except Comment.DoesNotExist:
+            context_dict['comments'] = None
+
+    except User.DoesNotExist:
+        context_dict['heading'] = "Anonymous"
+        context_dict['profile'] = None
+        context_dict['reviews'] = None
+        context_dict['comments'] = None
 
     return render(request, 'reviews/profile.html', context=context_dict)
 
@@ -60,6 +83,7 @@ def profile(request, user):
 def edit_profile(request, user):
     context_dict = {'heading': "Edit Profile"}
     context_dict['profile'] = UserProfile.objects.get(user=user)
+
     return render(request, 'reviews/edit.html', context=context_dict)
 
 

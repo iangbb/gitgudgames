@@ -10,8 +10,8 @@ urlpatterns = [
     url(r'^game/(?P<game_slug>[\w\-]+)/$', views.game, name='game'),
     url(r'^game/(?P<game_slug>[\w\-]+)/add_review/$', views.add_review, name='add_review'),
     # User urls
-    url(r'^profile/(?P<user>[\w\-]+)$', views.profile, name='profile'),
-    url(r'^profile/(?P<user>[\w\-]+)/edit/$', views.edit_profile, name='edit_profile'),
+    url(r'^profile/(?P<username>[\w\-]+)/$', views.profile, name='profile'),
+    url(r'^profile/(?P<username>[\w\-]+)/edit/$', views.edit_profile, name='edit_profile'),
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.user_login, name='login'),
     url(r'^restricted/$', views.restricted, name='restricted'),

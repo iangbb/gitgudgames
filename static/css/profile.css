@@ -1,0 +1,15 @@
+.row, .review, .comment {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.review, .comment {
+  max-height: 100px;
+  position: absolute;
+}
+
+.review button, .comment button {
+  position: relative;
+  bottom: 5px;
+  right: 5px;
+}

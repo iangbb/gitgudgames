@@ -1,0 +1,91 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  {{ heading }}
+{% endblock %}
+
+{% block stylesheets_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block body_block %}
+  <div class="">
+    <div class="row">
+      <div class="col-sm-10">
+        <h1>{{ heading }}'s Profile</h1>
+      </div>
+      <div class="">
+        <button class="btn btn-primary w-100" type="button"
+          onclick="window.location.href='{% url 'edit_profile' user %}'">Edit</button>
+      </div>
+    </div>
+
+    <!-- User details and biography -->
+    <div class="row">
+      <div class="col-sm-2">
+        <img src="{{ profile.profile_image }}" alt="profile image">
+      </div>
+      <div class="col">
+        <h2>Details</h2>
+        <div class="container-fluid w-100">
+          {% if profile %}
+            <ul>
+              <li>Name: {{ profile.user.first_name }} {{ profile.user.last_name }}</li>
+              <li>Email: {{ profile.user.email }}</li>
+              <li>Date Of Birth: {{ profile.date_of_birth }}</li>
+              <li>Journalist: {{ profile.is_journalist }}</li>
+              <li>Joined: {{ profile.user.date_joined }}</li>
+              <li>Last Login: {{ profile.user.last_login }}</li>
+            </ul>
+          {% else %}
+            <strong>Anonymous details.</strong>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <h2>Biography</h2>
+    <div class="container-fluid w-100">
+      {% if profile %}
+        <p>{{ profile.biography }}</p>
+      {% else %}
+        <strong>Anonymous biography.</strong>
+      {% endif %}
+    </div>
+
+    <!-- Generate list of reviews by user -->
+    <h2>Reviews</h2>
+    {% if reviews %}
+      {% for review in reviews %}
+        <div class="container-fluid w-100 review">
+          <h3>{{ review.game.name }}</h3>
+          <p>{{ review.text }}</p>
+          <button type="button" name="button">View</button>
+        </div>
+      {% endfor %}
+      <button type="button" name="button">More</button>
+    {% else %}
+      <div class="container-fluid w-100">
+        <strong>User has not made any reviews.</strong>
+      </div>
+    {% endif %}
+
+    <!-- Generate list of comments by user -->
+    <h2>Comments</h2>
+    {% if comments %}
+      {% for comment in comments %}
+        <div class="container-fluid w-100 comment">
+          <h3>Review by {{ comment.review.poster.username }} on
+            {{ comment.review.game.name }}</h3>
+          <p>{{ comment.text }}</p>
+          <button type="button" name="button">View</button>
+        </div>
+      {% endfor %}
+      <button type="button" name="button">More</button>
+    {% else %}
+      <div class="container-fluid w-100">
+        <p><strong>User has not made any comments.</strong></p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

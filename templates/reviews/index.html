@@ -26,8 +26,13 @@
   <div class="container-fluid w-75">
     <ul>
       <li><a href="{% url 'game' 'test' %}">Game Page</a></li>
-      <li><a href="{% url 'profile' user %}">Profile Page</a></li>
-      <li><a href="{% url 'edit_profile' user %}">Profile Edit Page</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'profile' user.username %}">Profile Page</a></li>
+        <li><a href="{% url 'edit_profile' user.username %}">Profile Edit Page</a></li>
+      {% else %}
+        <li><a href="{% url 'profile' 'anonymous' %}">Profile Page</a></li>
+        <li><a href="{% url 'edit_profile' 'anonymous' %}">Profile Edit Page</a></li>
+      {% endif %}
       <li><a href="{% url 'register' %}">Register Page</a></li>
       <li><a href="{% url 'login' %}">Login Page</a></li>
       <li><a href="{% url 'restricted' %}">Restricted Page</a></li>

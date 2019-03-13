@@ -98,7 +98,7 @@
       {% if games %}
         <ul>
           {% for game in games %}
-            <li><a href="{% url 'game' %}">{{ game.name }}</a></li>
+            <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a></li>
           {% endfor %}
         </ul>
       {% else %}
