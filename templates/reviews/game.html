@@ -15,7 +15,7 @@
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
                 <div class="col">
-                    <h1 class="gameName">
+                    <h1 style="color:#2d2d2d" class="gameName">
                         {{ game.name }}
                     </h1>
                 </div>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Details box -->
-    <div class="container-fluid">
+    <div style="color:#2d2d2d;" class="container-fluid">
         <div class="jumbotron fluid-jumbotron">
             <h1 class="display-6">Details</h1>
             <br>
@@ -95,6 +95,11 @@
                 <div class="col-2">Genre</div>
                 <div class="col">{{ game.genre }}</div>
             </div>
+            <br>
+            <div class="row">
+                <div class="col-2">Average Rating</div>
+                <div class="col">{{ game.average_rating }}</div>
+            </div>
         </div>
     </div>
 
@@ -108,7 +113,12 @@
         <div class="container">
             <div class="jumbotron">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-2">
+                        <h3 class="gameName">
+                            {{ review.poster.username }}
+                        </h3>
+                    </div>
+                    <div class="col-2">
                         <img class="profilePic" src="{{ review.profilePic }}" alt="review.userName">
                     </div>
                     <div class="col">
@@ -123,7 +133,7 @@
                 </div>
                 <br>
                 <p>
-                    {{ review.contents }}
+                    {{ review.review_text }}
                 </p>
             </div>
         </div>
