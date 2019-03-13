@@ -33,10 +33,10 @@ def game(request, game_slug):
         game = Game.objects.get(slug=game_slug)
         # Filter only reviews relevent to this game
         reviews = Review.objects.filter(game=game)
-        context_dict['heading'] = game.name
+        context_dict['game'] = game
         context_dict['reviews'] = reviews
     except Game.DoesNotExist:
-        context_dict['heading'] = "Gitgud Games"
+        context_dict['game'] = None
 
     return render(request, 'reviews/game.html', context=context_dict)
 
