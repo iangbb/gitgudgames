@@ -46,7 +46,7 @@ def add_review(request, game_slug):
     try:
         game = Game.objects.get(slug=game_slug)
     except Game.DoesNotExist:
-        print("game doesn't exist")
+        return restricted(request, status=404, message="The game you're looking for doesn't exist")
 
     if request.method == 'POST':
         review_form = ReviewForm(request.POST, request.user, game)
@@ -136,8 +136,9 @@ def register(request):
             return HttpResponseRedirect(reverse('login'))
 
         else:
-            # TODO: proper handling of form errors
-            print(user_form.errors, profile_form.errors)
+            messages.error(request, "You submitted an invalid registration form")
+            user_form = UserForm(data=request.POST)
+            profile_form = UserProfileForm(data=request.POST)
 
     else:
         user_form = UserForm()

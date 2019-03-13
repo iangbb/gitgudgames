@@ -13,9 +13,9 @@
   <h1>{{ heading }}</h1>
 
   <div class="container-fluid text-center w-50">
-    <p class="my-5">Sorry, but you need to log in to access this page!</p>
+    <p class="my-5">{{ message }}</p>
 
     <button class="w-25" type="button"
-      onclick="{% url 'login' %}">Log In</button>
+      onclick="window.location.href='{% url 'index' %}'">Back to Home</button>
   </div>
 {% endblock %}
