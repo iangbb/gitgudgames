@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block stylesheets_block %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/loginregister.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
 {% endblock %}
 
 {% block body_block %}
@@ -14,26 +14,17 @@
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="{% url 'register' %}" method="POST" id="registerForm">
 	    {% csrf_token %}
-        {% for field in user_form %}
-          <div class="row">
-            <div class="col-sm-4">{{ field.help_text }}</div>
-            <div class="col">{{ field }}</div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4">&nbsp;</div>
-            <div class="col">{{ field.errors }}</div>
-          </div>
-        {% endfor %}
-        {% for field in profile_form %}
-          <div class="row">
-            <div class="col-sm-4">{{ field.help_text }}</div>
-            <div class="col">{{ field }}</div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4">&nbsp;</div>
-            <div class="col">{{ field.errors }}</div>
-          </div>
-        {% endfor %}
+      {% for field in user_form.visible_fields %}
+        <div class="row">
+          <div class="col-sm-4">{{ field.help_text }}</div>
+          <div class="col">{{ field }}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">&nbsp;</div>
+          <div class="col text-danger">{{ field.errors|striptags }}</div>
+        </div>
+      {% endfor %}
+
       <!--<div class="form-row clearfix">
         <fieldset class="my-5">
           <div class="col-sm-4 px-0 float-left">
@@ -91,7 +82,8 @@
           </div>
         </fieldset>
       </div>-->
-      <p class="">Got an account?</p>
+
+      <p>Got an account?</p>
       <div class="form-row clearfix">
         <button class="float-left btn btn-secondary" type="button"
             onclick="window.location.href='{% url 'login' %}'">Log In</button>

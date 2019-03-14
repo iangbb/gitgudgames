@@ -79,9 +79,12 @@ def profile(request, username):
         user = User.objects.get(username=username)
 
         # Obtain user's profile
-        profile = UserProfile.objects.get(user=user)
-        context_dict['profile'] = profile
-
+        try:
+            profile = UserProfile.objects.get(user=user)
+            context_dict['profile'] = profile
+        except UserProfile.DoesNotExist:
+            context_dict['profile'] = None
+            
         # Add any reviews and comments by user
         try:
             reviews = Review.objects.filter(poster=user).order_by('-post_datetime')
@@ -141,34 +144,37 @@ def register(request):
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
+        #profile_form = UserProfileForm(data=request.POST)
 
-        if user_form.is_valid() and profile_form.is_valid():
+        #if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
 
-            profile = profile_form.save(commit=False)
-            profile.user = user
+            #profile = profile_form.save(commit=False)
+            #profile.user = user
 
-            if 'profile_image' in request.FILES:
-                profile.profile_image = request.FILES['profile_image']
+            #if 'profile_image' in request.FILES:
+            #    profile.profile_image = request.FILES['profile_image']
 
-            profile.save()
+            #profile.save()
             messages.success(request, "Your account has been created")
             return HttpResponseRedirect(reverse('login'))
 
         else:
             messages.error(request, "You submitted an invalid registration form")
             user_form = UserForm(data=request.POST)
-            profile_form = UserProfileForm(data=request.POST)
+            #profile_form = UserProfileForm(data=request.POST)
 
     else:
         user_form = UserForm()
-        profile_form = UserProfileForm()
+        #profile_form = UserProfileForm()
 
+    #context_dict = {'heading': "Register", 'user_form': user_form,
+    #                'profile_form': profile_form, 'registered': registered}
     context_dict = {'heading': "Register", 'user_form': user_form,
-                    'profile_form': profile_form, 'registered': registered}
+                    'registered': registered}
     return render(request, 'reviews/register.html', context=context_dict)
 
 

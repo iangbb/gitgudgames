@@ -17,7 +17,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        #fields = ('username', 'email', 'password', 'first_name', 'last_name')
+        #fields = ('username', 'email', 'password')
         fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
     # Override clean method to perform password confirmation checks
@@ -46,12 +46,9 @@ class UserForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
     # User-editable data
-    date_of_birth = forms.DateField(False, False,
-        help_text="Date of Birth")
-    profile_image = forms.ImageField(
-        help_text="Profile Image")
-    biography = forms.CharField(max_length=2000,
-        help_text="Biography")
+    date_of_birth = forms.DateField(False, False, help_text="Date of Birth")
+    profile_image = forms.ImageField(help_text="Profile Image")
+    biography = forms.CharField(max_length=2000, help_text="Biography")
 
     # Hidden data
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
