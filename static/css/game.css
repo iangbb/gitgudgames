@@ -10,16 +10,12 @@
 }
 
 .container-fluid {
-    padding: 20px 50px 0px;
+    padding: 20px 50px;
 }
 
 .jumbotron {
-    padding: 20px 50px 20px;
+    padding: 20px 50px;
     background-color: #dddddd;
-}
-
-.carousel {
-    padding: 10px 0px 10px;
 }
 
 .profilePic {
@@ -49,4 +45,8 @@
 .stars-inner::before {
   content: "\f005 \f005 \f005 \f005 \f005";
   color: #f8ce0b;
+}
+
+img {
+    object-fit: contain;
 }

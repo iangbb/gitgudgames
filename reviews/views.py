@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from reviews.models import Game, Review, Comment, User, UserProfile
+from reviews.models import Game, Review, Comment, User, UserProfile, Image
 from reviews.forms import UserForm, UserProfileForm, ReviewForm
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -34,8 +34,10 @@ def game(request, game_slug):
         game = Game.objects.get(slug=game_slug)
         # Filter only reviews relevent to this game
         reviews = Review.objects.filter(game=game).order_by('-votes')
-        context_dict['heading'] = game.name
+        pictures = Image.objects.filter(game=game)
+        context_dict['game'] = game
         context_dict['reviews'] = reviews
+        context_dict['pictures'] = pictures
     except Game.DoesNotExist:
         context_dict['game'] = None
 
