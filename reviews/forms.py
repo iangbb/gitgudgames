@@ -4,13 +4,21 @@ from django.contrib.auth.models import User
 
 
 class UserForm(forms.ModelForm):
-    email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.PasswordInput())
-    password_confirm = forms.CharField(widget=forms.PasswordInput())
+    #email = forms.EmailField(required=True)
+    #password = forms.CharField(widget=forms.PasswordInput())
+    #password_confirm = forms.CharField(widget=forms.PasswordInput())
+
+    username = forms.CharField(max_length=128, help_text="Username", required=True)
+    first_name = forms.CharField(max_length=128, help_text="First Name", required=False)
+    last_name = forms.CharField(max_length=128, help_text="Last Name", required=False)
+    email = forms.EmailField(help_text="Email", required=True)
+    password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
+    password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        #fields = ('username', 'email', 'password', 'first_name', 'last_name')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
     # Override clean method to perform password confirmation checks
     def clean(self):
@@ -37,9 +45,20 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    # User-editable data
+    date_of_birth = forms.DateField(False, False,
+        help_text="Date of Birth")
+    profile_image = forms.ImageField(
+        help_text="Profile Image")
+    biography = forms.CharField(max_length=2000,
+        help_text="Biography")
+
+    # Hidden data
+    is_journalist = forms.BooleanField(widget=forms.HiddenInput())
+
     class Meta:
         model = UserProfile
-        fields = ('profile_image', 'date_of_birth', 'biography')
+        fields = ('profile_image', 'date_of_birth', 'biography', 'is_journalist')
 
 
 class ReviewForm(forms.ModelForm):

@@ -10,28 +10,17 @@
 {% endblock %}
 
 {% block body_block %}
-  <div class="row">
-    <div class="col-sm-10">
-      <h1>{{ heading }}'s Profile</h1>
-    </div>
-    <div class="">
-      {% if user.is_authenticated %}
-        <button class="btn btn-primary w-100" type="button"
-          onclick="window.location.href='{% url 'edit_profile' user.username %}'">Edit</button>
-      {% else %}
-        <button class="btn btn-primary w-100" type="button"
-          onclick="window.location.href='{% url 'edit_profile' 'anonymous' %}'">Edit</button>
-      {% endif %}
-    </div>
-  </div>
-
+  <h1 style="position:relative;"> Profile of {{ heading }}</h1>
+  <button class="btn btn-primary position-absolute" type="button"
+    style="position:absolute; right:30px; top:60px;"
+    onclick="window.location.href='{% url 'edit_profile' user.username %}'">Edit</button>
   <!-- User details and biography -->
-  <div class="row">
+  <h2>Details</h2>
+  <div class="row clearfix">
     <div class="col-sm-2">
       <img src="{{ profile.profile_image }}" alt="profile image">
     </div>
     <div class="col">
-      <h2>Details</h2>
       <div class="container-fluid w-100">
         {% if profile %}
           <ul>
@@ -49,7 +38,7 @@
     </div>
   </div>
   <h2>Biography</h2>
-  <div class="container-fluid w-100">
+  <div class="container-fluid w-100 clearfix">
     {% if profile %}
       <p>{{ profile.biography }}</p>
     {% else %}

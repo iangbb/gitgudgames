@@ -15,47 +15,26 @@
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="{% url 'edit_profile' user.username %}" method="POST" id="registerForm">
       {% csrf_token %}
-      <div class="form-row clearfix">
-        <div class="col-sm-4 float-left">
-          <label for="first_name">First Name</label>
-          <label for="last_name">Last Name</label>
-          <label for="email">Email</label>
-          <label for="password">Password</label>
-          <label for="password_confirm">Re-enter Password</label>
-          <label for="birth_date">Date of Birth</label>
-          <label for="profile_image">Profile Image</label>
+      {% for field in user_form %}
+        <div class="row">
+          <div class="col-sm-4">{{ field.help_text }}</div>
+          <div class="col">{{ field }}</div>
         </div>
-        <div class="col-sm-8 float-left">
-          <input type="text" name="first_name" id="first_name"
-            value="{{ profile.user.first_name }}">
-          <div class="validation" id="valid_f_name">
-            Validation Text</div>
-          <input type="text" name="last_name" id="last_name"
-            value="{{ profile.user.last_name }}">
-          <div class="validation" id="valid_l_name">
-            Validation Text</div>
-          <input type="text" name="email" id="email"
-            value="{{ profile.user.email }}">
-          <div class="validation" id="valid_email">
-            Validation Text</div>
-          <input type="password" name="password" id="password"
-            value="{{ profile.password }}">
-          <div class="validation" id="valid_pw">
-            Validation Text</div>
-          <input type="password" name="password_confirm" id="password_confirm"
-            value="">
-          <div class="validation" id="valid_pw_conf">
-            Validation Text</div>
-          <input type="date" name="birth_date" id="birth_date"
-            value="{{ profile.date_of_birth }}">
-          <div class="validation" id="valid_b_date">
-            Validation Text</div>
-          <input type="file" name="profile_image" id="profile_image"
-            value="">
-          <div class="validation" id="valid_p_img">
-            Validation Text</div>
+        <div class="row">
+          <div class="col-sm-4">&nbsp;</div>
+          <div class="col">{{ field.errors }}</div>
         </div>
-      </div>
+      {% endfor %}
+      {% for field in profile_form %}
+        <div class="row">
+          <div class="col-sm-4">{{ field.help_text }}</div>
+          <div class="col">{{ field }}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">&nbsp;</div>
+          <div class="col">{{ field.errors }}</div>
+        </div>
+      {% endfor %}
       <div class="form-row clearfix">
         <button class="btn btn-secondary float-right" type="submit"
           name="submit">Submit</button>

@@ -13,8 +13,28 @@
 <h1>{{ heading }}</h1>
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="{% url 'register' %}" method="POST" id="registerForm">
-	{% csrf_token %}
-      <div class="form-row clearfix">
+	    {% csrf_token %}
+        {% for field in user_form %}
+          <div class="row">
+            <div class="col-sm-4">{{ field.help_text }}</div>
+            <div class="col">{{ field }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">&nbsp;</div>
+            <div class="col">{{ field.errors }}</div>
+          </div>
+        {% endfor %}
+        {% for field in profile_form %}
+          <div class="row">
+            <div class="col-sm-4">{{ field.help_text }}</div>
+            <div class="col">{{ field }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">&nbsp;</div>
+            <div class="col">{{ field.errors }}</div>
+          </div>
+        {% endfor %}
+      <!--<div class="form-row clearfix">
         <fieldset class="my-5">
           <div class="col-sm-4 px-0 float-left">
             <label class="" for="usename">
@@ -70,7 +90,7 @@
             </div>
           </div>
         </fieldset>
-      </div>
+      </div>-->
       <p class="">Got an account?</p>
       <div class="form-row clearfix">
         <button class="float-left btn btn-secondary" type="button"

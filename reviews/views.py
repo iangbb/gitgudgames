@@ -104,18 +104,29 @@ def profile(request, username):
 def edit_profile(request, username):
     context_dict = {'heading': "Edit Profile"}
 
-    try:
-        # Check if user is exists
-        user = User.objects.get(username=username)
+    # If form has been submitted
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
 
-        # Obtain user's profile
-        profile = UserProfile.objects.get(user=user)
-        context_dict['profile'] = profile
+        # Check for form field validity
+        if form.is_valid():
+            user_form.save(commit=True)
+            profile_form.save(commit=True)
+            messages.success(request, "Your profile has been edited")
+            return HttpResponseRedirect(reverse('profile', kwargs={'username':username}))
+        else:
+            messages.error(request, "Some fields contain errors.")
+            user_form = UserForm(data=request.POST)
+            profile_form = UserProfileForm(data=request.POST)
 
-    except User.DoesNotExist:
-        context_dict['heading'] = "Anonymous"
-        context_dict['profile'] = None
+    # Otherwise, display form
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
 
+    context_dict['user_form'] = user_form
+    context_dict['profile_form'] = profile_form
     return render(request, 'reviews/edit.html', context=context_dict)
 
 
