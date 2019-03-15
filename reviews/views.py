@@ -56,11 +56,18 @@ def add_review(request, game_slug):
     if request.method == 'POST':
         review_form = ReviewForm(request.POST, request.user, game)
         if review_form.is_valid():
+            # Save review to database
             review = review_form.save(commit=False)
             review.poster = request.user
             review.game = game
             review.save()
             messages.success(request, "Your review has been added")
+
+            # Update stored average rating
+            game.average_rating = (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
+            game.number_ratings += 1
+            game.save()
+            
             return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
         else:
             messages.error(request, "You submitted an invalid review")
