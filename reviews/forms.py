@@ -48,9 +48,7 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    # User-editable data
-    first_name = forms.CharField(max_length=128, help_text="First Name (Optional)", required=False)
-    last_name = forms.CharField(max_length=128, help_text="Last Name (Optional)", required=False)
+    display_name = forms.CharField(max_length=128, help_text="Display Name (Optional)", required=False)
     profile_image = forms.ImageField(help_text="Profile Image")
     date_of_birth = forms.DateField(False, False, help_text="Date of Birth")
     biography = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 90, 'class': 'form-control'}), help_text="Biography")
@@ -58,10 +56,19 @@ class UserProfileForm(forms.ModelForm):
     # Hidden data
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
 
+    def get_display_name(self):
+        return self.display_name
+
+    def clean_display_name(self):
+        if len(self.display_name) > 16:
+            raise forms.ValidationError('Display name is too long.')
+        if len(self.display_name) < 3:
+            raise forms.ValidationError('Display name is too short.')
+        return self.display_name
+
     class Meta:
         model = UserProfile
-        fields = ('first_name', 'last_name', 'profile_image', 'date_of_birth', 'biography', 'is_journalist')
-
+        fields = ('display_name', 'profile_image', 'date_of_birth', 'biography', 'is_journalist')
 
 class ReviewForm(forms.ModelForm):
     rating = forms.CharField(widget=forms.Select(choices=Review.RATINGS,

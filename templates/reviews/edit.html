@@ -12,12 +12,72 @@
 
 {% block body_block %}
   <h1>{{ heading }}</h1>
-  <form action="{% url 'edit_profile' user.username %}"
+  <div class="container w-100">
+    <div class="row">
+      <!-- Profile Pic -->
+      <div class="col-sm-4">
+        <h2>{{ profile_form.profile_image.help_text }}</h2>
+      </div>
+      <!-- Details -->
+      <div class="col">
+        <h2>Details</h2>
+        <div class="container-fluid p-5">
+          <h3 class="pt-0">Personal</h3>
+          <form action="{% url 'edit_personal' user.username %}" method="post">
+            {% csrf_token %}
+            {% for field in personal %}
+              <div class="row">
+                <div class="col-sm-4">{{ field.help_text }}</div>
+                <div class="col">{{ field }}</div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">&nbsp;</div>
+                <div class="col">{{ field.errors }}</div>
+              </div>
+            {% endfor %}
+            <div class="form-row clearfix">
+              <button class="float-right btn btn-secondary"
+                type="submit">Submit</button>
+            </div>
+          </form>
+          <h3>Password</h3>
+          <form action="{% url 'edit_password' user.username %}" method="post">
+            {% csrf_token %}
+            {% for field in password %}
+              <div class="row">
+                <div class="col-sm-4">{{ field.help_text }}</div>
+                <div class="col">{{ field }}</div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">&nbsp;</div>
+                <div class="col">{{ field.errors }}</div>
+              </div>
+            {% endfor %}
+            <script type="text/javascript">
+              document.getElementById("id_email").value = "{{ user.email }}";
+            </script>
+            <div class="form-row clearfix">
+              <button class="float-right btn btn-secondary"
+                type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Biography -->
+    <div class="row">
+      <div class="col">
+        <h2>{{ profile_form.biography.help_text }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!--<form action="{% url 'edit_profile' user.username %}"
     method="POST" id="profileForm">
     {% csrf_token %}
     <div class="row px-5">
       <!-- Profile Pic -->
-      <div class="col-sm-4 mr-3">
+      <!--<div class="col-sm-4 mr-3">
         <h2>{{ profile_form.profile_image.help_text }}</h2>
         <div class="container-fluid" style="max-height:300px;">
           <div class="row">
@@ -30,7 +90,7 @@
       </div>
 
       <!-- Details -->
-      <div class="col">
+      <!--<div class="col">
         <h2>Details</h2>
         <div class="container-fluid p-5">
           {% for field in user_form.visible_fields %}
@@ -54,11 +114,11 @@
             <div class="col">{{ profile_form.date_of_birth.errors }}</div>
           </div>
         </div><!-- Details -->
-      </div>
+      <!--</div>
     </div><!-- Row -->
 
     <!-- Biography -->
-    <h2>{{ profile_form.biography.help_text }}</h2>
+    <!--<h2>{{ profile_form.biography.help_text }}</h2>
     <div class="row px-5">
       <div class="container-fluid w-100 p-5">
           {{ profile_form.biography }}
@@ -66,10 +126,9 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="row my-5">
+    <!--<div class="row my-5">
       <button class="btn btn-primary float-right"
       type="submit" form="profileForm">Submit</button>
     </div>
-  </form>
-
+  </form>-->
 {% endblock %}

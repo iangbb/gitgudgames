@@ -59,8 +59,7 @@ class Game(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    first_name = models.CharField(max_length=128, blank=True, null=True)
-    last_name = models.CharField(max_length=128, blank=True, null=True)
+    display_name = models.CharField(max_length=128, blank=True, null=True)
     profile_image = models.ImageField(upload_to='profile_images', blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     biography = models.CharField(max_length=1000, blank=True)
