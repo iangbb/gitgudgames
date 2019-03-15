@@ -45,10 +45,6 @@
         width: 100%; // Add this
         }
 
-    img {
-        object-fit: contain;
-    }
-
     </style>
 {% endblock %}
 
@@ -183,9 +179,9 @@
                     </div>
                     <div class="col">
                         {% if review.profilePic %}
-                        <img class="profilePic" src="{{ review.profilePic }}" alt="review.userName">
+                        <img class="profilePic" src="{{ review.poster.profilepic }}" alt="review.poster.username">
                         {% else %}
-                        <img class="profilePic" src="{% static 'images/profilePic_placeholder.png' %}" alt="review.userName" hspace="20">
+                        <img class="profilePic" src="{% static 'images/profilePic_placeholder.png' %}" alt="review.poster.username" hspace="20">
                         {% endif %}
                     </div>
                     <div class="col">
@@ -207,6 +203,30 @@
                 <p>
                     {{ review.review_text }}
                 </p>
+            {% for comment in comments %}
+                {% if comment.review == review %}
+                <div class="jumbotron" style="background-color:#aaaaaa;">
+                    <div class="row">
+                        <div class="col-2">
+                            <h3 class="gameName">
+                                {{ comment.poster.username }}
+                            </h3>
+                        </div>
+                        <div class="col">
+                            {% if comment.poster.profilePic %}
+                            <img class="profilePic" src="{{ comment.poster.profilePic }}" alt="comment.poster.username">
+                            {% else %}
+                            <img class="profilePic" src="{% static 'images/profilePic_placeholder.png' %}" alt="comment.poster.username" hspace="20">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <br>
+                    <p>
+                        {{ comment.comment_text }}
+                    </p>
+                </div>
+                {% endif %}
+            {% endfor %}
             </div>
         </div>
         {% endfor %}
