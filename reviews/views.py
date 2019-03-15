@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 
 def index(request):
@@ -72,7 +73,7 @@ def add_review(request, game_slug):
     return render(request, 'reviews/review.html', context=context_dict)
 
 
-#@login_required
+# @login_required
 def profile(request, username):
     context_dict = {'heading': username}
 
@@ -121,7 +122,7 @@ def edit_profile(request, username):
             user_form.save(commit=True)
             profile_form.save(commit=True)
             messages.success(request, "Your profile has been edited")
-            return HttpResponseRedirect(reverse('profile', kwargs={'username':username}))
+            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
         else:
             messages.error(request, "Some fields contain errors.")
             user_form = UserForm(data=request.POST)
@@ -146,34 +147,34 @@ def register(request):
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        #profile_form = UserProfileForm(data=request.POST)
+        # profile_form = UserProfileForm(data=request.POST)
 
-        #if user_form.is_valid() and profile_form.is_valid():
+        # if user_form.is_valid() and profile_form.is_valid():
         if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
 
-            #profile = profile_form.save(commit=False)
-            #profile.user = user
+            # profile = profile_form.save(commit=False)
+            # profile.user = user
 
-            #if 'profile_image' in request.FILES:
+            # if 'profile_image' in request.FILES:
             #    profile.profile_image = request.FILES['profile_image']
 
-            #profile.save()
+            # profile.save()
             messages.success(request, "Your account has been created")
             return HttpResponseRedirect(reverse('login'))
 
         else:
             messages.error(request, "You submitted an invalid registration form")
             user_form = UserForm(data=request.POST)
-            #profile_form = UserProfileForm(data=request.POST)
+            # profile_form = UserProfileForm(data=request.POST)
 
     else:
         user_form = UserForm()
-        #profile_form = UserProfileForm()
+        # profile_form = UserProfileForm()
 
-    #context_dict = {'heading': "Register", 'user_form': user_form,
+    # context_dict = {'heading': "Register", 'user_form': user_form,
     #                'profile_form': profile_form, 'registered': registered}
     context_dict = {'heading': "Register", 'user_form': user_form,
                     'registered': registered}
@@ -181,6 +182,10 @@ def register(request):
 
 
 def user_login(request):
+    if request.user.is_authenticated():
+        messages.warning(request, "You are already logged in")
+        return HttpResponseRedirect(reverse('index'))
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
