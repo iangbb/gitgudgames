@@ -9,8 +9,8 @@ class UserForm(forms.ModelForm):
     #password_confirm = forms.CharField(widget=forms.PasswordInput())
 
     username = forms.CharField(max_length=128, help_text="Username", required=True)
-    first_name = forms.CharField(max_length=128, help_text="First Name", required=False)
-    last_name = forms.CharField(max_length=128, help_text="Last Name", required=False)
+    first_name = forms.CharField(max_length=128, help_text="First Name (Optional)", required=False)
+    last_name = forms.CharField(max_length=128, help_text="Last Name (Optional)", required=False)
     email = forms.EmailField(help_text="Email", required=True)
     password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
     password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")

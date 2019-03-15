@@ -25,10 +25,25 @@
           <div class="col-sm-8 px-0 float-left">
             <input class="" type="text"
               name="username" id="username">
-            <div class="">Validation text.</div>
+              {% if loginForm.username.errors %}
+                <div class="text-danger">
+                  {{ loginForm.username.errors|striptags }}
+              {% else %}
+                <div class="invisible">
+                  &nbsp;
+              {% endif %}
+              </div>
+
             <input class="" type="password"
               name="password" id="password">
-            <div class="">Validation text.</div>
+              {% if loginForm.password.errors %}
+                <div class="text-danger">
+                  {{ loginForm.password.errors|striptags }}
+              {% else %}
+                <div class="invisible">
+                  &nbsp;
+              {% endif %}
+              </div>
           </div>
         </fieldset>
       </div>

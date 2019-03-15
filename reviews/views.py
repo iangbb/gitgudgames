@@ -118,7 +118,7 @@ def edit_profile(request, username):
         profile_form = UserProfileForm(data=request.POST)
 
         # Check for form field validity
-        if form.is_valid():
+        if user_form.is_valid():
             user_form.save(commit=True)
             profile_form.save(commit=True)
             messages.success(request, "Your profile has been edited")

@@ -4,8 +4,12 @@ form, label, input {
   line-height: 25px;
 }
 
-input {
+label, input {
   width: 100%;
+}
+
+label {
+  margin: 1px 0 26px 0;
 }
 
 button {

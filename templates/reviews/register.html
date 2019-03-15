@@ -14,6 +14,7 @@
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="{% url 'register' %}" method="POST" id="registerForm">
 	    {% csrf_token %}
+
       {% for field in user_form.visible_fields %}
         <div class="row">
           <div class="col-sm-4">{{ field.help_text }}</div>
