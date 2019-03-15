@@ -23,12 +23,22 @@ class UserForm(forms.ModelForm):
     # Override clean method to perform password confirmation checks
     def clean(self):
         cleaned_data = super(UserForm, self).clean()
+        username = cleaned_data.get('username')
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
 
+        UserForm.validate_username(username)
         UserForm.validate_password(password, password_confirm)
 
         return cleaned_data
+
+    @staticmethod
+    def validate_username(username):
+        if len(username) < 3 or len(username) > 16:
+            raise forms.ValidationError("Your username must be 3-16 characters long.")
+
+        if any(not char.isalnum() for char in username):
+            raise forms.ValidationError("Your username can't contain any special characters.")
 
     # Method for performing password validation
     # Raises a ValidationError if any condition is not met, higher priority conditions go to the top

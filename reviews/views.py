@@ -67,6 +67,8 @@ def add_review(request, game_slug):
             game.average_rating = (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
             game.number_ratings += 1
             game.save()
+
+            print(review.id)
             
             return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
         else:
