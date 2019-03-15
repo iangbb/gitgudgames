@@ -24,7 +24,7 @@
       <div class="container-fluid w-100">
         {% if profile %}
           <ul>
-            <li>Name: {{ profile.user.first_name }} {{ profile.user.last_name }}</li>
+            <li>Name: {{ profile.first_name }} {{ profile.last_name }}</li>
             <li>Email: {{ profile.user.email }}</li>
             <li>Date Of Birth: {{ profile.date_of_birth }}</li>
             <li>Journalist: {{ profile.is_journalist }}</li>

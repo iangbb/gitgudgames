@@ -12,34 +12,64 @@
 
 {% block body_block %}
   <h1>{{ heading }}</h1>
-  <div class="container-fluid col-sm-8 p-5 mx-auto">
-    <form action="{% url 'edit_profile' user.username %}"
-      method="POST" id="profileForm">
-      {% csrf_token %}
-      {% for field in user_form.visible_fields %}
-        <div class="row">
-          <div class="col-sm-4">{{ field.help_text }}</div>
-          <div class="col">{{ field }}</div>
+  <form action="{% url 'edit_profile' user.username %}"
+    method="POST" id="profileForm">
+    {% csrf_token %}
+    <div class="row px-5">
+      <!-- Profile Pic -->
+      <div class="col-sm-4 mr-3">
+        <h2>{{ profile_form.profile_image.help_text }}</h2>
+        <div class="container-fluid" style="max-height:300px;">
+          <div class="row">
+            <img src="{{ profile_form.profile_image }}" alt="profile image">
+          </div>
+          <div class="row">
+            {{ profile_form.profile_image }}
+          </div>
         </div>
-        <div class="row">
-          <div class="col-sm-4">&nbsp;</div>
-          <div class="col">{{ field.errors }}</div>
-        </div>
-      {% endfor %}
-      {% for field in profile_form.visible_fields %}
-        <div class="row">
-          <div class="col-sm-4">{{ field.help_text }}</div>
-          <div class="col">{{ field }}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">&nbsp;</div>
-          <div class="col">{{ field.errors }}</div>
-        </div>
-      {% endfor %}
-      <div class="row">
-        <button class="btn btn-secondary float-right"
-          type="submit" form="profileForm">Submit</button>
       </div>
-    </form>
-  </div>
+
+      <!-- Details -->
+      <div class="col">
+        <h2>Details</h2>
+        <div class="container-fluid p-5">
+          {% for field in user_form.visible_fields %}
+            {% if field is not user_form.username %}
+              <div class="row">
+                <div class="col-sm-4">{{ field.help_text }}</div>
+                <div class="col">{{ field }}</div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">&nbsp;</div>
+                <div class="col">{{ field.errors }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          <div class="row">
+            <div class="col-sm-4">{{ profile_form.date_of_birth.help_text }}</div>
+            <div class="col">{{ profile_form.date_of_birth }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">&nbsp;</div>
+            <div class="col">{{ profile_form.date_of_birth.errors }}</div>
+          </div>
+        </div><!-- Details -->
+      </div>
+    </div><!-- Row -->
+
+    <!-- Biography -->
+    <h2>{{ profile_form.biography.help_text }}</h2>
+    <div class="row px-5">
+      <div class="container-fluid w-100 p-5">
+          {{ profile_form.biography }}
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="row my-5">
+      <button class="btn btn-primary float-right"
+      type="submit" form="profileForm">Submit</button>
+    </div>
+  </form>
+
 {% endblock %}
