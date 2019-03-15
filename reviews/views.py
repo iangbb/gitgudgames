@@ -56,11 +56,20 @@ def add_review(request, game_slug):
     if request.method == 'POST':
         review_form = ReviewForm(request.POST, request.user, game)
         if review_form.is_valid():
+            # Save review to database
             review = review_form.save(commit=False)
             review.poster = request.user
             review.game = game
             review.save()
             messages.success(request, "Your review has been added")
+
+            # Update stored average rating
+            game.average_rating = (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
+            game.number_ratings += 1
+            game.save()
+
+            print(review.id)
+            
             return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
         else:
             messages.error(request, "You submitted an invalid review")
@@ -101,10 +110,7 @@ def profile(request, username):
             context_dict['comments'] = None
 
     except User.DoesNotExist:
-        context_dict['heading'] = "Anonymous"
-        context_dict['profile'] = None
-        context_dict['reviews'] = None
-        context_dict['comments'] = None
+        return restricted(request, status=404, message="This user does not exist.")
 
     return render(request, 'reviews/profile.html', context=context_dict)
 
@@ -139,45 +145,28 @@ def edit_profile(request, username):
 
 
 def register(request):
-    registered = False
-
     if request.user.is_authenticated():
         messages.warning(request, "You can't register when you're logged in")
         return HttpResponseRedirect(reverse('index'))
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        # profile_form = UserProfileForm(data=request.POST)
 
-        # if user_form.is_valid() and profile_form.is_valid():
         if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-
-            # profile = profile_form.save(commit=False)
-            # profile.user = user
-
-            # if 'profile_image' in request.FILES:
-            #    profile.profile_image = request.FILES['profile_image']
-
-            # profile.save()
             messages.success(request, "Your account has been created")
             return HttpResponseRedirect(reverse('login'))
 
         else:
             messages.error(request, "You submitted an invalid registration form")
             user_form = UserForm(data=request.POST)
-            # profile_form = UserProfileForm(data=request.POST)
 
     else:
         user_form = UserForm()
-        # profile_form = UserProfileForm()
 
-    # context_dict = {'heading': "Register", 'user_form': user_form,
-    #                'profile_form': profile_form, 'registered': registered}
-    context_dict = {'heading': "Register", 'user_form': user_form,
-                    'registered': registered}
+    context_dict = {'heading': "Register", 'user_form': user_form}
     return render(request, 'reviews/register.html', context=context_dict)
 
 

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  Log In.
+  Register
 {% endblock %}
 
 {% block stylesheets_block %}
@@ -25,6 +25,13 @@
           <div class="col text-danger">{{ field.errors|striptags }}</div>
         </div>
       {% endfor %}
+	  
+	  {% if user_form.non_field_errors %}
+	    <div class="row">
+	      <div class="col-sm-4">&nbsp;</div>
+		  <div class="col text-danger">{{ user_form.non_field_errors|striptags }}</div>
+		</div>
+      {% endif %}
 
       <p>Got an account?</p>
       <div class="form-row clearfix">
