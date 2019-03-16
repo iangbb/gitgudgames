@@ -13,3 +13,8 @@
   bottom: 5px;
   right: 5px;
 }
+
+.profile_image {
+  max-width: 200px;
+  background-color: blue;
+}

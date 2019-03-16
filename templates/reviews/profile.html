@@ -17,33 +17,31 @@
   <!-- User details and biography -->
   <h2>Details</h2>
   <div class="row clearfix">
-    <div class="col-sm-2">
-      <img src="{{ profile.profile_image }}" alt="profile image">
+    <div class="col-sm-4">
+      <div class="container-fluid p-5">
+        {% if profile.profile_image %}
+          <img class="profile_image mx-auto"
+          src="{{ profile.profile_image.url }}"
+          alt="profile image">
+        {% else %}No image.{% endif %}
+      </div>
     </div>
     <div class="col">
-      <div class="container-fluid w-100">
-        {% if profile %}
-          <ul>
-            <li>Name: {{ profile.first_name }} {{ profile.last_name }}</li>
-            <li>Email: {{ profile.user.email }}</li>
-            <li>Date Of Birth: {{ profile.date_of_birth }}</li>
-            <li>Journalist: {{ profile.is_journalist }}</li>
-            <li>Joined: {{ profile.user.date_joined }}</li>
-            <li>Last Login: {{ profile.user.last_login }}</li>
-          </ul>
-        {% else %}
-          <strong>Profile is yet to be finished.</strong>
-        {% endif %}
+      <div class="container-fluid w-100 p-5">
+        <ul>
+          <li>Name: {{ profile.display_name }}</li>
+          <li>Email: {{ profile.user.email }}</li>
+          <li>Date Of Birth: {{ profile.date_of_birth }}</li>
+          <li>Journalist: {{ profile.is_journalist }}</li>
+          <li>Joined: {{ profile.user.date_joined }}</li>
+          <li>Last Login: {{ profile.user.last_login }}</li>
+        </ul>
       </div>
     </div>
   </div>
   <h2>Biography</h2>
   <div class="container-fluid w-100 clearfix">
-    {% if profile %}
-      <p>{{ profile.biography }}</p>
-    {% else %}
-      <strong>Anonymous biography.</strong>
-    {% endif %}
+    <p>{{ profile.biography }}</p>
   </div>
 
   <!-- Generate list of reviews by user -->

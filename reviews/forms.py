@@ -1,7 +1,8 @@
 from django import forms
-from reviews.models import User, UserProfile, Review
 from django.contrib.auth.models import User
-
+from reviews.models import User, UserProfile, Review
+import datetime
+import os
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(max_length=128, help_text="Username", required=True)
@@ -24,6 +25,16 @@ class UserForm(forms.ModelForm):
         UserForm.validate_password(password, password_confirm)
 
         return cleaned_data
+
+    # Validation of password for profile edit
+    def clean_password(self):
+        password = self.data['password']
+        password_confirm = self.data['password_confirm']
+        if len(password) < 8:
+            raise forms.ValidationError("Password is too short.")
+        elif password != password_confirm:
+            raise forms.ValidationError("Passwords do not match.")
+        return password
 
     @staticmethod
     def validate_username(username):
@@ -48,27 +59,57 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    # Personal
     display_name = forms.CharField(max_length=128, help_text="Display Name (Optional)", required=False)
+    email = forms.EmailField(help_text="Email")
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(format='%d/%m/%Y', attrs={'class': 'datepicker'}),
+        input_formats=('%d/%m/%Y', ), help_text="Date of Birth")
+    # Password
+    password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
+    password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")
+    # Extra
     profile_image = forms.ImageField(help_text="Profile Image")
-    date_of_birth = forms.DateField(False, False, help_text="Date of Birth")
     biography = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 90, 'class': 'form-control'}), help_text="Biography")
-
     # Hidden data
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
 
-    def get_display_name(self):
-        return self.display_name
-
-    def clean_display_name(self):
-        if len(self.display_name) > 16:
-            raise forms.ValidationError('Display name is too long.')
-        if len(self.display_name) < 3:
-            raise forms.ValidationError('Display name is too short.')
-        return self.display_name
-
     class Meta:
         model = UserProfile
-        fields = ('display_name', 'profile_image', 'date_of_birth', 'biography', 'is_journalist')
+        fields = ('display_name', 'email', 'date_of_birth',
+            'profile_image', 'biography', 'is_journalist')
+
+    def clean_display_name(self):
+        display_name = self.data['display_name']
+        if len(display_name) > 16:
+            raise forms.ValidationError("Display name is too long.")
+        elif len(display_name) < 3:
+            raise forms.ValidationError("Display name is too short.")
+        return display_name
+
+    def clean_date_of_birth(self):
+        date_of_birth = self.data['date_of_birth']
+        today = datetime.date.today()
+        if date_of_birth > today:
+            raise forms.ValidationError("Date is set to the future.")
+        else:
+            this_year_birth_date = datetime.date(today.year, date_of_birth.month, date_of_birth.day)
+            if this_year_birth_date < today:
+                if today.year - date_of_birth.year < 10:
+                    raise forms.ValidationError("Too young.")
+        return date_of_birth
+
+    def clean_profile_image(self, file):
+        print(file.name)
+        if file.size > 10000000:
+            raise forms.ValidationError("File is too large.")
+        return file
+
+    def clean_biography(self):
+        biography = self.data['biography']
+        if len(biography) > 2000:
+            raise forms.ValidationError("Biography is too long.")
+        return biography
 
 class ReviewForm(forms.ModelForm):
     rating = forms.CharField(widget=forms.Select(choices=Review.RATINGS,

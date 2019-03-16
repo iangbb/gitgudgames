@@ -17,15 +17,37 @@
       <!-- Profile Pic -->
       <div class="col-sm-4">
         <h2>{{ profile_form.profile_image.help_text }}</h2>
+        <div class="container-fluid p-5">
+          <div class="row">
+            {% if profile.profile_image %}
+              <img class="profile_image mx-auto"
+                src="{{ profile.profile_image.url }}"
+                alt="profile image">
+            {% else %}No image.{% endif %}
+          </div>
+          <form action="{% url 'edit_profile' user.username %}" method="post"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row my-5 mx-auto">
+              {{ profile_form.profile_image }}
+            </div>
+            <!-- Submit button -->
+            <div class="form-row clearfix">
+              <button class="float-right btn btn-secondary"
+              type="submit" name="image_button">Submit</button>
+            </div>
+          </form>
+        </div>
       </div>
       <!-- Details -->
       <div class="col">
         <h2>Details</h2>
         <div class="container-fluid p-5">
+          <!-- Personal Details -->
           <h3 class="pt-0">Personal</h3>
-          <form action="{% url 'edit_personal' user.username %}" method="post">
+          <form action="{% url 'edit_profile' user.username %}" method="post">
             {% csrf_token %}
-            {% for field in personal %}
+            {% for field in profile_form.visible_fields|slice:"0:3" %}
               <div class="row">
                 <div class="col-sm-4">{{ field.help_text }}</div>
                 <div class="col">{{ field }}</div>
@@ -35,15 +57,31 @@
                 <div class="col">{{ field.errors }}</div>
               </div>
             {% endfor %}
+            <!-- Auto fill fields that have values -->
+            <script type="text/javascript">
+              document.getElementById("id_display_name").value = "{{ profile.display_name }}";
+              document.getElementById("id_email").value = "{{ profile.user.email }}";
+              document.getElementById("id_date_of_birth").value = "{{ profile.date_of_birth }}";
+            </script>
+            <!-- Print validation error messages -->
+            {% if profile_form.non_field_errors %}
+        	    <div class="row">
+        	      <div class="col-sm-4">&nbsp;</div>
+        		    <div class="col text-danger">{{ profile_form.non_field_errors|striptags }}</div>
+        		  </div>
+            {% endif %}
+            <!-- Submit button -->
             <div class="form-row clearfix">
               <button class="float-right btn btn-secondary"
-                type="submit">Submit</button>
+                type="submit" name="details_button">Submit</button>
             </div>
           </form>
+
+          <!-- Change Password -->
           <h3>Password</h3>
-          <form action="{% url 'edit_password' user.username %}" method="post">
+          <form action="{% url 'edit_profile' user.username %}" method="post">
             {% csrf_token %}
-            {% for field in password %}
+            {% for field in user_form.visible_fields|slice:"2:" %}
               <div class="row">
                 <div class="col-sm-4">{{ field.help_text }}</div>
                 <div class="col">{{ field }}</div>
@@ -53,24 +91,48 @@
                 <div class="col">{{ field.errors }}</div>
               </div>
             {% endfor %}
-            <script type="text/javascript">
-              document.getElementById("id_email").value = "{{ user.email }}";
-            </script>
+            <!-- Print validation error messages -->
+            {% if user_form.non_field_errors %}
+        	    <div class="row">
+        	      <div class="col-sm-4">&nbsp;</div>
+        		    <div class="col text-danger">{{ user_form.non_field_errors|striptags }}</div>
+        		  </div>
+            {% endif %}
+            <!-- Submit button -->
             <div class="form-row clearfix">
               <button class="float-right btn btn-secondary"
-                type="submit">Submit</button>
+                type="submit" name="password_button">Submit</button>
             </div>
           </form>
         </div>
       </div>
     </div>
+
     <!-- Biography -->
     <div class="row">
       <div class="col">
         <h2>{{ profile_form.biography.help_text }}</h2>
+        <div class="container-fluid p-5">
+          <form action="{% url 'edit_profile' user.username %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col">
+                {{ profile_form.biography }}
+              </div>
+            </div>
+            <!-- Submit button -->
+            <div class="form-row clearfix">
+              <button class="float-right btn btn-secondary"
+              type="submit" name="biography_button">Submit</button>
+            </div>
+            <script type="text/javascript">
+              document.getElementById("id_biography").value = "{{ profile.biography }}";
+            </script>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  </div><!-- Container -->
 
   <!--<form action="{% url 'edit_profile' user.username %}"
     method="POST" id="profileForm">

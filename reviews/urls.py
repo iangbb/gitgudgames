@@ -1,4 +1,6 @@
 from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 from reviews import views
 
 urlpatterns = [
@@ -17,7 +19,5 @@ urlpatterns = [
     # Profile urls
     url(r'^profile/(?P<username>[\w\-]+)/$', views.profile, name='profile'),
     url(r'^profile/(?P<username>[\w\-]+)/edit/$', views.edit_profile, name='edit_profile'),
-    url(r'^profile/(?P<username>[\w\-]+)/edit/personal$', views.edit_personal, name='edit_personal'),
-    url(r'^profile/(?P<username>[\w\-]+)/edit/password$', views.edit_password, name='edit_password'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

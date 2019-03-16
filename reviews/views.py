@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.files.storage import FileSystemStorage
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -116,74 +117,92 @@ def profile(request, username):
 
 
 def edit_profile(request, username):
-    try:
-        user = User.objects.get(username=username)
-        user_form = UserForm()
-        profile_form = UserProfileForm()
-
-        personal = [profile_form['display_name'],
-            user_form['email'], profile_form['date_of_birth']]
-        #personal[1].widget.attrs.update({'placeholder': user.email})
-        password = [user_form['password'],
-            user_form['password_confirm']]
-        profile_image = profile_form['profile_image']
-        biography = profile_form['biography']
-
-        context_dict = {'heading': "Edit Profile",
-            'personal': personal, 'password': password,
-            'profile_image': profile_image, 'biography': biography}
-
-    except User.DoesNotExist:
-        return restricted(request, status=404, message="This user does not exist.")
-
-    # If form has been submitted
-    #if request.method == 'POST':
-    #    user_form = UserForm(data=request.POST)
-    #    profile_form = UserProfileForm(data=request.POST)
-
-        # Check for form field validity
-    #    if user_form.is_valid():
-    #        user_form.save(commit=True)
-    #        profile_form.save(commit=True)
-    #        messages.success(request, "Your profile has been edited")
-    #        return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
-    #    else:
-    #        messages.error(request, "Some fields contain errors.")
-    #        user_form = UserForm(data=request.POST)
-    #        profile_form = UserProfileForm(data=request.POST)
-
-    # Otherwise, display form
-    #else:
-    #    user_form = UserForm()
-    #    profile_form = UserProfileForm()
-
-    #context_dict['user_form'] = user_form
-    #context_dict['profile_form'] = profile_form
-
-    return render(request, 'reviews/edit.html', context=context_dict)
-
-def edit_personal(request, username):
     if request.method == 'POST':
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
+        user = User.objects.get(username=username)
+        # Image form
+        if 'image_button' in request.POST:
+            profile = UserProfile.objects.get(user=user)
+            profile_form = UserProfileForm()
 
-        # Check for form field validity
-        if profile_form['display_name'].is_valid():
-            #user_form.save(commit=True)
-            #profile_form.save(commit=True)
-            messages.success(request, "Your profile has been edited")
+            file = request.FILES['profile_image']
+
+            # Check for form field validity
+            if profile_form.clean_profile_image(file):
+                fs = FileSystemStorage("media/profile_images")
+                filename = fs.save(file.name, file)
+                profile.profile_image = filename
+                profile.save()
+                messages.success(request, "Your profile picture has been changed.")
+            else:
+                messages.error(request, "Some fields contain errors.")
+
             return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
-        else:
-            messages.error(request, "Some fields contain errors.")
-            #user_form = UserForm(data=request.POST)
-            #profile_form = UserProfileForm(data=request.POST)
 
-    # Otherwise
-    #else:
-    return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
-    #return render(request, 'reviews/edit.html', context=context_dict)
+        # Details form
+        elif 'details_button' in request.POST:
+            profile = UserProfile.objects.get(user=user)
+            profile_form = UserProfileForm(data=request.POST)
 
-def edit_password(request, username):
+            # Check for form field validity
+            #if (profile_form.clean_display_name() and
+                    #profile_form.clean_display_name()):
+            if profile_form.clean_display_name():
+                profile.display_name = request.POST.get('display_name')
+                user.email = request.POST.get('email')
+                #profile.date_of_birth = profile_form.data['date_of_birth']
+                profile.save()
+                user.save()
+                messages.success(request, "Your profile has been edited")
+            else:
+                messages.error(request, "Some fields contain errors.")
+
+            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+        # Password form
+        elif 'password_button' in request.POST:
+            user_form = UserForm(data=request.POST)
+
+            if user_form.clean_password():
+                user.set_password(user_form.data['password'])
+                user.save()
+                messages.success(request, "Your password has been changed")
+            else:
+                messages.error(request, "Some fields contain errors.")
+
+            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+        # Biography form
+        elif 'biography_button' in request.POST:
+            profile = UserProfile.objects.get(user=user)
+            profile_form = UserProfileForm(data=request.POST)
+
+            if profile_form.clean_biography():
+                profile.biography = request.POST.get('biography')
+                profile.save()
+                messages.success(request, "Your biography has been updated.")
+            else:
+                messages.error(request, "Some fields contain errors.")
+
+            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+    # Otherwise, load page
+    else:
+        try:
+            user = User.objects.get(username=username)
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                profile = None
+
+            user_form = UserForm()
+            profile_form = UserProfileForm()
+
+            context_dict = {'heading': "Edit Profile", 'profile': profile,
+                'user_form': user_form, 'profile_form': profile_form }
+
+        except User.DoesNotExist:
+            return restricted(request, status=404, message="This user does not exist.")
+
     return render(request, 'reviews/edit.html', context=context_dict)
 
 
@@ -196,9 +215,15 @@ def register(request):
         user_form = UserForm(data=request.POST)
 
         if user_form.is_valid():
+            # Create user
             user = user_form.save()
             user.set_password(user.password)
             user.save()
+
+            # Create an associated profile for user
+            profile = UserProfile.objects.get_or_create(user=user)[0]
+            profile.save()
+
             messages.success(request, "Your account has been created")
             return HttpResponseRedirect(reverse('login'))
 

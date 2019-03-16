@@ -60,7 +60,9 @@ class Game(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     display_name = models.CharField(max_length=128, blank=True, null=True)
-    profile_image = models.ImageField(upload_to='profile_images', blank=True)
+    profile_image = models.ImageField(
+        upload_to='profile_images/',
+        default='profile_images/gg_default.png')
     date_of_birth = models.DateField(blank=True, null=True)
     biography = models.CharField(max_length=1000, blank=True)
     is_journalist = models.BooleanField(default=False)
