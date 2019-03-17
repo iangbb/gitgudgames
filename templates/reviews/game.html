@@ -1,5 +1,6 @@
 {% extends 'reviews/base.html' %}
 {% load staticfiles %}
+{% load review_tags %}
 
 {% block title_block %}
 {{ game.name }}
@@ -12,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/game.css' %}">
 {% endblock %}
 
-<body>
     <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
@@ -170,7 +170,7 @@
                                 <script type="text/javascript">
                                     document.getElementById("{{ review.id }}").style.width = ({{ review.rating }} * 20) + "%";
                                 </script>
-                            <h3>
+                            </h3>
                         </div>
                     </div>
                 </div>
@@ -178,8 +178,7 @@
                 <p>
                     {{ review.review_text }}
                 </p>
-            {% for comment in comments %}
-                {% if comment.review == review %}
+            {% for comment in comments|dictionary_get:review %}
                 <div class="jumbotron" style="background-color:#aaaaaa;">
                     <div class="row">
                         <div class="col-2">
@@ -200,7 +199,6 @@
                         {{ comment.comment_text }}
                     </p>
                 </div>
-                {% endif %}
             {% endfor %}
             </div>
         </div>
@@ -210,3 +208,4 @@
     {% endif %}
         </div>
 {% endblock %}
+

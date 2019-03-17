@@ -34,16 +34,21 @@ def game(request, game_slug):
     context_dict = {}
     try:
         game = Game.objects.get(slug=game_slug)
-        # Filter only reviews relevent to this game
+        # Filter only reviews relevant to this game
         reviews = Review.objects.filter(game=game).order_by('-votes')
         pictures = Image.objects.filter(game=game)
-        comments = Comment.objects.filter(review=reviews)
+
+        # Find comments for each review and store in dictionary
+        comments = {}
+        for review in reviews:
+            comments[review] = Comment.objects.filter(review=review).order_by('-votes')[:3]
+
         context_dict['game'] = game
         context_dict['reviews'] = reviews
         context_dict['pictures'] = pictures
         context_dict['comments'] = comments
     except Game.DoesNotExist:
-        context_dict['game'] = None
+        return restricted(request, status=404, message="The game you requested could not be found")
 
     return render(request, 'reviews/game.html', context=context_dict)
 
