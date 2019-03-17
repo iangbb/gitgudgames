@@ -19,5 +19,7 @@ urlpatterns = [
     # Profile urls
     url(r'^profile/(?P<username>[\w\-]+)/$', views.profile, name='profile'),
     url(r'^profile/(?P<username>[\w\-]+)/edit/$', views.edit_profile, name='edit_profile'),
+    # AJAX URLs
+    url(r'^ajax/get_comments/$', views.ajax_get_comments, name='ajax_get_comments'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

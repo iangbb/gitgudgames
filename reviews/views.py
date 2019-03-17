@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -298,3 +299,23 @@ def user_logout(request):
     logout(request)
     messages.success(request, "You have logged out")
     return HttpResponseRedirect(reverse('index'))
+
+
+# Gets up to 3 more comments for the given review, starting at the given index
+def ajax_get_comments(request):
+    review = request.GET.get('review')
+    start = request.GET.get('start')
+
+    if not review or not start:
+        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+
+    start = int(start)
+    json = {'number': 0, 'comments': [], 'more': False}
+    comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
+    if len(comments) > 0:
+        json['number'] = len(comments)
+        json['comments'] = serializers.serialize("json", comments[:start + 3])
+        if len(comments) > 3:
+            json['more'] = True
+
+    return JsonResponse(json)
