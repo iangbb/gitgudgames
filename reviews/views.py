@@ -53,6 +53,7 @@ def game(request, game_slug):
     return render(request, 'reviews/game.html', context=context_dict)
 
 
+@login_required
 def add_review(request, game_slug):
     try:
         game = Game.objects.get(slug=game_slug)
@@ -251,22 +252,37 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        next = request.POST.get('next')
+
+        # For security, prevent cross-site redirection
+        if next[:1] != '/' or next[:2] == '//':
+            next = False
+
         user = authenticate(username=username, password=password)
 
         if user:
             if user.is_active:
                 login(request, user)
                 messages.success(request, "Logged in successfully")
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(next if next else reverse('index'))
             else:
                 messages.error(request, "Your account has been disabled")
-                return HttpResponseRedirect(reverse('login'))
+                return HttpResponseRedirect(next if next else reverse('login'))
 
         else:
             messages.error(request, "Incorrect login details")
-            return HttpResponseRedirect(reverse('login'))
+            response = HttpResponseRedirect(reverse('login'))
+
+            # Re-append Django's next parameter, if it exists
+            if next:
+                response['Location'] += "?next=" + next
+
+            return response
 
     context_dict = {'heading': "Login"}
+    if request.GET.get('next'):
+        context_dict['next'] = request.GET.get('next')
+
     return render(request, 'reviews/login.html', context=context_dict)
 
 

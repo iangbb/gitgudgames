@@ -13,7 +13,8 @@
 <h1>{{ heading }}</h1>
   <div class="container-fluid col-sm-8 p-5 mx-auto">
     <form action="{% url 'login' %}" method="POST" id="loginForm">
-	  {% csrf_token %}
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
       <div class="form-row clearfix">
         <fieldset class="my-5">
           <div class="col-sm-4 px-0 float-left">

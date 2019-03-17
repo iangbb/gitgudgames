@@ -140,9 +140,13 @@
     {% if reviews %}
     <br>
     <div class="container" style="background-color:#aaaaaa;">
-        <h2>
-            Reviews
-        </h2>
+      <h2 style="text-align:left">
+        Reviews
+        {% if user.is_authenticated %}
+          <button class="float-right btn btn-secondary" type="button"
+              onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+        {% endif %}
+      </h2>
         {% for review in reviews %}
         <div class="container">
             <div class="jumbotron">
