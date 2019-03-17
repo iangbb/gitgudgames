@@ -314,8 +314,34 @@ def ajax_get_comments(request):
     comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
     if len(comments) > 0:
         json['number'] = len(comments)
-        json['comments'] = serializers.serialize("json", comments[:start + 3])
+        json['comments'] = serializers.serialize("json", comments[:3])
         if len(comments) > 3:
+            json['more'] = True
+
+    return JsonResponse(json)
+
+
+# Gets up to 3 more reviews for the given game, starting at the given index
+def ajax_get_reviews(request):
+    game = request.GET.get('game')
+    start = request.GET.get('start')
+
+    if not game or not start:
+        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+
+    start = int(start)
+    json = {'number': 0, 'reviews': [], 'comments': [], 'more': False}
+    reviews = Review.objects.filter(game=game).order_by('-votes')[start:]
+    if len(reviews) > 0:
+        json['number'] = len(reviews)
+        json['reviews'] = serializers.serialize("json", reviews[:3])
+
+        # Iterate through reviews and add top 3 comments
+        for i in range(3 if len(reviews) > 3 else len(reviews)):
+            comments = Comment.objects.filter(review=reviews[i]).order_by('-votes')[:3]
+            json['comments'].append(serializers.serialize("json", comments))
+
+        if len(reviews) > 3:
             json['more'] = True
 
     return JsonResponse(json)
