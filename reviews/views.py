@@ -131,17 +131,12 @@ def edit_profile(request, username):
             profile = UserProfile.objects.get(user=user)
             profile_form = UserProfileForm()
 
-            file = request.FILES['profile_image']
-
-            # Check for form field validity
-            if profile_form.clean_profile_image(file):
-                fs = FileSystemStorage("media/profile_images")
-                filename = fs.save(file.name, file)
-                profile.profile_image = filename
-                profile.save()
-                messages.success(request, "Your profile picture has been changed.")
-            else:
-                messages.error(request, "Some fields contain errors.")
+            #if profile_form.is_valid():
+            profile.profile_image = request.FILES['profile_image']
+            profile.save()
+            messages.success(request, "Your profile picture has been changed.")
+            #else:
+            #messages.error(request, "Your submitted image was not valid.")
 
             return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
