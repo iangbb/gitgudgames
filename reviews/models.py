@@ -96,6 +96,11 @@ class Review(models.Model):
     def __str__(self):
         return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
 
+    def as_json(self, comments=[]):
+        return dict(id=self.id, poster=self.poster.id, game=self.game.id, review_text=self.review_text,
+                    rating=self.rating, post_datetime=self.post_datetime, votes=self.votes,
+                    comments=[comment.as_json() for comment in comments])
+
 
 class Comment(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -106,6 +111,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.poster.username + " - " + self.review.game.name + " - " + str(self.post_datetime)
+
+    def as_json(self):
+        return dict(id=self.id, poster=self.poster.id, review=self.review.id, comment_text=self.comment_text,
+                    post_datetime=self.post_datetime, votes=self.votes,)
 
 
 class Image(models.Model):
