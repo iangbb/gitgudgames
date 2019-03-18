@@ -97,7 +97,7 @@ class Review(models.Model):
         return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
 
     def as_json(self, comments=[]):
-        return dict(id=self.id, poster=self.poster.id, game=self.game.id, review_text=self.review_text,
+        return dict(id=self.id, poster=self.poster.username, game=self.game.id, review_text=self.review_text,
                     rating=self.rating, post_datetime=self.post_datetime, votes=self.votes,
                     comments=[comment.as_json() for comment in comments])
 

@@ -1,4 +1,4 @@
-{% extends 'reviews/base.html' %}
+''{% extends 'reviews/base.html' %}
 {% load staticfiles %}
 {% load review_tags %}
 
@@ -6,13 +6,16 @@
 {{ game.name }}
 {% endblock %}
 
-{% block body_block %}
-
 {% block stylesheets_block %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/game.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 {% endblock %}
 
+{% block body_block %}
+<script>
+    var startval = 0;
+</script>
     <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
@@ -140,6 +143,7 @@
     {% if reviews %}
     <br>
     <div class="container" style="background-color:#aaaaaa;">
+    <div class="reviewContainer">
       <h2 style="text-align:left">
         Reviews
         {% if user.is_authenticated %}
@@ -147,69 +151,63 @@
               onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
         {% endif %}
       </h2>
-        {% for review in reviews %}
-        <div class="container">
-            <div class="jumbotron">
-                <div class="row">
-                    <div class="col-2">
-                        <h3 class="gameName">
-                            {{ review.poster.username }}
-                        </h3>
-                    </div>
-                    <div class="col">
-                        {% if review.profilePic %}
-                        <img class="profilePic" src="{{ review.poster.profilepic }}" alt="review.poster.username">
-                        {% else %}
-                        <img class="profilePic" src="{% static 'images/profilePic_placeholder.png' %}" alt="review.poster.username" hspace="20">
-                        {% endif %}
-                    </div>
-                    <div class="col">
-                        <div style="text-align:right" class="col">
-                            <h3>
-                                <div>
-                                  <div class="stars-outer">
-                                    <div id="{{ review.id }}" class="stars-inner"></div>
-                                  </div>
-                              </div>
-                                <script type="text/javascript">
-                                    document.getElementById("{{ review.id }}").style.width = ({{ review.rating }} * 20) + "%";
-                                </script>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <p>
-                    {{ review.review_text }}
-                </p>
-            {% for comment in comments|dictionary_get:review %}
-                <div class="jumbotron" style="background-color:#aaaaaa;">
-                    <div class="row">
-                        <div class="col-2">
-                            <h3 class="gameName">
-                                {{ comment.poster.username }}
-                            </h3>
-                        </div>
-                        <div class="col">
-                            {% if comment.poster.profilePic %}
-                            <img class="commentPic" src="{{ comment.poster.profilePic }}" alt="comment.poster.username">
-                            {% else %}
-                            <img class="commentPic" src="{% static 'images/profilePic_placeholder.png' %}"  alt="comment.poster.username">
-                            {% endif %}
-                        </div>
-                    </div>
-                    <br>
-                    <p>
-                        {{ comment.comment_text }}
-                    </p>
-                </div>
-            {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-        <br>
-    </div>
+      </div>
+      <br>
+      <div class="getmorereviews">
+      <button type="button" data-gameid="{{ game.id }}" data-start="3"
+      class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
+      </div>
+      <script>
+          $( document ).ready(function() {
+              $( ".get-reviews" ).trigger( "click" );
+          });
+          $('.get-reviews').click(function(){
+              var gameid = $(this).attr("data-gameid");
+            $.getJSON('/ajax/get_reviews/', {game: gameid, start: startval}, function (data, textStatus, jqXHR){
+                console.log(data);
+                startval = startval + 3;
+                console.log(startval);
+                var parser = new DOMParser();
+                for (i = 0; i < data.reviews.length; i++) {
+                    var domString = '<div class="jumbotron">\
+                                        <div class="row">\
+                                            <div class="col-2">\
+                                                <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
+                                            </div>\
+                                            <div class="col">\
+                                            </div>\
+                                            <div class="col">\
+                                                <div style="text-align:right" class="col">\
+                                                    <h3>\
+                                                        <div>\
+                                                            <div class="stars-outer">\
+                                                                <div style="width:' + data.reviews[i].rating * 20 + '%" class="stars-inner"></div>\
+                                                            </div>\
+                                                        </div>\
+                                                    </h3>\
+                                                </div>\
+                                            </div>\
+                                        </div>\
+                                        <br>\
+                                        <p>' + data.reviews[i].review_text + '</p>\
+                                    </div>';
+                    var html = parser.parseFromString(domString, 'text/html');
+                    $('.reviewContainer').append(html.body.firstChild);
+                    if (data.more == false) {
+                        $('.getmorereviews').hide();
+                    }
+                }
+        });
+                                });
+      </script>
+    {% else %}
+        {% if user.is_authenticated %}
+            <div>
+            <br>
+            <button type="button" class="btn btn-secondary btn-lg btn-block"
+            onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+        {% endif %}
     {% endif %}
-        </div>
+    </div>
+    </div>
 {% endblock %}
-
