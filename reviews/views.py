@@ -432,6 +432,52 @@ def ajax_rate_comment(request):
         return ajax_error(message="Comment does not exist", status=404)
 
 
+# Upvotes or downvotes the given review, or changes the user's vote on the comment
+def ajax_rate_review(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    review_id = request.GET.get('review')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not review_id or not upvote:
+        return ajax_error()
+
+    review_id = int(review_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        review = Review.objects.get(id=review_id)  # Retrieve the review
+
+        try:
+            rating = ReviewRating.objects.get(user=request.user, review=review)  # Search for existing rating
+
+            # If the user has already voted on the review and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this review", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the review
+                rating.upvote = upvote
+                rating.save()
+                review.votes += 2 if upvote else -2
+                review.save()
+                changed = True
+        except ReviewRating.DoesNotExist:
+            # The user has never voted on this review before, so create a new object and save the rating
+            rating = ReviewRating(user=request.user, review=review, upvote=upvote)
+            rating.save()
+            review.votes += 1 if upvote else -1
+            review.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'review': review_id, 'upvote': upvote, 'changed': changed})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
 # Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
 def ajax_error(message="Bad AJAX request data", status=400):
     return JsonResponse({'error': message}, status=status)
