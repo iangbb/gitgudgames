@@ -22,5 +22,8 @@ urlpatterns = [
     # AJAX URLs
     url(r'^ajax/get_comments/$', views.ajax_get_comments, name='ajax_get_comments'),
     url(r'^ajax/get_reviews/$', views.ajax_get_reviews, name='ajax_get_reviews'),
+    url(r'^ajax/add_comment/$', views.ajax_add_comment, name='ajax_add_comment'),
+    url(r'^ajax/rate_comment/$', views.ajax_rate_comment, name='ajax_rate_comment'),
+    url(r'^ajax/rate_review/$', views.ajax_rate_review, name='ajax_rate_review'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

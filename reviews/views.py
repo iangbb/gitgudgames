@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment
+from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
 from reviews.forms import UserForm, UserProfileForm, DetailsForm, PasswordForm, ReviewForm
 
 
@@ -303,15 +303,21 @@ def ajax_get_comments(request):
     review = request.GET.get('review')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not review or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'comments': [], 'more': False}
+    # Retrieve comments for the given review, starting from index 'start'
     comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
+
+    # If comments have been found, generate the JSON to return to the client
     if len(comments) > 0:
         json['number'] = len(comments)
         json['comments'] = [comment.as_json() for comment in comments]
+
+        # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
             json['more'] = True
 
@@ -323,20 +329,153 @@ def ajax_get_reviews(request):
     game = request.GET.get('game')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not game or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'reviews': [], 'more': False}
+    # Retrieve reviews for the given game, starting from index 'start'
     reviews = Review.objects.filter(game=game).order_by('-votes')[start:]
+
+    # If reviews have been found, generate JSON
     if len(reviews) > 0:
         json['number'] = len(reviews)
 
         for review in reviews[:3]:
-            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]
+            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
             json['reviews'].append(review.as_json(comments))
 
+        # Indicate if there are more reviews to retrieve
         if len(reviews) > 3:
             json['more'] = True
 
     return JsonResponse(json)
+
+
+# Adds a comment to a review submitted via an AJAX POST request
+def ajax_add_comment(request):
+    # Ensure user is logged in before proceeding
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    # Enforce POST method
+    if request.method != 'POST':
+        return ajax_error(message="A POST request was expected", status=405)
+
+    review_id = request.POST.get('review')
+    comment_text = request.POST.get('comment_text')
+
+    # Confirm data has been provided
+    if not review_id or not comment_text:
+        return ajax_error()
+
+    # Perform validation on comment text, returning JSON error if invalid
+    if len(comment_text) == 0 or len(comment_text) > 200:
+        return ajax_error(message="Comment text must be 1 to 200 characters long.")
+
+    try:
+        # Save comment
+        review = Review.objects.get(id=int(review_id))
+        comment = Comment(poster=request.user, review=review, comment_text=comment_text)
+        comment.save()
+        return JsonResponse({'success': True, 'comment': comment.as_json()})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
+# Upvotes or downvotes the given comment, or changes the user's vote on the comment
+def ajax_rate_comment(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    comment_id = request.GET.get('comment')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not comment_id or not upvote:
+        return ajax_error()
+
+    comment_id = int(comment_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        comment = Comment.objects.get(id=comment_id)  # Retrieve the comment
+
+        try:
+            rating = CommentRating.objects.get(user=request.user, comment=comment)  # Search for existing rating
+
+            # If the user has already voted on the comment and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this comment", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the comment
+                rating.upvote = upvote
+                rating.save()
+                comment.votes += 2 if upvote else -2
+                comment.save()
+                changed = True
+        except CommentRating.DoesNotExist:
+            # The user has never voted on this comment before, so create a new object and save the rating
+            rating = CommentRating(user=request.user, comment=comment, upvote=upvote)
+            rating.save()
+            comment.votes += 1 if upvote else -1
+            comment.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'comment': comment_id, 'upvote': upvote, 'changed': changed})
+    except Comment.DoesNotExist:
+        return ajax_error(message="Comment does not exist", status=404)
+
+
+# Upvotes or downvotes the given review, or changes the user's vote on the comment
+def ajax_rate_review(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    review_id = request.GET.get('review')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not review_id or not upvote:
+        return ajax_error()
+
+    review_id = int(review_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        review = Review.objects.get(id=review_id)  # Retrieve the review
+
+        try:
+            rating = ReviewRating.objects.get(user=request.user, review=review)  # Search for existing rating
+
+            # If the user has already voted on the review and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this review", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the review
+                rating.upvote = upvote
+                rating.save()
+                review.votes += 2 if upvote else -2
+                review.save()
+                changed = True
+        except ReviewRating.DoesNotExist:
+            # The user has never voted on this review before, so create a new object and save the rating
+            rating = ReviewRating(user=request.user, review=review, upvote=upvote)
+            rating.save()
+            review.votes += 1 if upvote else -1
+            review.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'review': review_id, 'upvote': upvote, 'changed': changed})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
+# Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
+def ajax_error(message="Bad AJAX request data", status=400):
+    return JsonResponse({'error': message}, status=status)
