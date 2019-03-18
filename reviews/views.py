@@ -315,7 +315,7 @@ def ajax_get_comments(request):
     # If comments have been found, generate the JSON to return to the client
     if len(comments) > 0:
         json['number'] = len(comments)
-        json['comments'] = [comment.as_json() for comment in comments]
+        json['comments'] = [comment.as_json() for comment in comments[:3]]  # Send next 3
 
         # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
