@@ -10,10 +10,12 @@
 {% endblock %}
 
 {% block body_block %}
-  <h1 style="position:relative;"> Profile of {{ heading }}</h1>
-  <button class="btn btn-primary position-absolute" type="button"
-    style="position:absolute; right:30px; top:60px;"
-    onclick="window.location.href='{% url 'edit_profile' user.username %}'">Edit</button>
+  <h1 style="position:relative;">{{ heading }}</h1>
+  {% if user == profile.user %}
+    <button class="btn btn-primary position-absolute" type="button"
+      style="position:absolute; right:30px; top:60px;"
+      onclick="window.location.href='{% url 'edit_profile' user.username %}'">Edit</button>
+  {% endif %}
   <!-- User details and biography -->
   <h2>Details</h2>
   <div class="row clearfix">

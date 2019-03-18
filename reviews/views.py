@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment
-from reviews.forms import UserForm, UserProfileForm, ReviewForm
+from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
+from reviews.forms import UserForm, UserProfileForm, DetailsForm, PasswordForm, ReviewForm
 
 
 def index(request):
@@ -61,7 +61,7 @@ def add_review(request, game_slug):
         return restricted(request, status=404, message="The game you're looking for doesn't exist")
 
     if request.method == 'POST':
-        review_form = ReviewForm(request.POST, request.user, game)
+        review_form = ReviewForm(data=request.POST)
         if review_form.is_valid():
             # Save review to database
             review = review_form.save(commit=False)
@@ -71,7 +71,8 @@ def add_review(request, game_slug):
             messages.success(request, "Your review has been added")
 
             # Update stored average rating
-            game.average_rating = (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
+            game.average_rating = \
+                (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
             game.number_ratings += 1
             game.save()
 
@@ -80,9 +81,9 @@ def add_review(request, game_slug):
             return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
         else:
             messages.error(request, "You submitted an invalid review")
-            review_form = ReviewForm(request.GET, request.user, game)
+            review_form = ReviewForm()
     else:
-        review_form = ReviewForm(request.GET, request.user, game)
+        review_form = ReviewForm()
 
     context_dict = {'heading': "Add Review", 'review_form': review_form,
                     'slug': game_slug}
@@ -91,7 +92,7 @@ def add_review(request, game_slug):
 
 # @login_required
 def profile(request, username):
-    context_dict = {'heading': username}
+    context_dict = {'heading': 'Profile of ' + username}
 
     try:
         # Check if user is exists
@@ -121,7 +122,7 @@ def profile(request, username):
 
     return render(request, 'reviews/profile.html', context=context_dict)
 
-
+@login_required
 def edit_profile(request, username):
     if request.method == 'POST':
         user = User.objects.get(username=username)
@@ -130,52 +131,46 @@ def edit_profile(request, username):
             profile = UserProfile.objects.get(user=user)
             profile_form = UserProfileForm()
 
-            file = request.FILES['profile_image']
-
-            # Check for form field validity
-            if profile_form.clean_profile_image(file):
-                fs = FileSystemStorage("media/profile_images")
-                filename = fs.save(file.name, file)
-                profile.profile_image = filename
-                profile.save()
-                messages.success(request, "Your profile picture has been changed.")
-            else:
-                messages.error(request, "Some fields contain errors.")
+            #if profile_form.is_valid():
+            profile.profile_image = request.FILES['profile_image']
+            profile.save()
+            messages.success(request, "Your profile picture has been changed.")
+            #else:
+            #messages.error(request, "Your submitted image was not valid.")
 
             return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
         # Details form
         elif 'details_button' in request.POST:
-            profile = UserProfile.objects.get(user=user)
-            profile_form = UserProfileForm(data=request.POST)
+            details_form = DetailsForm(data=request.POST)
 
             # Check for form field validity
-            #if (profile_form.clean_display_name() and
-                    #profile_form.clean_display_name()):
-            if profile_form.clean_display_name():
+            if details_form.is_valid():
+                profile = UserProfile.objects.get(user=user)
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
                 #profile.date_of_birth = profile_form.data['date_of_birth']
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")
+                return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
             else:
                 messages.error(request, "Some fields contain errors.")
-
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Password form
         elif 'password_button' in request.POST:
-            user_form = UserForm(data=request.POST)
+            # Add user's username to post
+            password_form = PasswordForm(data=request.POST)
 
-            if user_form.clean_password():
-                user.set_password(user_form.data['password'])
+            if password_form.is_valid():
+                user.set_password(password_form.data['password'])
                 user.save()
                 messages.success(request, "Your password has been changed")
+                return HttpResponseRedirect(reverse('login'))
             else:
                 messages.error(request, "Some fields contain errors.")
-
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Biography form
         elif 'biography_button' in request.POST:
@@ -201,10 +196,13 @@ def edit_profile(request, username):
                 profile = None
 
             user_form = UserForm()
+            details_form = DetailsForm()
+            password_form = PasswordForm()
             profile_form = UserProfileForm()
 
             context_dict = {'heading': "Edit Profile", 'profile': profile,
-                'user_form': user_form, 'profile_form': profile_form }
+                'details_form': details_form, 'password_form': password_form,
+                'profile_form': profile_form }
 
         except User.DoesNotExist:
             return restricted(request, status=404, message="This user does not exist.")
@@ -305,15 +303,21 @@ def ajax_get_comments(request):
     review = request.GET.get('review')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not review or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'comments': [], 'more': False}
+    # Retrieve comments for the given review, starting from index 'start'
     comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
+
+    # If comments have been found, generate the JSON to return to the client
     if len(comments) > 0:
         json['number'] = len(comments)
-        json['comments'] = [comment.as_json() for comment in comments]
+        json['comments'] = [comment.as_json() for comment in comments[:3]]  # Send next 3
+
+        # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
             json['more'] = True
 
@@ -325,20 +329,153 @@ def ajax_get_reviews(request):
     game = request.GET.get('game')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not game or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'reviews': [], 'more': False}
+    # Retrieve reviews for the given game, starting from index 'start'
     reviews = Review.objects.filter(game=game).order_by('-votes')[start:]
+
+    # If reviews have been found, generate JSON
     if len(reviews) > 0:
         json['number'] = len(reviews)
 
         for review in reviews[:3]:
-            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]
+            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
             json['reviews'].append(review.as_json(comments))
 
+        # Indicate if there are more reviews to retrieve
         if len(reviews) > 3:
             json['more'] = True
 
     return JsonResponse(json)
+
+
+# Adds a comment to a review submitted via an AJAX POST request
+def ajax_add_comment(request):
+    # Ensure user is logged in before proceeding
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    # Enforce POST method
+    if request.method != 'POST':
+        return ajax_error(message="A POST request was expected", status=405)
+
+    review_id = request.POST.get('review')
+    comment_text = request.POST.get('comment_text')
+
+    # Confirm data has been provided
+    if not review_id or not comment_text:
+        return ajax_error()
+
+    # Perform validation on comment text, returning JSON error if invalid
+    if len(comment_text) == 0 or len(comment_text) > 200:
+        return ajax_error(message="Comment text must be 1 to 200 characters long.")
+
+    try:
+        # Save comment
+        review = Review.objects.get(id=int(review_id))
+        comment = Comment(poster=request.user, review=review, comment_text=comment_text)
+        comment.save()
+        return JsonResponse({'success': True, 'comment': comment.as_json()})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
+# Upvotes or downvotes the given comment, or changes the user's vote on the comment
+def ajax_rate_comment(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    comment_id = request.GET.get('comment')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not comment_id or not upvote:
+        return ajax_error()
+
+    comment_id = int(comment_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        comment = Comment.objects.get(id=comment_id)  # Retrieve the comment
+
+        try:
+            rating = CommentRating.objects.get(user=request.user, comment=comment)  # Search for existing rating
+
+            # If the user has already voted on the comment and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this comment", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the comment
+                rating.upvote = upvote
+                rating.save()
+                comment.votes += 2 if upvote else -2
+                comment.save()
+                changed = True
+        except CommentRating.DoesNotExist:
+            # The user has never voted on this comment before, so create a new object and save the rating
+            rating = CommentRating(user=request.user, comment=comment, upvote=upvote)
+            rating.save()
+            comment.votes += 1 if upvote else -1
+            comment.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'comment': comment_id, 'upvote': upvote, 'changed': changed})
+    except Comment.DoesNotExist:
+        return ajax_error(message="Comment does not exist", status=404)
+
+
+# Upvotes or downvotes the given review, or changes the user's vote on the comment
+def ajax_rate_review(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    review_id = request.GET.get('review')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not review_id or not upvote:
+        return ajax_error()
+
+    review_id = int(review_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        review = Review.objects.get(id=review_id)  # Retrieve the review
+
+        try:
+            rating = ReviewRating.objects.get(user=request.user, review=review)  # Search for existing rating
+
+            # If the user has already voted on the review and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this review", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the review
+                rating.upvote = upvote
+                rating.save()
+                review.votes += 2 if upvote else -2
+                review.save()
+                changed = True
+        except ReviewRating.DoesNotExist:
+            # The user has never voted on this review before, so create a new object and save the rating
+            rating = ReviewRating(user=request.user, review=review, upvote=upvote)
+            rating.save()
+            review.votes += 1 if upvote else -1
+            review.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'review': review_id, 'upvote': upvote, 'changed': changed})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
+# Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
+def ajax_error(message="Bad AJAX request data", status=400):
+    return JsonResponse({'error': message}, status=status)
