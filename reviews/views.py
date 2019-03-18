@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment
+from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
 from reviews.forms import UserForm, UserProfileForm, ReviewForm
 
 
@@ -384,6 +384,52 @@ def ajax_add_comment(request):
         return JsonResponse({'success': True, 'comment': comment.as_json()})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)
+
+
+# Upvotes or downvotes the given comment, or changes the user's vote on the comment
+def ajax_rate_comment(request):
+    # Must be logged in
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    comment_id = request.GET.get('comment')
+    upvote = request.GET.get('upvote')
+
+    # Ensure both fields are given
+    if not comment_id or not upvote:
+        return ajax_error()
+
+    comment_id = int(comment_id)
+    upvote = upvote.lower() == "true"
+    changed = False  # Used to track if the user has updated their vote
+
+    try:
+        comment = Comment.objects.get(id=comment_id)  # Retrieve the comment
+
+        try:
+            rating = CommentRating.objects.get(user=request.user, comment=comment)  # Search for existing rating
+
+            # If the user has already voted on the comment and isn't changing their vote, then don't proceed
+            if rating.upvote == upvote:
+                return ajax_error(message="Already voted on this comment", status=403)
+            else:
+                # The user is changing their vote, so update their vote and the total votes on the comment
+                rating.upvote = upvote
+                rating.save()
+                comment.votes += 2 if upvote else -2
+                comment.save()
+                changed = True
+        except CommentRating.DoesNotExist:
+            # The user has never voted on this comment before, so create a new object and save the rating
+            rating = CommentRating(user=request.user, comment=comment, upvote=upvote)
+            rating.save()
+            comment.votes += 1 if upvote else -1
+            comment.save()
+
+        # Return a successful status report
+        return JsonResponse({'success': True, 'comment': comment_id, 'upvote': upvote, 'changed': changed})
+    except Comment.DoesNotExist:
+        return ajax_error(message="Comment does not exist", status=404)
 
 
 # Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
