@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from reviews.models import User, UserProfile, Review
+from gitgudgames.settings import DATE_INPUT_FORMATS
 import datetime
 import os
 
@@ -26,101 +27,157 @@ class UserForm(forms.ModelForm):
 
         return cleaned_data
 
-    # Validation of password for profile edit
-    def clean_password(self):
-        password = self.data['password']
-        password_confirm = self.data['password_confirm']
-        if len(password) < 8:
-            raise forms.ValidationError("Password is too short.")
-        elif password != password_confirm:
-            raise forms.ValidationError("Passwords do not match.")
-        return password
-
     @staticmethod
     def validate_username(username):
-        if len(username) < 3 or len(username) > 16:
-            raise forms.ValidationError("Your username must be 3-16 characters long.")
-
-        if any(not char.isalnum() for char in username):
-            raise forms.ValidationError("Your username can't contain any special characters.")
+        if username is None:
+            raise forms.ValidationError("You need a username.")
+        else:
+            if len(username) < 3 or len(username) > 16:
+                raise forms.ValidationError("Your username must be 3-16 characters long.")
+            if any(not char.isalnum() for char in username):
+                raise forms.ValidationError("Your username can't contain any special characters.")
 
     # Method for performing password validation
     # Raises a ValidationError if any condition is not met, higher priority conditions go to the top
     @staticmethod
     def validate_password(password, confirm):
-        if len(password) < 8:
-            raise forms.ValidationError("Your password must be at least 8 characters long.")
-
-        if not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
-            raise forms.ValidationError("Your password must contain at least one letter and one number.")
-
-        if password != confirm:
-            raise forms.ValidationError("Passwords don't match.")
-
+        if None in (password, confirm):
+            raise forms.ValidationError("You need a password.")
+        else:
+            if len(password) < 8:
+                raise forms.ValidationError("Your password must be at least 8 characters long.")
+            if not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
+                raise forms.ValidationError("Your password must contain at least one letter and one number.")
+            if password != confirm:
+                raise forms.ValidationError("Passwords don't match.")
 
 class UserProfileForm(forms.ModelForm):
-    # Personal
-    display_name = forms.CharField(max_length=128, help_text="Display Name (Optional)", required=False)
-    email = forms.EmailField(help_text="Email")
-    date_of_birth = forms.DateField(
-        widget=forms.DateInput(format='%d/%m/%Y', attrs={'class': 'datepicker'}),
-        input_formats=('%d/%m/%Y', ), help_text="Date of Birth")
-    # Password
-    password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
-    password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")
-    # Extra
+    display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
+    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS, help_text="Date of Birth")
     profile_image = forms.ImageField(help_text="Profile Image")
     biography = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 90, 'class': 'form-control'}), help_text="Biography")
-    # Hidden data
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
 
     class Meta:
         model = UserProfile
-        fields = ('display_name', 'email', 'date_of_birth',
-            'profile_image', 'biography', 'is_journalist')
+        fields = ('display_name', 'profile_image',
+            'date_of_birth', 'biography', 'is_journalist')
 
-    def clean_display_name(self):
-        display_name = self.data['display_name']
-        if len(display_name) > 16:
-            raise forms.ValidationError("Display name is too long.")
-        elif len(display_name) < 3:
-            raise forms.ValidationError("Display name is too short.")
-        return display_name
+    def clean(self):
+        cleaned_data = super(UserProfileForm, self).clean()
+        profile_image = cleaned_data.get('profile_image')
+        biography = cleaned_data.get('biography')
 
-    def clean_date_of_birth(self):
-        date_of_birth = self.data['date_of_birth']
-        today = datetime.date.today()
-        if date_of_birth > today:
-            raise forms.ValidationError("Date is set to the future.")
+        UserProfileForm.validate_profile_image(profile_image)
+        UserProfileForm.validate_biography(biography)
+
+        return cleaned_data
+
+    @staticmethod
+    def validate_profile_image(profile_image):
+        if profile_image is None:
+            print("Profile image empty.")
+            pass
+        elif profile_image.size > 1000000:
+            print("Profile image invalid.")
+            raise forms.ValidationError("Your profile image is too big.")
+        print("Profile image valid.")
+
+    @staticmethod
+    def validate_biography(biography):
+        if biography is None:
+            print("Biography empty.")
+            pass
+        elif len(biography) > 2000:
+            print("Biography invalid.")
+            raise forms.ValidationError("Your biography is too long.")
+        print("Biography valid.")
+
+
+class DetailsForm(forms.ModelForm):
+    display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
+    email = forms.EmailField(help_text="Email")
+    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS,
+        help_text="Date of Birth")
+
+    class Meta:
+        model = UserProfile
+        fields = ('display_name', 'email', 'date_of_birth', )
+        widgets = {
+            'date_of_birth': forms.DateInput(format=DATE_INPUT_FORMATS,
+                attrs={'class': 'datepicker-input', 'placeholder': 'dd/mm/yy'})
+        }
+
+    def clean(self):
+        cleaned_data = super(DetailsForm, self).clean()
+        display_name = cleaned_data.get('display_name')
+        date_of_birth = cleaned_data.get('date_of_birth')
+
+        print("Validating.")
+        DetailsForm.validate_display_name(display_name)
+        DetailsForm.validate_date_of_birth(date_of_birth)
+        print("Validation done.")
+
+        return cleaned_data
+
+    @staticmethod
+    def validate_display_name(display_name):
+        if display_name is not None:
+            if len(display_name) > 16:
+                raise forms.ValidationError("Your display name is too long.")
+
+    @staticmethod
+    def validate_date_of_birth(date_of_birth):
+        print(str(date_of_birth))
+        if date_of_birth is not None:
+            today = datetime.date.today()
+            print(str(today))
+            print(str(date_of_birth.year) + ">" + str(today.year) + ": ")
+            print(str(date_of_birth.year > today.year))
+            if date_of_birth.year > today.year:
+                raise forms.ValidationError("Date of birth is set in the future.")
+
+
+# Form for changing password
+class PasswordForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
+    password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")
+
+    class Meta:
+        model = User
+        fields = ('password',)
+
+    # Override clean method to perform password confirmation checks
+    def clean(self):
+        cleaned_data = super(PasswordForm, self).clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+        PasswordForm.validate_password(password, password_confirm)
+        return cleaned_data
+
+    # Method for performing password validation
+    # Raises a ValidationError if any condition is not met, higher priority conditions go to the top
+    @staticmethod
+    def validate_password(password, confirm):
+        if None in (password, confirm):
+            raise forms.ValidationError("You need a password.")
         else:
-            this_year_birth_date = datetime.date(today.year, date_of_birth.month, date_of_birth.day)
-            if this_year_birth_date < today:
-                if today.year - date_of_birth.year < 10:
-                    raise forms.ValidationError("Too young.")
-        return date_of_birth
+            if len(password) < 8:
+                raise forms.ValidationError("Your password must be at least 8 characters long.")
+            if not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
+                raise forms.ValidationError("Your password must contain at least one letter and one number.")
+            if password != confirm:
+                raise forms.ValidationError("Passwords don't match.")
 
-    def clean_profile_image(self, file):
-        print(file.name)
-        if file.size > 10000000:
-            raise forms.ValidationError("File is too large.")
-        return file
 
-    def clean_biography(self):
-        biography = self.data['biography']
-        if len(biography) > 2000:
-            raise forms.ValidationError("Biography is too long.")
-        return biography
+
+
 
 class ReviewForm(forms.ModelForm):
     rating = forms.CharField(widget=forms.Select(choices=Review.RATINGS,
                                                  attrs={'class': 'form-control', 'style': 'width: 15%'}), required=True)
     review_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 90, 'class': 'form-control'}),
                                   max_length=2000, required=True)
-
-    def __init__(self, *args, **kwargs):
-        self.poster = args[1]
-        self.game = args[2]
-        super(ReviewForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Review
