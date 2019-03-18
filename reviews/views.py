@@ -305,15 +305,21 @@ def ajax_get_comments(request):
     review = request.GET.get('review')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not review or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'comments': [], 'more': False}
+    # Retrieve comments for the given review, starting from index 'start'
     comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
+
+    # If comments have been found, generate the JSON to return to the client
     if len(comments) > 0:
         json['number'] = len(comments)
         json['comments'] = [comment.as_json() for comment in comments]
+
+        # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
             json['more'] = True
 
@@ -325,20 +331,61 @@ def ajax_get_reviews(request):
     game = request.GET.get('game')
     start = request.GET.get('start')
 
+    # Ensure both fields have been provided
     if not game or not start:
-        return JsonResponse({'error': "Bad AJAX request data"}, status=400)
+        return ajax_error()
 
     start = int(start)
     json = {'number': 0, 'reviews': [], 'more': False}
+    # Retrieve reviews for the given game, starting from index 'start'
     reviews = Review.objects.filter(game=game).order_by('-votes')[start:]
+
+    # If reviews have been found, generate JSON
     if len(reviews) > 0:
         json['number'] = len(reviews)
 
         for review in reviews[:3]:
-            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]
+            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
             json['reviews'].append(review.as_json(comments))
 
+        # Indicate if there are more reviews to retrieve
         if len(reviews) > 3:
             json['more'] = True
 
     return JsonResponse(json)
+
+
+# Adds a comment to a review submitted via an AJAX POST request
+def ajax_add_comment(request):
+    # Ensure user is logged in before proceeding
+    if not request.user.is_authenticated():
+        return ajax_error(message="You must be logged in to comment", status=403)
+
+    # Enforce POST method
+    if request.method != 'POST':
+        return ajax_error(message="A POST request was expected", status=405)
+
+    review_id = request.POST.get('review')
+    comment_text = request.POST.get('comment_text')
+
+    # Confirm data has been provided
+    if not review_id or not comment_text:
+        return ajax_error()
+
+    # Perform validation on comment text, returning JSON error if invalid
+    if len(comment_text) == 0 or len(comment_text) > 200:
+        return ajax_error(message="Comment text must be 1 to 200 characters long.")
+
+    try:
+        # Save comment
+        review = Review.objects.get(id=int(review_id))
+        comment = Comment(poster=request.user, review=review, comment_text=comment_text)
+        comment.save()
+        return JsonResponse({'success': True, 'comment': comment.as_json()})
+    except Review.DoesNotExist:
+        return ajax_error(message="Review does not exist", status=404)
+
+
+# Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
+def ajax_error(message="Bad AJAX request data", status=400):
+    return JsonResponse({'error': message}, status=status)
