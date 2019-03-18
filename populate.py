@@ -89,7 +89,28 @@ def populate():
             "username": "ijustmakeannoyingcomments",
             "password": generate_password(),
             "journalist": False,
-        }
+        },
+        {
+            "username": "ihategames",
+            "password": generate_password(),
+            "journalist": False,
+        },
+        {
+            "username": "ilovegames",
+            "password": generate_password(),
+            "journalist": True,
+        },
+        {
+            "username": "iamindifferenttowardsgames",
+            "password": generate_password(),
+            "journalist": False,
+        },
+        {
+            "username": "big_keith",
+            "password": generate_password(),
+            "journalist": False,
+        },
+
     ]
 
     # TODO: actual review text
@@ -124,6 +145,37 @@ def populate():
             "review_text": "it's okay",
             "rating": Review.THREE_STARS,
         },
+        {
+            "poster": "ihategames",
+            "game": "An Action Game",
+            "review_text": "this game sucks big time",
+            "rating": Review.ONE_STAR,
+        },
+        {
+            "poster": "ilovegames",
+            "game": "An Action Game",
+            "review_text": "This game is great and I wasn't paid to say this",
+            "rating": Review.FIVE_STARS,
+        },
+        {
+            "poster": "iamindifferenttowardsgames",
+            "game": "An Action Game",
+            "review_text": "It was alright",
+            "rating": Review.THREE_STARS,
+        },
+        {
+            "poster": "ilovegames",
+            "game": "An Action Game",
+            "review_text": "Absolutly fantastic game, still wasn't paid to say this",
+            "rating": Review.FIVE_STARS,
+        },
+        {
+            "poster": "ihategames",
+            "game": "An Action Game",
+            "review_text": "bad rats is a better game",
+            "rating": Review.ONE_STAR,
+        }
+
     ]
 
     # TODO: at least add some images when populating - should be easier to add than comments
