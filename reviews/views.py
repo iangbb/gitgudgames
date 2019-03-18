@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
-from reviews.forms import UserForm, UserProfileForm, ReviewForm
+from reviews.forms import UserForm, UserProfileForm, DetailsForm, PasswordForm, ReviewForm
 
 
 def index(request):
@@ -61,7 +61,7 @@ def add_review(request, game_slug):
         return restricted(request, status=404, message="The game you're looking for doesn't exist")
 
     if request.method == 'POST':
-        review_form = ReviewForm(request.POST, request.user, game)
+        review_form = ReviewForm(data=request.POST)
         if review_form.is_valid():
             # Save review to database
             review = review_form.save(commit=False)
@@ -71,7 +71,8 @@ def add_review(request, game_slug):
             messages.success(request, "Your review has been added")
 
             # Update stored average rating
-            game.average_rating = (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
+            game.average_rating = \
+                (game.average_rating * game.number_ratings + int(review.rating)) / (game.number_ratings + 1)
             game.number_ratings += 1
             game.save()
 
@@ -80,9 +81,9 @@ def add_review(request, game_slug):
             return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
         else:
             messages.error(request, "You submitted an invalid review")
-            review_form = ReviewForm(request.GET, request.user, game)
+            review_form = ReviewForm()
     else:
-        review_form = ReviewForm(request.GET, request.user, game)
+        review_form = ReviewForm()
 
     context_dict = {'heading': "Add Review", 'review_form': review_form,
                     'slug': game_slug}
@@ -91,7 +92,7 @@ def add_review(request, game_slug):
 
 # @login_required
 def profile(request, username):
-    context_dict = {'heading': username}
+    context_dict = {'heading': 'Profile of ' + username}
 
     try:
         # Check if user is exists
@@ -121,7 +122,7 @@ def profile(request, username):
 
     return render(request, 'reviews/profile.html', context=context_dict)
 
-
+@login_required
 def edit_profile(request, username):
     if request.method == 'POST':
         user = User.objects.get(username=username)
@@ -130,52 +131,46 @@ def edit_profile(request, username):
             profile = UserProfile.objects.get(user=user)
             profile_form = UserProfileForm()
 
-            file = request.FILES['profile_image']
-
-            # Check for form field validity
-            if profile_form.clean_profile_image(file):
-                fs = FileSystemStorage("media/profile_images")
-                filename = fs.save(file.name, file)
-                profile.profile_image = filename
-                profile.save()
-                messages.success(request, "Your profile picture has been changed.")
-            else:
-                messages.error(request, "Some fields contain errors.")
+            #if profile_form.is_valid():
+            profile.profile_image = request.FILES['profile_image']
+            profile.save()
+            messages.success(request, "Your profile picture has been changed.")
+            #else:
+            #messages.error(request, "Your submitted image was not valid.")
 
             return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
         # Details form
         elif 'details_button' in request.POST:
-            profile = UserProfile.objects.get(user=user)
-            profile_form = UserProfileForm(data=request.POST)
+            details_form = DetailsForm(data=request.POST)
 
             # Check for form field validity
-            #if (profile_form.clean_display_name() and
-                    #profile_form.clean_display_name()):
-            if profile_form.clean_display_name():
+            if details_form.is_valid():
+                profile = UserProfile.objects.get(user=user)
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
                 #profile.date_of_birth = profile_form.data['date_of_birth']
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")
+                return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
             else:
                 messages.error(request, "Some fields contain errors.")
-
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Password form
         elif 'password_button' in request.POST:
-            user_form = UserForm(data=request.POST)
+            # Add user's username to post
+            password_form = PasswordForm(data=request.POST)
 
-            if user_form.clean_password():
-                user.set_password(user_form.data['password'])
+            if password_form.is_valid():
+                user.set_password(password_form.data['password'])
                 user.save()
                 messages.success(request, "Your password has been changed")
+                return HttpResponseRedirect(reverse('login'))
             else:
                 messages.error(request, "Some fields contain errors.")
-
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Biography form
         elif 'biography_button' in request.POST:
@@ -201,10 +196,13 @@ def edit_profile(request, username):
                 profile = None
 
             user_form = UserForm()
+            details_form = DetailsForm()
+            password_form = PasswordForm()
             profile_form = UserProfileForm()
 
             context_dict = {'heading': "Edit Profile", 'profile': profile,
-                'user_form': user_form, 'profile_form': profile_form }
+                'details_form': details_form, 'password_form': password_form,
+                'profile_form': profile_form }
 
         except User.DoesNotExist:
             return restricted(request, status=404, message="This user does not exist.")
