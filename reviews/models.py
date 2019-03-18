@@ -70,6 +70,9 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+    def as_json(self):
+        return str(self.profile_image)
+
 
 class Review(models.Model):
     ONE_STAR = '1'
@@ -96,9 +99,9 @@ class Review(models.Model):
     def __str__(self):
         return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
 
-    def as_json(self, comments=[]):
+    def as_json(self, UserProfile, comments=[]):
         return dict(id=self.id, poster=self.poster.username, game=self.game.id, review_text=self.review_text,
-                    rating=self.rating, post_datetime=self.post_datetime, votes=self.votes,
+                    rating=self.rating, post_datetime=self.post_datetime, votes=self.votes, profileImage=UserProfile.as_json(),
                     comments=[comment.as_json() for comment in comments])
 
 

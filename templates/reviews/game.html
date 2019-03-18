@@ -169,12 +169,12 @@
                 console.log(startval);
                 var parser = new DOMParser();
                 for (i = 0; i < data.reviews.length; i++) {
+                    console.log(data.reviews[i])
                     var domString = '<div class="jumbotron">\
                                         <div class="row">\
-                                            <div class="col-2">\
-                                                <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
-                                            </div>\
                                             <div class="col">\
+                                                <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
+                                                <img src="../../media/' + data.reviews[i].profileImage + '" alt="Profile Image" style="width:50px;height:50px;">\
                                             </div>\
                                             <div class="col">\
                                                 <div style="text-align:right" class="col">\

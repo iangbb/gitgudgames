@@ -344,7 +344,8 @@ def ajax_get_reviews(request):
 
         for review in reviews[:3]:
             comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
-            json['reviews'].append(review.as_json(comments))
+            userprofile = UserProfile.objects.filter(user=review.poster)
+            json['reviews'].append(review.as_json(userprofile[0],comments))
 
         # Indicate if there are more reviews to retrieve
         if len(reviews) > 3:
