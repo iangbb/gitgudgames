@@ -16,7 +16,7 @@
     <div class="row">
       <!-- Profile Pic -->
       <div class="col-sm-4">
-        <h2>{{ profile_form.profile_image.help_text }}</h2>
+        <h2>{{ profile_image_form.profile_image.help_text }}</h2>
         <div class="container-fluid p-5">
           <div class="row">
             {% if profile.profile_image %}
@@ -29,7 +29,7 @@
               enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row my-5 mx-auto">
-              {{ profile_form.profile_image }}
+              {{ profile_image_form.profile_image }}
             </div>
             <!-- Submit button -->
             <div class="form-row clearfix">
@@ -105,13 +105,13 @@
     <!-- Biography -->
     <div class="row">
       <div class="col">
-        <h2>{{ profile_form.biography.help_text }}</h2>
+        <h2>{{ biography_form.biography.help_text }}</h2>
         <div class="container-fluid p-5">
           <form action="{% url 'edit_profile' user.username %}" method="post">
             {% csrf_token %}
             <div class="row">
               <div class="col">
-                {{ profile_form.biography }}
+                {{ biography_form.biography }}
               </div>
             </div>
             <!-- Submit button -->

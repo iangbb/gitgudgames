@@ -51,11 +51,14 @@ class UserForm(forms.ModelForm):
             if password != confirm:
                 raise forms.ValidationError("Passwords don't match.")
 
+
+# Form to hole user's profile information
 class UserProfileForm(forms.ModelForm):
-    display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
-    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS, help_text="Date of Birth")
-    profile_image = forms.ImageField(help_text="Profile Image")
-    biography = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 90, 'class': 'form-control'}), help_text="Biography")
+    display_name = forms.CharField(max_length=16)
+    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS)
+    profile_image = forms.ImageField()
+    #date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS)
+    biography = forms.CharField(max_length=1000)
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
 
     class Meta:
@@ -63,60 +66,53 @@ class UserProfileForm(forms.ModelForm):
         fields = ('display_name', 'profile_image',
             'date_of_birth', 'biography', 'is_journalist')
 
-    def clean(self):
-        cleaned_data = super(UserProfileForm, self).clean()
-        profile_image = cleaned_data.get('profile_image')
-        biography = cleaned_data.get('biography')
 
-        UserProfileForm.validate_profile_image(profile_image)
-        UserProfileForm.validate_biography(biography)
+# Form for user to change their profile image
+class ProfileImageForm(forms.ModelForm):
+    profile_image = forms.ImageField(help_text="Profile Image")
+
+    class Meta:
+        model = UserProfile
+        fields = ('profile_image',)
+
+    def clean(self):
+        cleaned_data = super(ProfileImageForm, self).clean()
+        profile_image = cleaned_data.get('profile_image')
+        ProfileImageForm.validate_profile_image(profile_image)
 
         return cleaned_data
 
     @staticmethod
     def validate_profile_image(profile_image):
         if profile_image is None:
-            print("Profile image empty.")
-            pass
+            return
         elif profile_image.size > 1000000:
-            print("Profile image invalid.")
             raise forms.ValidationError("Your profile image is too big.")
-        print("Profile image valid.")
-
-    @staticmethod
-    def validate_biography(biography):
-        if biography is None:
-            print("Biography empty.")
-            pass
-        elif len(biography) > 2000:
-            print("Biography invalid.")
-            raise forms.ValidationError("Your biography is too long.")
-        print("Biography valid.")
 
 
+# Form for user to change their details
 class DetailsForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
     email = forms.EmailField(help_text="Email")
-    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS,
-        help_text="Date of Birth")
+    #date_of_birth = forms.DateField(
+    #    widget=forms.DateInput(format=DATE_INPUT_FORMATS,
+    #        attrs={'class': 'datepicker-input', 'placeholder': 'dd/mm/yy'}),
+    #    input_formats=DATE_INPUT_FORMATS,
+    #    help_text="Date of Birth")
 
     class Meta:
         model = UserProfile
-        fields = ('display_name', 'email', 'date_of_birth', )
-        widgets = {
-            'date_of_birth': forms.DateInput(format=DATE_INPUT_FORMATS,
-                attrs={'class': 'datepicker-input', 'placeholder': 'dd/mm/yy'})
-        }
+        fields = ('display_name', 'email',
+            #'date_of_birth',
+            )
 
     def clean(self):
         cleaned_data = super(DetailsForm, self).clean()
         display_name = cleaned_data.get('display_name')
-        date_of_birth = cleaned_data.get('date_of_birth')
+        #date_of_birth = cleaned_data.get('date_of_birth')
 
-        print("Validating.")
         DetailsForm.validate_display_name(display_name)
-        DetailsForm.validate_date_of_birth(date_of_birth)
-        print("Validation done.")
+        #DetailsForm.validate_date_of_birth(date_of_birth)
 
         return cleaned_data
 
@@ -126,19 +122,19 @@ class DetailsForm(forms.ModelForm):
             if len(display_name) > 16:
                 raise forms.ValidationError("Your display name is too long.")
 
-    @staticmethod
-    def validate_date_of_birth(date_of_birth):
-        print(str(date_of_birth))
-        if date_of_birth is not None:
-            today = datetime.date.today()
-            print(str(today))
-            print(str(date_of_birth.year) + ">" + str(today.year) + ": ")
-            print(str(date_of_birth.year > today.year))
-            if date_of_birth.year > today.year:
-                raise forms.ValidationError("Date of birth is set in the future.")
+    #@staticmethod
+    #def validate_date_of_birth(date_of_birth):
+    #    print(str(date_of_birth))
+    #    if date_of_birth is not None:
+    #        today = datetime.date.today()
+    #        print(str(today))
+    #        print(str(date_of_birth.year) + ">" + str(today.year) + ": ")
+    #        print(str(date_of_birth.year > today.year))
+    #        if date_of_birth.year > today.year:
+    #            raise forms.ValidationError("Date of birth is set in the future.")
 
 
-# Form for changing password
+# Form for user to change their password
 class PasswordForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), help_text="Password")
     password_confirm = forms.CharField(widget=forms.PasswordInput(), help_text="Confirm Password")
@@ -170,7 +166,28 @@ class PasswordForm(forms.ModelForm):
                 raise forms.ValidationError("Passwords don't match.")
 
 
+# Form for user to change their biography
+class BiographyForm(forms.ModelForm):
+    biography = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'style': 'width: 100%;'}),
+        help_text="Biography")
 
+    class Meta:
+        model = UserProfile
+        fields = ('biography', )
+
+    def clean(self):
+        cleaned_data = super(BiographyForm, self).clean()
+        biography = cleaned_data.get('biography')
+        BiographyForm.validate_biography(biography)
+        return cleaned_data
+
+    @staticmethod
+    def validate_biography(biography):
+        if biography is None:
+            return
+        elif len(biography) > 1000:
+            raise forms.ValidationError("Your biography is too long.")
 
 
 class ReviewForm(forms.ModelForm):

@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
-from reviews.forms import UserForm, UserProfileForm, DetailsForm, PasswordForm, ReviewForm
+from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm, ReviewForm
 
 
 def index(request):
@@ -128,17 +128,17 @@ def edit_profile(request, username):
         user = User.objects.get(username=username)
         # Image form
         if 'image_button' in request.POST:
-            profile = UserProfile.objects.get(user=user)
-            profile_form = UserProfileForm()
+            profile_image_form = ProfileImageForm(files=request.FILES)
 
-            #if profile_form.is_valid():
-            profile.profile_image = request.FILES['profile_image']
-            profile.save()
-            messages.success(request, "Your profile picture has been changed.")
-            #else:
-            #messages.error(request, "Your submitted image was not valid.")
-
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+            if profile_image_form.is_valid():
+                profile = UserProfile.objects.get(user=user)
+                profile.profile_image = request.FILES['profile_image']
+                profile.save()
+                messages.success(request, "Your profile picture has been changed.")
+                return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+            else:
+                messages.error(request, "Your submitted image was not valid.")
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Details form
         elif 'details_button' in request.POST:
@@ -174,17 +174,18 @@ def edit_profile(request, username):
 
         # Biography form
         elif 'biography_button' in request.POST:
-            profile = UserProfile.objects.get(user=user)
-            profile_form = UserProfileForm(data=request.POST)
+            biography_form = BiographyForm(data=request.POST)
 
-            if profile_form.clean_biography():
+            if biography_form.is_valid():
+                profile = UserProfile.objects.get(user=user)
                 profile.biography = request.POST.get('biography')
                 profile.save()
                 messages.success(request, "Your biography has been updated.")
+                return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
             else:
                 messages.error(request, "Some fields contain errors.")
+                return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
-            return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
     # Otherwise, load page
     else:
@@ -195,14 +196,14 @@ def edit_profile(request, username):
             except UserProfile.DoesNotExist:
                 profile = None
 
-            user_form = UserForm()
+            profile_image_form = ProfileImageForm()
             details_form = DetailsForm()
             password_form = PasswordForm()
-            profile_form = UserProfileForm()
+            biography_form = BiographyForm()
 
             context_dict = {'heading': "Edit Profile", 'profile': profile,
-                'details_form': details_form, 'password_form': password_form,
-                'profile_form': profile_form }
+                'profile_image_form': profile_image_form, 'details_form': details_form,
+                'password_form': password_form, 'biography_form': biography_form }
 
         except User.DoesNotExist:
             return restricted(request, status=404, message="This user does not exist.")
