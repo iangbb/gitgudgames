@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
@@ -47,7 +46,11 @@
         </form>
         {% if user.is_authenticated %}
           <ul class="navbar-nav pull-md-right">
-            <li class="nav-item"><a href="{% url 'profile' user %}">Profile</a></li>
+            <li class="nav-item">
+              <a href="{% url 'profile' user %}">
+                <img src="{{ profile.profile_image.url }}" alt="Profile">
+              </a>
+            </li>
           </ul>
         {% endif %}
       </div>
