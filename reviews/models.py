@@ -115,9 +115,9 @@ class Comment(models.Model):
         return self.poster.username + " - " + self.review.game.name + " - " + str(self.post_datetime)
 
     # Returns a dictionary representation of the object for use in a JSON response
-    def as_json(self):
-        return dict(id=self.id, poster=self.poster.id, review=self.review.id, comment_text=self.comment_text,
-                    post_datetime=self.post_datetime, votes=self.votes,)
+    def as_json(self, profile_image_url=settings.MEDIA_ROOT + "profile_images/gg_default.png"):
+        return dict(id=self.id, poster=self.poster.username, review=self.review.id, comment_text=self.comment_text,
+                    post_datetime=self.post_datetime, votes=self.votes, profile_image_url=profile_image_url)
 
 
 class Image(models.Model):
