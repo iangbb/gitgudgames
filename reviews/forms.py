@@ -195,7 +195,7 @@ class ReviewForm(forms.ModelForm):
 
 
 class GameForm(forms.ModelForm):
-    releaseDate = forms.DateField(input_formats=DATE_INPUT_FORMATS)
+    releaseDate = forms.DateField(input_formats=DATE_FORMAT)
 
     class Meta:
         model = Game
