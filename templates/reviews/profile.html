@@ -47,41 +47,53 @@
   </div>
 
   <!-- Generate list of reviews by user -->
-  <h2>Reviews</h2>
-  {% if reviews %}
-    {% for review in reviews %}
-      <div class="container-fluid w-100 review">
+  <div class="container">
+    <h2>Reviews</h2>
+    {% if reviews %}
+      {% for review in reviews %}
+      <div class="container-fluid px-5 py-3 w-100 clearfix">
         <h3>{{ review.game.name }}</h3>
         <p>{{ review.review_text }}</p>
         <button class="float-right btn btn-secondary"
           type="submit" name="">View</button>
       </div>
-    {% endfor %}
-    <button class="float-right btn btn-secondary"
-      type="submit" name="reviews_button">More</button>
-  {% else %}
-    <div class="container-fluid w-100">
-      <strong>User has not made any reviews.</strong>
-    </div>
-  {% endif %}
+      {% endfor %}
+      <div class="row mt-3">
+        <div class="col-sm-2 mx-auto">
+          <button class="btn btn-primary"
+            type="submit" name="reviews_button">More</button>
+        </div>
+      </div>
+    {% else %}
+      <div class="container-fluid w-100">
+        <strong>User has not made any reviews.</strong>
+      </div>
+    {% endif %}
+  </div>
 
   <!-- Generate list of comments by user -->
-  <h2>Comments</h2>
-  {% if comments %}
-    {% for comment in comments %}
-      <div class="container-fluid w-100 comment">
+  <div class="container">
+    <h2>Comments</h2>
+    {% if comments %}
+      {% for comment in comments %}
+      <div class="container-fluid px-5 py-3 w-100 clearfix">
         <h3>Review by {{ comment.review.poster.username }} on
           {{ comment.review.game.name }}</h3>
-        <p>{{ comment.comment_text }}</p>
-        <button class="float-right btn btn-secondary"
-         type="submit" name="">View</button>
+          <p>{{ comment.comment_text }}</p>
+          <button class="float-right btn btn-secondary"
+            type="submit" name="">View</button>
+        </div>
+      {% endfor %}
+      <div class="row mt-3">
+        <div class="col-sm-2 mx-auto">
+          <button class="float-right btn btn-secondary"
+            type="submit" name="comments_button">More</button>
+        </div>
       </div>
-    {% endfor %}
-    <button class="float-right btn btn-secondary"
-      type="submit" name="comments_button">More</button>
-  {% else %}
-    <div class="container-fluid w-100">
-      <p><strong>User has not made any comments.</strong></p>
-    </div>
-  {% endif %}
+    {% else %}
+      <div class="container-fluid w-100">
+        <p><strong>User has not made any comments.</strong></p>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}
