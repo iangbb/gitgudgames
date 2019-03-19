@@ -11,8 +11,19 @@ from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsFo
     ReviewForm, GameForm, ImageForm
 
 
+# Helper method to obtain user profile, if they're logged in.
+def init_context_dict(request, heading):
+    context_dict = {'heading': heading}
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        profile_image_url = profile.profile_image.url
+        context_dict['profile_image_url'] = profile_image_url
+    except:
+        context_dict['profile_image_url'] = None
+    return context_dict
+
 def index(request):
-    context_dict = {'heading': "Gitgud Games"}
+    context_dict = init_context_dict(request, "Gitgud Games")
     # Add top 5 games
     games = Game.objects.order_by('-average_rating')[:5]
     context_dict['games'] = games
@@ -20,7 +31,7 @@ def index(request):
 
 
 def about(request):
-    context_dict = {'heading': "About Us"}
+    context_dict = init_context_dict(request, "About Us")
     return render(request, 'reviews/about.html', context=context_dict)
 
 
@@ -63,13 +74,19 @@ def games(request):
         games = Game.objects.all().order_by('-average_rating')
         sorting_order = '-average_rating'
 
-    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms, 'games': games,
-                    'platforms_checked': platforms_checked, 'genres_checked': genres_checked, 'order': sorting_order}
+    context_dict = init_context_dict(request, "Games")
+    context_dict['genres'] = genres
+    context_dict['platforms'] = platforms
+    context_dict['games'] = games
+    context_dict['platforms_checked'] = platforms_checked
+    context_dict['genres_checked'] = genres_checked
+    context_dict['order'] = sorting_order
+
     return render(request, 'reviews/games.html', context=context_dict)
 
 
 def game(request, game_slug):
-    context_dict = {}
+    context_dict = init_context_dict(request, "Game")
     try:
         game = Game.objects.get(slug=game_slug)
         # Filter only reviews relevant to this game
@@ -113,7 +130,9 @@ def add_game(request):
     else:
         game_form = GameForm()
 
-    context_dict = {'heading': "Add Game", 'game_form': game_form}
+    context_dict = init_context_dict(request, "Add Game")
+    context_dict['game_form'] = game_form
+
     return render(request, "reviews/add_game.html", context=context_dict)
 
 
@@ -157,7 +176,10 @@ def add_game_image(request, game_slug):
     else:
         image_form = ImageForm()
 
-    context_dict = {'heading': "Add Image", 'game': game, 'image_form': image_form}
+    context_dict = init_context_dict(request, "Add Image")
+    context_dict['game'] = game
+    context_dict['image_form'] = image_form
+
     return render(request, "reviews/add_image.html", context=context_dict)
 
 
@@ -193,14 +215,16 @@ def add_review(request, game_slug):
     else:
         review_form = ReviewForm()
 
-    context_dict = {'heading': "Add Review", 'review_form': review_form,
-                    'slug': game_slug}
+    context_dict = init_context_dict(request, "Add Review")
+    context_dict['review_form'] = review_form
+    context_dict['slug'] = game_slug
+
     return render(request, 'reviews/review.html', context=context_dict)
 
 
 # @login_required
 def profile(request, username):
-    context_dict = {'heading': 'Profile of ' + username}
+    context_dict = init_context_dict(request, 'Profile of ' + username)
 
     try:
         # Check if user is exists
@@ -315,9 +339,12 @@ def edit_profile(request, username):
             password_form = PasswordForm()
             biography_form = BiographyForm()
 
-            context_dict = {'heading': "Edit Profile", 'profile': profile,
-                'profile_image_form': profile_image_form, 'details_form': details_form,
-                'password_form': password_form, 'biography_form': biography_form }
+            context_dict = init_context_dict(request, "Edit Profile")
+            context_dict['profile'] = profile
+            context_dict['profile_image_form'] = profile_image_form
+            context_dict['details_form'] = details_form
+            context_dict['password_form'] = password_form
+            context_dict['biography_form'] = biography_form
 
         except User.DoesNotExist:
             return restricted(request, status=404, message="This user does not exist.")
@@ -353,7 +380,9 @@ def register(request):
     else:
         user_form = UserForm()
 
-    context_dict = {'heading': "Register", 'user_form': user_form}
+    context_dict = init_context_dict(request, "Register")
+    context_dict['user_form'] = user_form
+
     return render(request, 'reviews/register.html', context=context_dict)
 
 
@@ -392,7 +421,7 @@ def user_login(request):
 
             return response
 
-    context_dict = {'heading': "Login"}
+    context_dict = init_context_dict(request, "Login")
     if request.GET.get('next'):
         context_dict['next'] = request.GET.get('next')
 
@@ -400,10 +429,9 @@ def user_login(request):
 
 
 def restricted(request, status=403, message="You are not allowed to access this page"):
-    context_dict = {
-        'heading': "Restricted",
-        'message': message,
-    }
+    context_dict = init_context_dict(request, "Restricted")
+    context_dict['message'] = message
+
     return render(request, 'reviews/restricted.html', context=context_dict, status=status)
 
 
