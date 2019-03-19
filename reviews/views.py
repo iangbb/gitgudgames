@@ -166,6 +166,9 @@ def profile(request, username):
         try:
             profile = UserProfile.objects.get(user=user)
             context_dict['profile'] = profile
+            if profile.display_name is not None:
+                context_dict['heading'] = 'Profile of ' + profile.display_name
+
         except UserProfile.DoesNotExist:
             context_dict['profile'] = None
 
