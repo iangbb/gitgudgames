@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from reviews.models import User, UserProfile, Review
-from gitgudgames.settings import DATE_INPUT_FORMATS
+from gitgudgames.settings import DATE_FORMAT
 import datetime
 import os
 
@@ -55,9 +55,8 @@ class UserForm(forms.ModelForm):
 # Form to hole user's profile information
 class UserProfileForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16)
-    date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS)
+    date_of_birth = forms.DateField(input_formats=DATE_FORMAT)
     profile_image = forms.ImageField()
-    #date_of_birth = forms.DateField(input_formats=DATE_INPUT_FORMATS)
     biography = forms.CharField(max_length=1000)
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
 
@@ -93,26 +92,23 @@ class ProfileImageForm(forms.ModelForm):
 # Form for user to change their details
 class DetailsForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
+    date_of_birth = forms.DateField(widget=forms.DateInput(
+        format=DATE_FORMAT, attrs={'placeholder': 'dd/mm/yy'}),
+        input_formats=DATE_FORMAT, help_text="Date of Birth (Optional)")
     email = forms.EmailField(help_text="Email")
-    #date_of_birth = forms.DateField(
-    #    widget=forms.DateInput(format=DATE_INPUT_FORMATS,
-    #        attrs={'class': 'datepicker-input', 'placeholder': 'dd/mm/yy'}),
-    #    input_formats=DATE_INPUT_FORMATS,
-    #    help_text="Date of Birth")
 
     class Meta:
         model = UserProfile
-        fields = ('display_name', 'email',
-            #'date_of_birth',
-            )
+        fields = ('display_name', 'date_of_birth', 'email')
 
     def clean(self):
         cleaned_data = super(DetailsForm, self).clean()
         display_name = cleaned_data.get('display_name')
-        #date_of_birth = cleaned_data.get('date_of_birth')
+        date_of_birth = cleaned_data.get('date_of_birth')
+        print(str(date_of_birth))
 
         DetailsForm.validate_display_name(display_name)
-        #DetailsForm.validate_date_of_birth(date_of_birth)
+        DetailsForm.validate_date_of_birth(date_of_birth)
 
         return cleaned_data
 
@@ -122,16 +118,12 @@ class DetailsForm(forms.ModelForm):
             if len(display_name) > 16:
                 raise forms.ValidationError("Your display name is too long.")
 
-    #@staticmethod
-    #def validate_date_of_birth(date_of_birth):
-    #    print(str(date_of_birth))
-    #    if date_of_birth is not None:
-    #        today = datetime.date.today()
-    #        print(str(today))
-    #        print(str(date_of_birth.year) + ">" + str(today.year) + ": ")
-    #        print(str(date_of_birth.year > today.year))
-    #        if date_of_birth.year > today.year:
-    #            raise forms.ValidationError("Date of birth is set in the future.")
+    @staticmethod
+    def validate_date_of_birth(date_of_birth):
+        if date_of_birth is not None:
+            today = datetime.date.today()
+            if date_of_birth.year > today.year:
+                raise forms.ValidationError("Date of birth is set in the future.")
 
 
 # Form for user to change their password

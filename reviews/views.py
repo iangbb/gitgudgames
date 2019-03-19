@@ -184,12 +184,15 @@ def edit_profile(request, username):
         elif 'details_button' in request.POST:
             details_form = DetailsForm(data=request.POST)
 
+            print(request.POST.get('date_of_birth'))
+            print(str(details_form.data['date_of_birth']))
+
             # Check for form field validity
             if details_form.is_valid():
                 profile = UserProfile.objects.get(user=user)
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
-                #profile.date_of_birth = profile_form.data['date_of_birth']
+                profile.date_of_birth = request.POST.get('date_of_birth')
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")
