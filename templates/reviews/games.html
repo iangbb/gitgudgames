@@ -21,6 +21,7 @@
   <!-- Filtering options -->
   <div class="container-fluid py-5">
     <form action="{% url 'games' %}" method="POST" id="searchCriteria">
+      {% csrf_token %}
       <div class="form-row mb-5 clearfix">
         <!-- Genre -->
         <div class="col-sm-4 float-left">
@@ -28,8 +29,8 @@
           <fieldset>
           {% for genre in genres %}
             <li><input class="form-check-input" type="checkbox"
-              id="check{{ genre }}"/>
-            <label class="form-check-label" for="check{{ genre }}">
+              id="genre-{{ genre }}" name="genre-{{ genre }}" {% if genre in genres_checked %}checked=checked{% endif%} />
+            <label class="form-check-label" for="genre-{{ genre }}">
               {{ genre }}</label></li>
           {% endfor %}
           </fieldset>
@@ -41,8 +42,8 @@
           <fieldset>
           {% for platform in platforms %}
             <li><input class="form-check-input" type="checkbox"
-              id="check{{ platform }}"/>
-            <label class="form-check-label" for="check{{ platform }}">
+              id="platform-{{ platform }}" name="platform-{{ platform }}" {% if platform in platforms_checked %}checked=checked{% endif %}/>
+            <label class="form-check-label" for="platform-{{ platform }}">
               {{ platform }}</label></li>
           {% endfor %}
           </fieldset>
@@ -52,22 +53,22 @@
         <div class="col-sm-4 float-left">
           <h3>Order By:</h3>
           <fieldset>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioNameAsc" value="nameAsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioNameAsc" value="name" {% if order == "name" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioNameAsc">
               Name Ascending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioNameDsc" value="nameDsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioNameDsc" value="-name" {% if order == "-name" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioNameDsc">
               Name Decending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioRelAsc" value="relAsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioRelAsc" value="releaseDate" {% if order == "releaseDate" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioRelAsc">
-              Release Ascending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioRelDsc" value="RelDsc" />
+              Release Date Ascending</label></li>
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioRelDsc" value="-releaseDate" {% if order == "-releaseDate" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioRelDsc">
-              Release Descending</label></li>
+              Release Date Descending</label></li>
           </fieldset>
         </div>
       </div>
@@ -91,14 +92,14 @@
   <hr />
 
   <!-- Games list -->
-  <div class="container">
+  <div class="container-fluid py-5">
     <h3>Results:</h3>
     <div id="results">
       <!-- Display full list of games by default -->
       {% if games %}
         <ul>
           {% for game in games %}
-            <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a></li>
+            <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a> {{ game.average_rating }}</li>
           {% endfor %}
         </ul>
       {% else %}
