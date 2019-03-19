@@ -1,4 +1,4 @@
-''{% extends 'reviews/base.html' %}
+{% extends 'reviews/base.html' %}
 {% load staticfiles %}
 {% load review_tags %}
 
@@ -174,7 +174,7 @@
                                         <div class="row">\
                                             <div class="col">\
                                                 <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
-                                                <img src="../../media/' + data.reviews[i].profileImage + '" alt="Profile Image" style="width:50px;height:50px;">\
+                                                <img src="' + data.reviews[i].profile_image_url + '" alt="Profile Image" style="width:50px;height:50px;">\
                                             </div>\
                                             <div class="col">\
                                                 <div style="text-align:right" class="col">\

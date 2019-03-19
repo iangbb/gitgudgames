@@ -345,8 +345,13 @@ def ajax_get_reviews(request):
 
         for review in reviews[:3]:
             comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
-            userprofile = UserProfile.objects.filter(user=review.poster)
-            json['reviews'].append(review.as_json(userprofile[0],comments))
+            try:
+                user_profile = UserProfile.objects.get(user=review.poster)
+                profile_image_url = user_profile.profile_image.url
+                json['reviews'].append(review.as_json(comments, profile_image_url))
+            except UserProfile.DoesNotExist:
+                print("No user profile found for " + review.poster)
+                json['reviews'].append(review.as_json(comments))
 
         # Indicate if there are more reviews to retrieve
         if len(reviews) > 3:

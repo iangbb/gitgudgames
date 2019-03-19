@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from gitgudgames import settings
 
 
 class Game(models.Model):
@@ -70,9 +71,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-    def as_json(self):
-        return str(self.profile_image)
-
 
 class Review(models.Model):
     ONE_STAR = '1'
@@ -99,10 +97,11 @@ class Review(models.Model):
     def __str__(self):
         return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
 
-    def as_json(self, UserProfile, comments=[]):
+    # Returns a dictionary representation of the object for use in a JSON response
+    def as_json(self, comments=[], profile_image_url=settings.MEDIA_ROOT + "profile_images/gg_default.png"):
         return dict(id=self.id, poster=self.poster.username, game=self.game.id, review_text=self.review_text,
-                    rating=self.rating, post_datetime=self.post_datetime, votes=self.votes, profileImage=UserProfile.as_json(),
-                    comments=[comment.as_json() for comment in comments])
+                    rating=self.rating, post_datetime=self.post_datetime, votes=self.votes,
+                    profile_image_url=profile_image_url, comments=[comment.as_json() for comment in comments])
 
 
 class Comment(models.Model):
@@ -115,6 +114,7 @@ class Comment(models.Model):
     def __str__(self):
         return self.poster.username + " - " + self.review.game.name + " - " + str(self.post_datetime)
 
+    # Returns a dictionary representation of the object for use in a JSON response
     def as_json(self):
         return dict(id=self.id, poster=self.poster.id, review=self.review.id, comment_text=self.comment_text,
                     post_datetime=self.post_datetime, votes=self.votes,)
