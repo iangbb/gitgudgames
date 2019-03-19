@@ -24,9 +24,46 @@ def about(request):
 
 
 def games(request):
-    platforms = [platform[1] for platform in Game.PLATFORM]
-    genres = [genre[1] for genre in Game.GENRE]
-    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms}
+    platforms = [platform[1] for platform in Game.PLATFORM]  # Platform user-friendly names
+    genres = [genre[1] for genre in Game.GENRE]  # Genre user-friendly names
+    platforms_checked = []  # Track which platforms checkboxes are selected
+    genres_checked = []
+
+    if request.method == "POST":
+        platform_options = []
+        genre_options = []
+        sorting_order = request.POST.get('order')
+
+        # Find what platforms the user has selected
+        for platform in Game.PLATFORM:
+            if request.POST.get('platform-' + platform[1]):
+                platform_options.append(platform[0])
+                platforms_checked.append(platform[1])
+
+        # Default to all platforms if not specified
+        if len(platform_options) == 0:
+            platform_options = [platform[0] for platform in Game.PLATFORM]
+
+        # Same with genres
+        for genre in Game.GENRE:
+            if request.POST.get('genre-' + genre[1]):
+                genre_options.append(genre[0])
+                genres_checked.append(genre[1])
+
+        if len(genre_options) == 0:
+            genre_options = [genre[0] for genre in Game.GENRE]
+
+        # Default sorting order is highest rated first
+        if not sorting_order:
+            sorting_order = '-average_rating'
+
+        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options).order_by(sorting_order)
+    else:
+        games = Game.objects.all().order_by('-average_rating')
+        sorting_order = '-average_rating'
+
+    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms, 'games': games,
+                    'platforms_checked': platforms_checked, 'genres_checked': genres_checked, 'order': sorting_order}
     return render(request, 'reviews/games.html', context=context_dict)
 
 
