@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
 from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm,\
     ReviewForm, GameForm, ImageForm
+import datetime
 
 
 # Helper method to obtain user profile, if they're logged in.
@@ -40,11 +41,22 @@ def games(request):
     genres = [genre[1] for genre in Game.GENRE]  # Genre user-friendly names
     platforms_checked = []  # Track which platforms checkboxes are selected
     genres_checked = []
+    min_price = 0  # Default price values
+    max_price = 100
 
     if request.method == "POST":
         platform_options = []
         genre_options = []
         sorting_order = request.POST.get('order')
+        min_price = request.POST.get('min_price')
+        max_price = request.POST.get('max_price')
+
+        # Although these two fields should always be submitted, it's still better to handle this
+        if not min_price:
+            min_price = 100
+
+        if not max_price:
+            max_price = 100
 
         # Find what platforms the user has selected
         for platform in Game.PLATFORM:
@@ -69,7 +81,8 @@ def games(request):
         if not sorting_order:
             sorting_order = '-average_rating'
 
-        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options).order_by(sorting_order)
+        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
+                                    price__gte=min_price, price__lte=max_price).order_by(sorting_order)
     else:
         games = Game.objects.all().order_by('-average_rating')
         sorting_order = '-average_rating'
@@ -81,7 +94,9 @@ def games(request):
     context_dict['platforms_checked'] = platforms_checked
     context_dict['genres_checked'] = genres_checked
     context_dict['order'] = sorting_order
-
+    context_dict['min_price'] = min_price
+    context_dict['max_price'] = max_price
+    
     return render(request, 'reviews/games.html', context=context_dict)
 
 
@@ -279,15 +294,24 @@ def edit_profile(request, username):
         elif 'details_button' in request.POST:
             details_form = DetailsForm(data=request.POST)
 
-            print(request.POST.get('date_of_birth'))
-            print(str(details_form.data['date_of_birth']))
-
             # Check for form field validity
             if details_form.is_valid():
                 profile = UserProfile.objects.get(user=user)
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
-                profile.date_of_birth = request.POST.get('date_of_birth')
+
+                date_of_birth = request.POST.get('date_of_birth').split('/')
+                if len(date_of_birth) != 3:
+                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+                try:
+                    profile.date_of_birth = datetime.date(int(date_of_birth[2]), int(date_of_birth[1]),
+                                                          int(date_of_birth[0]))
+                except ValueError:
+                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")

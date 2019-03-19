@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from reviews.models import User, UserProfile, Review, Game, Image
-from gitgudgames.settings import DATE_FORMAT
+from gitgudgames import settings
 import datetime
 import os
 
@@ -56,7 +56,7 @@ class UserForm(forms.ModelForm):
 # Form to hole user's profile information
 class UserProfileForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16)
-    date_of_birth = forms.DateField(input_formats=DATE_FORMAT)
+    date_of_birth = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS)
     profile_image = forms.ImageField()
     biography = forms.CharField(max_length=1000)
     is_journalist = forms.BooleanField(widget=forms.HiddenInput())
@@ -93,9 +93,8 @@ class ProfileImageForm(forms.ModelForm):
 # Form for user to change their details
 class DetailsForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
-    date_of_birth = forms.DateField(widget=forms.DateInput(
-        format=DATE_FORMAT, attrs={'placeholder': 'dd/mm/yy'}),
-        input_formats=DATE_FORMAT, help_text="Date of Birth (Optional)")
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'dd/mm/yyyy'}),
+                                    input_formats=settings.DATE_INPUT_FORMATS, help_text="Date of Birth (Optional)")
     email = forms.EmailField(help_text="Email")
 
     class Meta:
@@ -106,7 +105,6 @@ class DetailsForm(forms.ModelForm):
         cleaned_data = super(DetailsForm, self).clean()
         display_name = cleaned_data.get('display_name')
         date_of_birth = cleaned_data.get('date_of_birth')
-        print(str(date_of_birth))
 
         DetailsForm.validate_display_name(display_name)
         DetailsForm.validate_date_of_birth(date_of_birth)
@@ -195,7 +193,8 @@ class ReviewForm(forms.ModelForm):
 
 
 class GameForm(forms.ModelForm):
-    releaseDate = forms.DateField(input_formats=DATE_FORMAT)
+    releaseDate = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'dd/mm/yyyy'}),
+                                  input_formats=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = Game
