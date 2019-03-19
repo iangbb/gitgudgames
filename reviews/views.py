@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
-from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm, ReviewForm
+from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm,\
+    ReviewForm, GameForm
 
 
 def index(request):
@@ -24,9 +25,46 @@ def about(request):
 
 
 def games(request):
-    platforms = [platform[1] for platform in Game.PLATFORM]
-    genres = [genre[1] for genre in Game.GENRE]
-    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms}
+    platforms = [platform[1] for platform in Game.PLATFORM]  # Platform user-friendly names
+    genres = [genre[1] for genre in Game.GENRE]  # Genre user-friendly names
+    platforms_checked = []  # Track which platforms checkboxes are selected
+    genres_checked = []
+
+    if request.method == "POST":
+        platform_options = []
+        genre_options = []
+        sorting_order = request.POST.get('order')
+
+        # Find what platforms the user has selected
+        for platform in Game.PLATFORM:
+            if request.POST.get('platform-' + platform[1]):
+                platform_options.append(platform[0])
+                platforms_checked.append(platform[1])
+
+        # Default to all platforms if not specified
+        if len(platform_options) == 0:
+            platform_options = [platform[0] for platform in Game.PLATFORM]
+
+        # Same with genres
+        for genre in Game.GENRE:
+            if request.POST.get('genre-' + genre[1]):
+                genre_options.append(genre[0])
+                genres_checked.append(genre[1])
+
+        if len(genre_options) == 0:
+            genre_options = [genre[0] for genre in Game.GENRE]
+
+        # Default sorting order is highest rated first
+        if not sorting_order:
+            sorting_order = '-average_rating'
+
+        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options).order_by(sorting_order)
+    else:
+        games = Game.objects.all().order_by('-average_rating')
+        sorting_order = '-average_rating'
+
+    context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms, 'games': games,
+                    'platforms_checked': platforms_checked, 'genres_checked': genres_checked, 'order': sorting_order}
     return render(request, 'reviews/games.html', context=context_dict)
 
 
@@ -51,6 +89,32 @@ def game(request, game_slug):
         return restricted(request, status=404, message="The game you requested could not be found")
 
     return render(request, 'reviews/game.html', context=context_dict)
+
+
+@login_required
+def add_game(request):
+    # Check if the logged in user is a journalist, reject if not
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+        if not user_profile.is_journalist:
+            return restricted(request)
+    except UserProfile.DoesNotExist:
+        return restricted(request)
+
+    if request.method == "POST":
+        game_form = GameForm(data=request.POST)
+        if game_form.is_valid():
+            # Add the game if the form is valid
+            game = game_form.save()
+            messages.success(request, "The game has been added")
+            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game.slug}))
+        else:
+            messages.error(request, "You submitted an invalid game")
+    else:
+        game_form = GameForm()
+
+    context_dict = {'heading': "Add Game", 'game_form': game_form}
+    return render(request, "reviews/add_game.html", context=context_dict)
 
 
 @login_required
@@ -102,6 +166,9 @@ def profile(request, username):
         try:
             profile = UserProfile.objects.get(user=user)
             context_dict['profile'] = profile
+            if profile.display_name is not None:
+                context_dict['heading'] = 'Profile of ' + profile.display_name
+
         except UserProfile.DoesNotExist:
             context_dict['profile'] = None
 

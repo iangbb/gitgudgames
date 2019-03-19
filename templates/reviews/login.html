@@ -15,22 +15,22 @@
     <form action="{% url 'login' %}" method="POST" id="loginForm">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}" />
-      <div class="form-row clearfix">
-        <fieldset class="my-5">
-          <div class="col-sm-4 px-0 float-left">
-            <label class="" for="usename">
-              Username</label>
-            <label class="" for="password">
-              Password</label>
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="usename">Username</label>
           </div>
-          <div class="col-sm-8 px-0 float-left">
-            <input class="" type="text"
+          <div class="col"><input class="" type="text"
               name="username" id="username">
-            <input class="" type="password"
-              name="password" id="password">
           </div>
-        </fieldset>
-      </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="password">Password</label>
+          </div>
+          <div class="col"><input class="" type="password"
+            name="password" id="password">
+          </div>
+        </div>
       <p class="">Not registered?</p>
       <div class="form-row clearfix">
         <button class="float-left btn btn-secondary" type="button"

@@ -52,6 +52,11 @@ li {
   width: 100%;
 }
 
+.nav-item img {
+  max-width: 50px;
+  max-height: 50px;
+}
+
 /* Main content area */
 #content {
   min-height: 500px;

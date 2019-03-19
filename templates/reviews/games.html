@@ -21,65 +21,68 @@
   <!-- Filtering options -->
   <div class="container-fluid py-5">
     <form action="{% url 'games' %}" method="POST" id="searchCriteria">
-      <div class="form-row mb-5 clearfix">
+      {% csrf_token %}
+      <div class="row mb-5">
         <!-- Genre -->
-        <div class="col-sm-4 float-left">
+        <div class="col">
           <h3>Genres:</h3>
-          <fieldset>
           {% for genre in genres %}
             <li><input class="form-check-input" type="checkbox"
-              id="check{{ genre }}"/>
-            <label class="form-check-label" for="check{{ genre }}">
+              id="genre-{{ genre }}" name="genre-{{ genre }}" {% if genre in genres_checked %}checked=checked{% endif%} />
+            <label class="form-check-label" for="genre-{{ genre }}">
               {{ genre }}</label></li>
           {% endfor %}
-          </fieldset>
         </div>
 
         <!-- Platform -->
-        <div class="col-sm-4 float-left">
+        <div class="col">
           <h3>Platforms:</h3>
-          <fieldset>
           {% for platform in platforms %}
             <li><input class="form-check-input" type="checkbox"
-              id="check{{ platform }}"/>
-            <label class="form-check-label" for="check{{ platform }}">
+              id="platform-{{ platform }}" name="platform-{{ platform }}" {% if platform in platforms_checked %}checked=checked{% endif %}/>
+            <label class="form-check-label" for="platform-{{ platform }}">
               {{ platform }}</label></li>
           {% endfor %}
-          </fieldset>
         </div>
 
         <!-- Order by -->
-        <div class="col-sm-4 float-left">
+        <div class="col">
           <h3>Order By:</h3>
-          <fieldset>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioNameAsc" value="nameAsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioNameAsc" value="name" {% if order == "name" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioNameAsc">
               Name Ascending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioNameDsc" value="nameDsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioNameDsc" value="-name" {% if order == "-name" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioNameDsc">
               Name Decending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioRelAsc" value="relAsc" />
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioRelAsc" value="releaseDate" {% if order == "releaseDate" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioRelAsc">
-              Release Ascending</label></li>
-            <li><input class="form-check-input "type="radio" name="radioOrder"
-              id="radioRelDsc" value="RelDsc" />
+              Release Date Ascending</label></li>
+            <li><input class="form-check-input" type="radio" name="order"
+              id="radioRelDsc" value="-releaseDate" {% if order == "-releaseDate" %}checked=checked{% endif %} />
             <label class="form-check-label" for="radioRelDsc">
-              Release Descending</label></li>
-          </fieldset>
+              Release Date Descending</label></li>
         </div>
       </div>
 
       <!-- Price Slider -->
-      <!--<div class="form-row">
-        <h3>Price:</h3>
-        <label for="rangePrice" class="float-left">£0</label>
-        <label for="rangePrice" class="float-right">£100</label>
-        <input type="range" id="rangePrice" class="w-100"
-          min="0" max="100" value="50" />
-      </div>-->
+      <h3>Price:</h3>
+      <div class="row mb-5 mx-auto">
+        <div class="col">
+          <div class="row">
+            <div class="">£0</div>
+            <div class="float-right">£100</div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="range" id="rangePrice" class="w-100"
+              min="0" max="100" value="50" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Submit Button -->
       <div class="form-row text-center clearfix">
@@ -91,19 +94,21 @@
   <hr />
 
   <!-- Games list -->
-  <div class="container">
-    <h3>Results:</h3>
-    <div id="results">
-      <!-- Display full list of games by default -->
-      {% if games %}
-        <ul>
-          {% for game in games %}
-            <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a></li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <strong>There are no games present.</strong>
-      {% endif %}
-    </div>
+  <h3>Results:</h3>
+  <div id="container results">
+    <!-- Display list of games that meet search criteria -->
+    {% if games %}
+      {% for game in games %}
+        <a href="{% url 'game' game.slug %}">
+          <div class="container-fluid my-2">
+            <h3>{{ game.name }}</h3>
+            <div class="">{{ game.average_rating }}</div>
+            <p>{{ game.description }}</p>
+          </div>
+        </a>
+      {% endfor %}
+    {% else %}
+      <strong>No games fit the search criteria.</strong>
+    {% endif %}
   </div>
 {% endblock %}

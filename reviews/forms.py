@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
-from reviews.models import User, UserProfile, Review
+from reviews.models import User, UserProfile, Review, Game
 from gitgudgames.settings import DATE_INPUT_FORMATS
 import datetime
 import os
+
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(max_length=128, help_text="Username", required=True)
@@ -199,3 +200,17 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ('rating', 'review_text')
+
+
+class GameForm(forms.ModelForm):
+    releaseDate = forms.DateField(input_formats=DATE_INPUT_FORMATS)
+
+    class Meta:
+        model = Game
+        fields = ('name', 'description', 'releaseDate', 'publisher', 'developer', 'platform', 'genre', 'age_rating',
+                  'price')
+
+    def __init__(self, *args, **kwargs):
+        super(GameForm, self).__init__(*args, **kwargs)
+        for field in self.visible_fields():
+            field.field.widget.attrs['class'] = "form-control"
