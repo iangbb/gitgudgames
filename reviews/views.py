@@ -43,20 +43,24 @@ def games(request):
     genres_checked = []
     min_price = 0  # Default price values
     max_price = 100
+    search = ""
 
     if request.method == "POST":
         platform_options = []
         genre_options = []
+
         sorting_order = request.POST.get('order')
         min_price = request.POST.get('min_price')
         max_price = request.POST.get('max_price')
+        search_terms = request.POST.get('search').split(" ")
 
+        # Defined at top
         # Although these two fields should always be submitted, it's still better to handle this
-        if not min_price:
-            min_price = 100
+        #if not min_price:
+        #    min_price = 0
 
-        if not max_price:
-            max_price = 100
+        #if not max_price:
+        #    max_price = 100
 
         # Find what platforms the user has selected
         for platform in Game.PLATFORM:
@@ -81,8 +85,16 @@ def games(request):
         if not sorting_order:
             sorting_order = '-average_rating'
 
-        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
+        # Do different Query base on on search bar status
+        if len(search_terms) == 0:
+            games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
                                     price__gte=min_price, price__lte=max_price).order_by(sorting_order)
+        else:
+            for word in search_terms:
+                games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
+                            price__gte=min_price, price__lte=max_price,
+                            name__icontains=word, description__icontains=word).order_by(sorting_order)
+
     else:
         games = Game.objects.all().order_by('-average_rating')
         sorting_order = '-average_rating'
@@ -96,7 +108,8 @@ def games(request):
     context_dict['order'] = sorting_order
     context_dict['min_price'] = min_price
     context_dict['max_price'] = max_price
-    
+    context_dict['search'] = search
+
     return render(request, 'reviews/games.html', context=context_dict)
 
 
