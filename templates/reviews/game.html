@@ -10,28 +10,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/game.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'js/game.js' %}"></script>
 {% endblock %}
 
 {% block body_block %}
-<script>
-    var startval = 0;
-</script>
     <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
                 <div class="col">
-                    <h1 style="color:#2d2d2d" class="gameName">
+                    <h1 class="gameName">
                         {{ game.name }}
                     </h1>
                 </div>
-                <div style="text-align:right" class="col-2">
+                <div class="col-2">
                     <h1>
                       <div class="stars-outer">
-                        <div id="{{ game.average_rating }}" class="stars-inner"></div>
+                        <div gameScore='{{ game.average_rating }}'id="gameStars" class="stars-inner"></div>
                       </div>
-                        <script type="text/javascript">
-                            document.getElementById("{{ game.average_rating }}").style.width = ({{ game.average_rating }} * 20) + "%";
-                        </script>
                     </h1>
                 </div>
             </div>
@@ -74,67 +69,67 @@
     </div>
 
     <!-- Details box -->
-    <div style="color:#2d2d2d;" class="container-fluid">
-        <div style="margin:auto" class="jumbotron fluid-jumbotron w-75">
-            <h1 class="display-6">Details</h1>
+    <div class="container-fluid">
+        <div class="jumbotron w-75">
+            <h1 class="detailsName">Details</h1>
             <div class="row">
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Description</div>
+                <div class="row w-50">
+                    <div class="col head">Description</div>
                     <div class="col">{{ game.description }}</div>
                 </div>
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Release Date</div>
+                <div class="row w-50">
+                    <div class="col head">Release Date</div>
                     <div class="col">{{ game.releaseDate }}</div>
                 </div>
             </div>
             <br>
             <div class="row">
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Publisher</div>
+                <div class="row w-50">
+                    <div class="col head">Publisher</div>
                     <div class="col">{{ game.publisher }}</div>
                 </div>
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Developer</div>
+                <div class="row w-50">
+                    <div class="col head">Developer</div>
                     <div class="col">{{ game.developer }}</div>
                 </div>
             </div>
             <br>
             <div class="row">
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Platform</div>
+                <div class="row w-50">
+                    <div class="col head">Platform</div>
                     <div class="col">{{ game.platform }}</div>
                 </div>
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Genre</div>
+                <div class="row w-50">
+                    <div class="col head">Genre</div>
                     <div class="col">{{ game.genre }}</div>
                 </div>
             </div>
             <br>
             <div class="row">
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Age Rating</div>
+                <div class="row w-50">
+                    <div class="col head">Age Rating</div>
                     <div class="col">{{ game.age_rating }}</div>
                 </div>
                 {% if game.price %}
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Price</div>
+                <div class="row w-50">
+                    <div class="col head">Price</div>
                     <div class="col">£{{ game.price }}</div>
                 </div>
                 {% else %}
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Price</div>
+                <div class="row w-50">
+                    <div class="col head">Price</div>
                     <div class="col">Free</div>
                 </div>
                 {% endif %}
             </div>
             <br>
             <div class="row">
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Average Rating</div>
+                <div class="row w-50">
+                    <div class="col head">Average Rating</div>
                     <div class="col">{{ game.average_rating|floatformat:1 }}</div>
                 </div>
-                <div style="margin:auto" class="row w-50">
-                    <div style="text-align:right" class="col">Number Of Ratings</div>
+                <div class="row w-50">
+                    <div class="col head">Number Of Ratings</div>
                     <div class="col">{{ game.number_ratings }}</div>
                 </div>
             </div>
@@ -142,72 +137,29 @@
     <!-- Reviews -->
     {% if reviews %}
     <br>
-    <div class="container" style="background-color:#aaaaaa;">
-    <div class="reviewContainer">
-      <h2 style="text-align:left">
-        Reviews
-        {% if user.is_authenticated %}
-          <button class="float-right btn btn-secondary" type="button"
-              onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+    <div class="jumbotron reviews">
+        <div class="reviewContainer">
+          <h1 class="gameName">
+            Reviews
+            {% if user.is_authenticated %}
+              <button class="float-right btn btn-secondary" type="button"
+                  onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+            {% endif %}
+          </h1>
+          </div>
+          <div class="getmorereviews">
+              <button type="button" data-gameid="{{ game.id }}" data-start="3" class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
+          </div>
+        {% else %}
+            {% if user.is_authenticated %}
+                <div>
+                <br>
+                <button type="button" class="btn btn-secondary btn-lg btn-block"
+                onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+            {% endif %}
         {% endif %}
-      </h2>
-      </div>
-      <br>
-      <div class="getmorereviews">
-      <button type="button" data-gameid="{{ game.id }}" data-start="3"
-      class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
-      </div>
-      <script>
-          $( document ).ready(function() {
-              $( ".get-reviews" ).trigger( "click" );
-          });
-          $('.get-reviews').click(function(){
-              var gameid = $(this).attr("data-gameid");
-            $.getJSON('/ajax/get_reviews/', {game: gameid, start: startval}, function (data, textStatus, jqXHR){
-                console.log(data);
-                startval = startval + 3;
-                console.log(startval);
-                var parser = new DOMParser();
-                for (i = 0; i < data.reviews.length; i++) {
-                    console.log(data.reviews[i])
-                    var domString = '<div class="jumbotron">\
-                                        <div class="row">\
-                                            <div class="col">\
-                                                <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
-                                                <img src="' + data.reviews[i].profile_image_url + '" alt="Profile Image" style="width:50px;height:50px;">\
-                                            </div>\
-                                            <div class="col">\
-                                                <div style="text-align:right" class="col">\
-                                                    <h3>\
-                                                        <div>\
-                                                            <div class="stars-outer">\
-                                                                <div style="width:' + data.reviews[i].rating * 20 + '%" class="stars-inner"></div>\
-                                                            </div>\
-                                                        </div>\
-                                                    </h3>\
-                                                </div>\
-                                            </div>\
-                                        </div>\
-                                        <br>\
-                                        <p>' + data.reviews[i].review_text + '</p>\
-                                    </div>';
-                    var html = parser.parseFromString(domString, 'text/html');
-                    $('.reviewContainer').append(html.body.firstChild);
-                    if (data.more == false) {
-                        $('.getmorereviews').hide();
-                    }
-                }
-        });
-                                });
-      </script>
-    {% else %}
-        {% if user.is_authenticated %}
-            <div>
-            <br>
-            <button type="button" class="btn btn-secondary btn-lg btn-block"
-            onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
-        {% endif %}
-    {% endif %}
+        </div>
+    </div>
     </div>
     </div>
 {% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'reviews/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  {{ heading }}
+{% endblock %}
+
+{% block stylesheets_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block body_block %}
+  <h1>Add Game</h1>
+  <div class="container-fluid col-sm-8 p-5 mx-auto">
+    <form action="{% url 'add_game' %}" method="post" id="game">
+      {% csrf_token %}
+      <div class="form-row clearfix">
+        <fieldset class="my-5">
+          <div class="col-sm-4 px-0 float-left">
+            <label class="pad-bottom-form-label" for="{{ game_form.name.id_for_label }}">Name</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.description.id_for_label }}">Description</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.releaseDate.id_for_label }}">Release Date</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.publisher.id_for_label }}">Publisher</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.developer.id_for_label }}">Developer</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.platform.id_for_label }}">Platform</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.genre.id_for_label }}">Genre</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.age_rating.id_for_label }}">Age Rating</label>
+            <label class="pad-bottom-form-label" for="{{ game_form.price.id_for_label }}">Price</label>
+          </div>
+          <div class="col-sm-8 px-0 float-left">
+            {{ game_form.name }}
+            {% if game_form.name.errors %}
+              <div class="text-danger">
+              {{ game_form.name.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.description }}
+            {% if game_form.description.errors %}
+              <div class="text-danger">
+              {{ game_form.description.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.releaseDate }}
+            {% if game_form.releaseDate.errors %}
+              <div class="text-danger">
+              {{ game_form.releaseDate.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.publisher }}
+            {% if game_form.publisher.errors %}
+              <div class="text-danger">
+              {{ game_form.publisher.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.developer }}
+            {% if game_form.developer.errors %}
+              <div class="text-danger">
+              {{ game_form.developer.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.platform }}
+            {% if game_form.platform.errors %}
+              <div class="text-danger">
+              {{ game_form.platform.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.genre }}
+            {% if game_form.genre.errors %}
+              <div class="text-danger">
+              {{ game_form.genre.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.age_rating }}
+            {% if game_form.age_rating.errors %}
+              <div class="text-danger">
+              {{ game_form.age_rating.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+            {{ game_form.price }}
+            {% if game_form.price.errors %}
+              <div class="text-danger">
+              {{ game_form.price.errors|striptags }}
+            {% else %}
+              <div class="invisible">
+                &nbsp;
+            {% endif %}
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="form-row clearfix">
+        <button class="float-right btn btn-secondary" type="submit"
+            form="game">Submit</button>
+      </div>
+  </form>
+  </div>
+{% endblock %}
+

@@ -15,3 +15,7 @@ label {
 button {
   width: 20%;
 }
+
+.pad-bottom-form-label {
+  padding: 0.35rem 0.75rem;
+}
