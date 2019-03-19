@@ -84,5 +84,11 @@ img {
 }
 
 .jumbotron.reviews {
-    background-color : #aaaaaa
+    background-color : #aaaaaa;
+}
+
+.jumbotron.comments {
+    background-color: #a0a0a0;
+    padding: 10px 10px;
+    margin: auto auto 10px auto;
 }
