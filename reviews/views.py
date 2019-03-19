@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
 from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm,\
     ReviewForm, GameForm, ImageForm
+import datetime
 
 
 def index(request):
@@ -268,15 +269,24 @@ def edit_profile(request, username):
         elif 'details_button' in request.POST:
             details_form = DetailsForm(data=request.POST)
 
-            print(request.POST.get('date_of_birth'))
-            print(str(details_form.data['date_of_birth']))
-
             # Check for form field validity
             if details_form.is_valid():
                 profile = UserProfile.objects.get(user=user)
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
-                profile.date_of_birth = request.POST.get('date_of_birth')
+
+                date_of_birth = request.POST.get('date_of_birth').split('/')
+                if len(date_of_birth) != 3:
+                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+                try:
+                    profile.date_of_birth = datetime.date(int(date_of_birth[2]), int(date_of_birth[1]),
+                                                          int(date_of_birth[0]))
+                except ValueError:
+                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")
