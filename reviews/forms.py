@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from reviews.models import User, UserProfile, Review, Game
+from reviews.models import User, UserProfile, Review, Game, Image
 from gitgudgames.settings import DATE_INPUT_FORMATS
 import datetime
 import os
@@ -214,3 +214,11 @@ class GameForm(forms.ModelForm):
         super(GameForm, self).__init__(*args, **kwargs)
         for field in self.visible_fields():
             field.field.widget.attrs['class'] = "form-control"
+
+
+class ImageForm(forms.ModelForm):
+    image = forms.ImageField(required=False)
+
+    class Meta:
+        model = Image
+        fields = ('image',)

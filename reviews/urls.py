@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^games/add_game/$', views.add_game, name='add_game'),
     url(r'^games/(?P<game_slug>[\w\-]+)/$', views.game, name='game'),
     url(r'^games/(?P<game_slug>[\w\-]+)/add_review/$', views.add_review, name='add_review'),
+    url(r'^games/(?P<game_slug>[\w\-]+)/add_image/$', views.add_game_image, name='add_game_image'),
     # User urls
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.user_login, name='login'),
