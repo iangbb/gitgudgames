@@ -16,8 +16,9 @@ $('.get-reviews').click(function() {
             const domString = '<div class="jumbotron">\
                               <div class="row">\
                                   <div class="col">\
-                                      <h3 class="gameName">' + data.reviews[i].poster + '</h3>\
+                                      <h3 class="gameName">' + data.reviews[i].poster + '\
                                       <img class="profilePicture" src="' + data.reviews[i].profile_image_url + '" alt="Profile Image">\
+                                      </h3>\
                                   </div>\
                                   <div class="col">\
                                       <div class="col">\
@@ -42,8 +43,6 @@ $('.get-reviews').click(function() {
             }
             const starwidth = (data.reviews[i].rating * 20 + "%");
             $("#" + data.reviews[i].id + "").width(starwidth);
-            $(".profilePicture").width("50px");
-            $(".profilePicture").height("50px");
         }
     });
 });
