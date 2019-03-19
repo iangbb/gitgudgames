@@ -193,7 +193,8 @@ class ReviewForm(forms.ModelForm):
 
 
 class GameForm(forms.ModelForm):
-    releaseDate = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    releaseDate = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'dd/mm/yyyy'}),
+                                  input_formats=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = Game
