@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
-from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm, ReviewForm
+from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm,\
+    ReviewForm, GameForm
 
 
 def index(request):
@@ -88,6 +89,32 @@ def game(request, game_slug):
         return restricted(request, status=404, message="The game you requested could not be found")
 
     return render(request, 'reviews/game.html', context=context_dict)
+
+
+@login_required
+def add_game(request):
+    # Check if the logged in user is a journalist, reject if not
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+        if not user_profile.is_journalist:
+            return restricted(request)
+    except UserProfile.DoesNotExist:
+        return restricted(request)
+
+    if request.method == "POST":
+        game_form = GameForm(data=request.POST)
+        if game_form.is_valid():
+            # Add the game if the form is valid
+            game = game_form.save()
+            messages.success(request, "The game has been added")
+            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game.slug}))
+        else:
+            messages.error(request, "You submitted an invalid game")
+    else:
+        game_form = GameForm()
+
+    context_dict = {'heading': "Add Game", 'game_form': game_form}
+    return render(request, "reviews/add_game.html", context=context_dict)
 
 
 @login_required
