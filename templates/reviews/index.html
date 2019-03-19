@@ -15,34 +15,17 @@
 
   <!-- Heading and welcome message -->
   <h1>{{ heading }}</h1>
-  {% if user.is_authenticated %}
+  <div class="container-fluid text-center p-5">
+    {% if user.is_authenticated %}
     Greetings {{ user.username }}!
-  {% else %}
+    {% else %}
     Greetings?
-  {% endif %}
-
-  <!-- Development Only -->
-  <h2>Development Pages:</h2>
-  <div class="container-fluid w-75">
-    <ul>
-      <li><a href="{% url 'game' 'test' %}">Game Page</a></li>
-      {% if user.is_authenticated %}
-        <li><a href="{% url 'profile' user.username %}">Profile Page</a></li>
-        <li><a href="{% url 'edit_profile' user.username %}">Profile Edit Page</a></li>
-      {% else %}
-        <li><a href="{% url 'profile' 'anonymous' %}">Profile Page</a></li>
-        <li><a href="{% url 'edit_profile' 'anonymous' %}">Profile Edit Page</a></li>
-      {% endif %}
-      <li><a href="{% url 'register' %}">Register Page</a></li>
-      <li><a href="{% url 'login' %}">Login Page</a></li>
-      <li><a href="{% url 'restricted' %}">Restricted Page</a></li>
-      <li><a href="{% url 'add_review' 'test' %}">Review Page</a></li>
-    </ul>
+    {% endif %}
   </div>
 
   <!-- Show top 5 games -->
   <h2>Top 5 games:</h2>
-  <div class="container-fluid w-75">
+  <div class="container-fluid p-5">
     {% if games %}
       <ul>
         {% for game in games %}
