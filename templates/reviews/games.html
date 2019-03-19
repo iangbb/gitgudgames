@@ -69,18 +69,16 @@
 
       <!-- Price Slider -->
       <h3>Price:</h3>
-      <div class="row mb-5 mx-auto">
+      <div class="row mb-5 w-50 mx-auto">
         <div class="col">
-          <div class="row">
-            <div class="">£0</div>
-            <div class="float-right">£100</div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <input type="range" id="rangePrice" class="w-100"
-              min="0" max="100" value="50" />
-            </div>
-          </div>
+          <label for="min_price">Min:</label>
+          <input type="number" name="min_price" value="0"
+            class="w-75">
+        </div>
+        <div class="col">
+          <label for="max_price">Max:</label>
+          <input type="number" name="max_price" value="100"
+            class="w-75">
         </div>
       </div>
 
