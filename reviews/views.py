@@ -29,11 +29,22 @@ def games(request):
     genres = [genre[1] for genre in Game.GENRE]  # Genre user-friendly names
     platforms_checked = []  # Track which platforms checkboxes are selected
     genres_checked = []
+    min_price = 0  # Default price values
+    max_price = 100
 
     if request.method == "POST":
         platform_options = []
         genre_options = []
         sorting_order = request.POST.get('order')
+        min_price = request.POST.get('min_price')
+        max_price = request.POST.get('max_price')
+
+        # Although these two fields should always be submitted, it's still better to handle this
+        if not min_price:
+            min_price = 100
+
+        if not max_price:
+            max_price = 100
 
         # Find what platforms the user has selected
         for platform in Game.PLATFORM:
@@ -58,13 +69,15 @@ def games(request):
         if not sorting_order:
             sorting_order = '-average_rating'
 
-        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options).order_by(sorting_order)
+        games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
+                                    price__gte=min_price, price__lte=max_price).order_by(sorting_order)
     else:
         games = Game.objects.all().order_by('-average_rating')
         sorting_order = '-average_rating'
 
     context_dict = {'heading': "Games", 'genres': genres, 'platforms': platforms, 'games': games,
-                    'platforms_checked': platforms_checked, 'genres_checked': genres_checked, 'order': sorting_order}
+                    'platforms_checked': platforms_checked, 'genres_checked': genres_checked, 'order': sorting_order,
+                    'min_price': min_price, 'max_price': max_price}
     return render(request, 'reviews/games.html', context=context_dict)
 
 
