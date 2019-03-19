@@ -1,7 +1,11 @@
 .gameName {
+    color: #2d2d2d;
+    text-align: left;
     padding: 10px 10px 10px;
-    float: left;
-    color:#2d2d2d;
+}
+
+.detailsName {
+    padding: 10px 10px 10px;
 }
 
 /* Styling for checked stars */
@@ -11,11 +15,13 @@
 
 .container-fluid {
     padding: 20px 50px;
+    margin: auto;
+    color: #2d2d2d;
 }
 
 .jumbotron {
     padding: 20px 50px;
-    background-color: #dddddd;
+    margin: auto auto 10px auto;
 }
 
 .profilePic {
@@ -24,27 +30,36 @@
 }
 
 .stars-outer {
-  display: inline-block;
-  position: relative;
-  font-family: FontAwesome;
+    text-align: right;
+    float: right;
+    display: inline-block;
+    position: relative;
+    font-family: FontAwesome;
 }
 
 .stars-outer::before {
-  content: "\f006 \f006 \f006 \f006 \f006";
+    content: "\f006 \f006 \f006 \f006 \f006";
 }
 
 .stars-inner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 50%;
+    float: right;
+    text-align: right;
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 50%;
 }
 
 .stars-inner::before {
-  content: "\f005 \f005 \f005 \f005 \f005";
-  color: #f8ce0b;
+    content: "\f005 \f005 \f005 \f005 \f005";
+    color: #f8ce0b;
+}
+
+.profilePicture {
+    width: 100px;
+    height: 100px;
 }
 
 img {
@@ -55,4 +70,20 @@ img {
     width: 50px;
     height: 50px;
     object-fit: contain;
+}
+
+.ratingstars {
+    color: #4C3F12;
+}
+
+.row {
+    margin: auto;
+}
+
+.col.head {
+    text-align: right;
+}
+
+.jumbotron.reviews {
+    background-color : #aaaaaa
 }
