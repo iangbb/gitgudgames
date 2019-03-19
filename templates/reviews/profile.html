@@ -18,7 +18,7 @@
   {% endif %}
   <!-- User details and biography -->
   <h2>Details</h2>
-  <div class="row clearfix">
+  <div class="row w-75 mx-auto clearfix">
     <div class="col-sm-4">
       <div class="container-fluid p-5">
         {% if profile.profile_image %}
@@ -34,7 +34,7 @@
           <li>Name: {{ profile.display_name }}</li>
           <li>Email: {{ profile.user.email }}</li>
           <li>Date Of Birth: {{ profile.date_of_birth }}</li>
-          <li>Journalist: {{ profile.is_journalist }}</li>
+          <li>Journalist: {{ profile.is_journalist }}</li><br />
           <li>Joined: {{ profile.user.date_joined }}</li>
           <li>Last Login: {{ profile.user.last_login }}</li>
         </ul>
@@ -42,7 +42,7 @@
     </div>
   </div>
   <h2>Biography</h2>
-  <div class="container-fluid w-100 clearfix">
+  <div class="container-fluid mx-auto">
     <p>{{ profile.biography }}</p>
   </div>
 
