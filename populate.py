@@ -24,8 +24,8 @@ def populate():
             "developer": "a game developer",
             "platform": Game.PC,
             "genre": Game.ACTION,
-            "average_rating": 4.5,
-            "number_reviews": 2,
+            "average_rating": 3.43,
+            "number_reviews": 7,
         },
         {
             "name": "An Adventure Game",
