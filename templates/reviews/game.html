@@ -152,7 +152,7 @@
           </h1>
           </div>
           <div class="getmorereviews">
-              <button type="button" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
+              <button type="button" data-csrftoken="{% csrf_token %}" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
               data-postComment class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
           </div>
         {% else %}

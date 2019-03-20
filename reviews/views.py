@@ -548,10 +548,10 @@ def ajax_add_comment(request):
         return ajax_error(message="A POST request was expected", status=405)
 
     review_id = request.POST.get('review')
-    comment_text = request.POST.get('comment_text')
+    comment_text = request.POST.get('comment_text', "")
 
     # Confirm data has been provided
-    if not review_id or not comment_text:
+    if not review_id:
         return ajax_error()
 
     # Perform validation on comment text, returning JSON error if invalid
@@ -570,7 +570,7 @@ def ajax_add_comment(request):
         if display_name is None:
             display_name = comment.poster.username
         profile_image_url = user_profile.profile_image.url
-        
+
         return JsonResponse({'success': True, 'comment': comment.as_json(display_name, profile_image_url)})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)

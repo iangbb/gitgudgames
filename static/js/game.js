@@ -47,7 +47,14 @@ $('.get-reviews').click(function() {
                               <button type="button" data-reviewid="' + data.reviews[i].id + '" class="get-comments review' + data.reviews[i].id + ' float-left btn btn-secondary btn-lg">Get comments</button>\
                               </div>\
                               <div class="col">\
-                              <button type="button"class="add-comment float-right btn btn-secondary btn-lg">Add comment</button>\
+                              <form>\
+                                <div class="form-group">\
+                                    <textarea class="form-control" id="addcomment' + data.reviews[i].id + '" rows = "3" placeholder="Enter your comment here"></textarea>\
+                                </div>\
+                              <div class="text-danger error-' + data.reviews[i].id + ' float-right">\
+                              </div>\
+                              <button type="button" data-reviewid="' + data.reviews[i].id + '" class="add-comment float-right btn btn-secondary btn-lg">Add comment</button>\
+                              </form>\
                               </div>\
                               </div>\
                               </div>\
@@ -86,7 +93,8 @@ $(document).on("click", ".get-comments" , function() {
                 console.log(data);
                 const parser = new DOMParser();
                 for (i = 0; i < data.comments.length; i++) {
-                    const domString = '<div class="jumbotron comments">\
+                    if (!($('.' + data.comments[i].id).length)){
+                    const domString = '<div class="jumbotron comments ' + data.comments[i].id +'">\
                                       <div class="row">\
                                           <div class="col">\
                                               <h3 class="gameName">' + data.comments[i].poster + '\
@@ -101,10 +109,114 @@ $(document).on("click", ".get-comments" , function() {
                     $('.' + reviewid).append(html.body.firstChild);
 
                     }
+                }
                     if (data.more == false) {
                         console.log('.get-comments.review' + reviewid);
                         $('.get-comments.review' + reviewid).hide();
                 }
         });
         });
+
+$(document).on("click", ".add-comment" , function() {
+    const reviewid = $(this).attr("data-reviewid");
+    const commentText = $("#addcomment" + reviewid).val();
+    $.ajax({
+        url : '/ajax/add_comment/',
+        type : 'POST',
+        data : { review : reviewid, comment_text : commentText},
+
+        success : function(data) {
+            console.log("Success");
+            console.log(data);
+            $('.add-comment').hide();
+            $("#addcomment" + reviewid).hide();
+            $('.error-' + reviewid).hide();
+
+
+            const parser = new DOMParser();
+            const domString = '<div class="jumbotron comments ' + data.comment.id +'">\
+                              <div class="row">\
+                                  <div class="col">\
+                                      <h3 class="gameName">' + data.comment.poster + '\
+                                      <img class="profilePicture" src="' + data.comment.profile_image_url + '" alt="Profile Image">\
+                                      </h3>\
+                                  </div>\
+                              </div>\
+                              <p>' + data.comment.comment_text + '</p>\
+                          </div>';
+            const html = parser.parseFromString(domString, 'text/html');
+
+            $('.' + reviewid).append(html.body.firstChild);
+
+
+
+
+        },
+
+        error : function(xhr, errmsg, err){
+            console.log(xhr.status);
+            console.log(errmsg);
+            console.log(err);
+            $('.error-' + reviewid).html(JSON.parse(xhr.responseText).error);
+        }
+
+});
+
+});
+});
+
+$(function() {
+
+
+    // This function gets cookie with a given name
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    /*
+    The functions below will create a header with csrftoken
+    */
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
 });
