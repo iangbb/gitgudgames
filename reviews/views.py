@@ -19,6 +19,8 @@ def init_context_dict(request, heading):
         profile = UserProfile.objects.get(user=request.user)
         profile_image_url = profile.profile_image.url
         context_dict['profile_image_url'] = profile_image_url
+        is_journalist = profile.is_journalist
+        context_dict['is_journalist'] = is_journalist
     except:
         context_dict['profile_image_url'] = None
     return context_dict

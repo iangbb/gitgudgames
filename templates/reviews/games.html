@@ -73,7 +73,7 @@
         </div>
       </div>
 
-      <!-- Price Slider -->
+      <!-- Price Range -->
       <div class="row mb-5 w-100 mx-auto">
         <div class="col">
           <h3>Price:</h3>
@@ -106,7 +106,7 @@
           form="searchCriteria">Submit</button>
       </div>
     </form>
-  </div> <!-- Container -->
+  </div> <!-- Filtering Options -->
   <hr />
 
   <!-- Games list -->
@@ -126,5 +126,16 @@
     {% else %}
       <strong>No games fit the search criteria.</strong>
     {% endif %}
-  </div>
+  </div> <!-- Results -->
+
+  <!-- Add Game -->
+  {% if is_journalist %}
+    <div class="container">
+      <h2>Add a Game?</h2>
+      <div class="container-fluid w-50 p-5 text-center">
+        <button class="btn btn-secondary float-center" type="button"
+          onclick="window.location.href='{% url 'add_game' %}'">New Game</button>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

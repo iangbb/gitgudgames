@@ -142,8 +142,12 @@
           <h1 class="gameName">
             Reviews
             {% if user.is_authenticated %}
+              {% if is_journalist %}
+                <button class="float-right btn btn-secondary ml-5" type="button"
+                  onclick="window.location.href='{% url 'add_game_image' game.slug %}'">Add Image</button>
+              {% endif %}
               <button class="float-right btn btn-secondary" type="button"
-                  onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+                onclick="window.location.href='{% url 'add_review' game.slug %}'">Add Review</button>
             {% endif %}
           </h1>
           </div>
