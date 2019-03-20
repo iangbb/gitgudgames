@@ -179,7 +179,33 @@ def populate():
     ]
 
     # TODO: at least add some images when populating - should be easier to add than comments
-    comments = []
+    comments = [
+    {
+        "poster": "big_keith",
+        "review": 1,
+        "comment_text": "Brexit",
+    },
+    {
+        "poster": "ihategames",
+        "review": 1,
+        "comment_text": "I hate this review",
+    },
+    {
+        "poster": "ilovegames",
+        "review": 1,
+        "comment_text": "I love this review",
+    },
+    {
+        "poster": "iamindifferenttowardsgames",
+        "review": 2,
+        "comment_text": "I am i am indifferent towards this review",
+    },
+    {
+        "poster": "big_keith",
+        "review": 2,
+        "comment_text": "down with bercow",
+    },
+]
     images = []
 
     for game in games:
@@ -190,6 +216,9 @@ def populate():
 
     for review in reviews:
         add_review(review)
+
+    for comment in comments:
+        add_comment(comment)
 
 
 def add_game(game):
@@ -225,6 +254,16 @@ def add_review(review):
     review_object.save()
 
     return review_object
+
+def add_comment(comment):
+    user = User.objects.get(username=comment["poster"])
+    review = Review.objects.get(id=comment["review"])
+    comment = \
+        Comment.objects.get_or_create(poster=user, review=review, comment_text=comment["comment_text"])[0]
+
+    comment.save()
+
+    return comment
 
 
 # Randomly generates 16 character passwords

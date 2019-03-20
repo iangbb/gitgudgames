@@ -1,4 +1,4 @@
-from django import forms
+﻿from django import forms
 from django.contrib.auth.models import User
 from reviews.models import User, UserProfile, Review, Game, Image
 from gitgudgames import settings
@@ -205,6 +205,15 @@ class GameForm(forms.ModelForm):
         super(GameForm, self).__init__(*args, **kwargs)
         for field in self.visible_fields():
             field.field.widget.attrs['class'] = "form-control"
+
+    def clean(self):
+        cleaned_data = super(GameForm, self).clean()
+        price = cleaned_data['price']
+
+        if price < 0:
+            raise forms.ValidationError("Price must be at least £0.")
+
+        return cleaned_data
 
 
 class ImageForm(forms.ModelForm):
