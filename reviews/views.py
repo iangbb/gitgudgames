@@ -168,7 +168,8 @@ def add_game_image(request, game_slug):
         return restricted(request, status=404, message="The game you requested could not be found")
 
     if request.method == "POST":
-        image_form = ImageForm(data=request.POST)
+        #image_form = ImageForm(data=request.POST)
+        image_form = ImageForm(files=request.FILES)
 
         # Check form validity
         if image_form.is_valid():
@@ -178,14 +179,15 @@ def add_game_image(request, game_slug):
             image.poster = request.user
 
             # Save the image if provided, or give an error if no image uploaded
-            if 'image' in request.FILES:
-                image.image = request.FILES['image']
-                image.save()
+            #if 'image' in request.FILES:
+            image.image = request.FILES['image']
+            image.save()
 
-                messages.success(request, "Image uploaded successfully")
-                return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
-            else:
-                messages.error(request, "You must upload an image")
+            messages.success(request, "Image uploaded successfully")
+            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
+
+            #else:
+            #    messages.error(request, "You must upload an image")
         else:
             messages.error(request, "Invalid image submitted")
     else:

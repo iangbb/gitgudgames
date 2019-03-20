@@ -123,7 +123,8 @@ class Comment(models.Model):
 class Image(models.Model):
     poster = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='game_images')
+    image = models.ImageField(upload_to='game_images/',
+        default='game_images/game_placeholder.png')
 
     def __str__(self):
         return self.poster.username + " - " + self.game.name

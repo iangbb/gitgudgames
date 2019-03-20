@@ -92,3 +92,7 @@ img {
     padding: 10px 10px;
     margin: auto auto 10px auto;
 }
+
+.carousel-item {
+  max-height: 720px;
+}

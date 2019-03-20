@@ -39,9 +39,13 @@
             <div class="carousel-inner">
                 <!-- boxArt -->
                 {% if pictures %}
-                    <div class="carousel-item active">
-                        <img class="d-block w-100" src="{% static 'images/profilePic_placeholder.png' %}" alt="box art">
-                    </div>
+                    {% for picture in pictures %}
+                        <div class="carousel-item active">
+                            <img class="d-block w-100"
+                              src="{{ picture.image.url }}"
+                              alt="box art">
+                        </div>
+                    {% endfor %}
                     <!-- ExtraPictures -->
                     {% if extraPics %}
                         {% for pic in extraPics %}
