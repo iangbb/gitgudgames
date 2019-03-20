@@ -128,16 +128,16 @@
   <!-- Auto fill fields that have values -->
   <script type="text/javascript">
     {% if profile.display_name %}
-      document.getElementById("id_display_name").value = "{{ profile.display_name }}";
+      populate_edit_profile("id_display_name", "{{ profile.display_name }}");
     {% endif %}
     {% if profile.user.email %}
-      document.getElementById("id_email").value = "{{ profile.user.email }}";
+      populate_edit_profile("id_email", "{{ profile.user.email }}");
     {% endif %}
     {% if profile.date_of_birth %}
-      document.getElementById("id_date_of_birth").value = "{{ profile.date_of_birth }}";
+      populate_edit_profile("id_date_of_birth", "{{ profile.date_of_birth }}");
     {% endif %}
     {% if profile.biography %}
-      document.getElementById("id_biography").value = "{{ profile.biography }}";
+      populate_edit_profile("id_biography", "{{ profile.biography }}");
     {% endif %}
   </script>
 {% endblock %}
