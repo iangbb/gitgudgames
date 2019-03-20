@@ -14,7 +14,7 @@ import os
 from django.contrib.messages import constants as messages
 
 # Developers
-DEVELOPERS = ['ian', 'charles', 'scott',]
+DEVELOPERS = ['ian', 'charles', 'scott', "matt"]
 
 # Tags
 MESSAGE_TAGS = {

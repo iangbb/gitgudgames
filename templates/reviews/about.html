@@ -17,7 +17,7 @@
 
     <h1>{{ heading }}</h1>
     <!-- About Information -->
-    <div class="container-fluid w-75 my-5">
+    <div class="container-fluid p-5">
         <p>
             Gitgud Games is a website that allows gamers and journalists to get the basic information they need on games,
             as well as game reviews by journalists that are rated by users so gamers know they are reading reviews they
@@ -28,15 +28,30 @@
     </div>
 
     <!-- Profiles of developers -->
-    <div class="container-fluid w-75">
+    <div class="container w-100 p-0">
+      <h2>Developers</h2>
       {% if developers %}
         {% for developer in developers %}
-          {{ developer }}
-          <div class="container-fluid w-75 p-3 my-2 clearfix profile">
-            <img src="{{ developer.icon }}" alt="{{ developer.username }} icon"
-              class="float-left"/>
-            <a href="{% url 'profile/{{ developer.username }}' %}">{{ developer.name }}</a>
-          </div>
+          <a href="{% url 'profile' developer.user.username %}">
+            <div class="container-fluid w-75 my-3">
+              <div class="row p-3">
+                <div class="col-sm-2">
+                  <img src="{{ developer.profile_image.url }}" alt="{{ developer.user.username }} icon"
+                    class="mx-auto d-block"/>
+                </div>
+                <div class="col">
+                  {% if developer.display_name is not None %}
+                    <h3>{{ developer.display_name }}</h3>
+                  {% else %}
+                    <h3>{{ developer.user.username }}</h3>
+                  {% endif %}
+                  {% if developer.biography is not None %}
+                    <p>{{ developer.biography }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </a>
         {% endfor %}
       {% else %}
         <strong>There are no developers present.</strong>

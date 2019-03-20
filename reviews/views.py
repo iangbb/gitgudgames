@@ -36,8 +36,9 @@ def index(request):
 
 def about(request):
     context_dict = init_context_dict(request, "About Us")
-        
-    context_dict['developers'] = DEVELOPERS
+    devs = list(User.objects.filter(username__in=DEVELOPERS))
+    dev_profiles = UserProfile.objects.filter(user__in=devs)
+    context_dict['developers'] = dev_profiles
     return render(request, 'reviews/about.html', context=context_dict)
 
 
