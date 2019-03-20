@@ -38,12 +38,6 @@
             <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
           {% endif %}
         </ul>
-        <form class="form-inline" role="search">
-          <div class="input-group w-100">
-            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-secondary" type="submit">Search</button>
-          </div>
-        </form>
         {% if user.is_authenticated %}
           <ul class="navbar-nav pull-md-right">
             <li class="nav-item">

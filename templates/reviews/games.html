@@ -26,59 +26,77 @@
         <!-- Genre -->
         <div class="col">
           <h3>Genres:</h3>
-          {% for genre in genres %}
-            <li><input class="form-check-input" type="checkbox"
-              id="genre-{{ genre }}" name="genre-{{ genre }}" {% if genre in genres_checked %}checked=checked{% endif%} />
-            <label class="form-check-label" for="genre-{{ genre }}">
-              {{ genre }}</label></li>
-          {% endfor %}
+          <ul>
+            {% for genre in genres %}
+              <li><input class="form-check-input" type="checkbox"
+                id="genre-{{ genre }}" name="genre-{{ genre }}" {% if genre in genres_checked %}checked=checked{% endif%} />
+              <label class="form-check-label" for="genre-{{ genre }}">
+                {{ genre }}</label></li>
+            {% endfor %}
+          </ul>
         </div>
 
         <!-- Platform -->
         <div class="col">
           <h3>Platforms:</h3>
-          {% for platform in platforms %}
-            <li><input class="form-check-input" type="checkbox"
-              id="platform-{{ platform }}" name="platform-{{ platform }}" {% if platform in platforms_checked %}checked=checked{% endif %}/>
-            <label class="form-check-label" for="platform-{{ platform }}">
-              {{ platform }}</label></li>
-          {% endfor %}
+          <ul>
+            {% for platform in platforms %}
+              <li><input class="form-check-input" type="checkbox"
+                id="platform-{{ platform }}" name="platform-{{ platform }}" {% if platform in platforms_checked %}checked=checked{% endif %}/>
+              <label class="form-check-label" for="platform-{{ platform }}">
+                {{ platform }}</label></li>
+            {% endfor %}
+          </ul>
         </div>
 
         <!-- Order by -->
         <div class="col">
           <h3>Order By:</h3>
-            <li><input class="form-check-input" type="radio" name="order"
-              id="radioNameAsc" value="name" {% if order == "name" %}checked=checked{% endif %} />
-            <label class="form-check-label" for="radioNameAsc">
-              Name Ascending</label></li>
-            <li><input class="form-check-input" type="radio" name="order"
-              id="radioNameDsc" value="-name" {% if order == "-name" %}checked=checked{% endif %} />
-            <label class="form-check-label" for="radioNameDsc">
-              Name Decending</label></li>
-            <li><input class="form-check-input" type="radio" name="order"
-              id="radioRelAsc" value="releaseDate" {% if order == "releaseDate" %}checked=checked{% endif %} />
-            <label class="form-check-label" for="radioRelAsc">
-              Release Date Ascending</label></li>
-            <li><input class="form-check-input" type="radio" name="order"
-              id="radioRelDsc" value="-releaseDate" {% if order == "-releaseDate" %}checked=checked{% endif %} />
-            <label class="form-check-label" for="radioRelDsc">
-              Release Date Descending</label></li>
+            <ul>
+              <li><input class="form-check-input" type="radio" name="order"
+                id="radioNameAsc" value="name" {% if order == "name" %}checked=checked{% endif %} />
+              <label class="form-check-label" for="radioNameAsc">
+                Name Ascending</label></li>
+              <li><input class="form-check-input" type="radio" name="order"
+                id="radioNameDsc" value="-name" {% if order == "-name" %}checked=checked{% endif %} />
+              <label class="form-check-label" for="radioNameDsc">
+                Name Decending</label></li>
+              <li><input class="form-check-input" type="radio" name="order"
+                id="radioRelAsc" value="releaseDate" {% if order == "releaseDate" %}checked=checked{% endif %} />
+              <label class="form-check-label" for="radioRelAsc">
+                Release Date Ascending</label></li>
+              <li><input class="form-check-input" type="radio" name="order"
+                id="radioRelDsc" value="-releaseDate" {% if order == "-releaseDate" %}checked=checked{% endif %} />
+              <label class="form-check-label" for="radioRelDsc">
+                Release Date Descending</label></li>
+            </ul>
         </div>
       </div>
 
-      <!-- Price Slider -->
-      <h3>Price:</h3>
-      <div class="row mb-5 w-50 mx-auto">
+      <!-- Price Range -->
+      <div class="row mb-5 w-100 mx-auto">
         <div class="col">
-          <label for="min_price">Min:</label>
-          <input type="number" name="min_price" value="{{ min_price }}"
-            class="w-75">
+          <h3>Price:</h3>
+          <div class="row w-50 mx-auto">
+            <div class="col">
+              <label for="min_price">Min:</label>
+              <input type="number" name="min_price" value="{{ min_price }}"
+              class="w-50">
+            </div>
+            <div class="col">
+              <label for="max_price">Max:</label>
+              <input type="number" name="max_price" value="{{ max_price }}"
+              class="w-50">
+            </div>
+          </div>
         </div>
         <div class="col">
-          <label for="max_price">Max:</label>
-          <input type="number" name="max_price" value="{{ max_price }}"
-            class="w-75">
+          <h3>Search:</h3>
+          <div class="col">
+            <label for="min_price">Keywords:</label>
+            <input type="text" name="search" value="{{ search }}"
+              class="w-75">
+          </div>
         </div>
       </div>
 
@@ -88,7 +106,7 @@
           form="searchCriteria">Submit</button>
       </div>
     </form>
-  </div> <!-- Container -->
+  </div> <!-- Filtering Options -->
   <hr />
 
   <!-- Games list -->
@@ -108,5 +126,16 @@
     {% else %}
       <strong>No games fit the search criteria.</strong>
     {% endif %}
-  </div>
+  </div> <!-- Results -->
+
+  <!-- Add Game -->
+  {% if is_journalist %}
+    <div class="container">
+      <h2>Add a Game?</h2>
+      <div class="container-fluid w-50 p-5 text-center">
+        <button class="btn btn-secondary float-center" type="button"
+          onclick="window.location.href='{% url 'add_game' %}'">New Game</button>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
