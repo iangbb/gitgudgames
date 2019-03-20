@@ -52,17 +52,9 @@ def games(request):
         genre_options = []
 
         sorting_order = request.POST.get('order')
-        min_price = request.POST.get('min_price')
-        max_price = request.POST.get('max_price')
+        min_price = request.POST.get('min_price', 0)
+        max_price = request.POST.get('max_price', 100)
         search_terms = request.POST.get('search').split(" ")
-
-        # Defined at top
-        # Although these two fields should always be submitted, it's still better to handle this
-        #if not min_price:
-        #    min_price = 0
-
-        #if not max_price:
-        #    max_price = 100
 
         # Find what platforms the user has selected
         for platform in Game.PLATFORM:
@@ -119,19 +111,12 @@ def game(request, game_slug):
     context_dict = init_context_dict(request, "Game")
     try:
         game = Game.objects.get(slug=game_slug)
-        # Filter only reviews relevant to this game
-        reviews = Review.objects.filter(game=game).order_by('-votes')
         pictures = Image.objects.filter(game=game)
-
-        # Find comments for each review and store in dictionary
-        comments = {}
-        for review in reviews:
-            comments[review] = Comment.objects.filter(review=review).order_by('-votes')[:3]
+        reviews = Review.objects.filter(game=game)
 
         context_dict['game'] = game
-        context_dict['reviews'] = reviews
         context_dict['pictures'] = pictures
-        context_dict['comments'] = comments
+        context_dict['reviews'] = reviews
     except Game.DoesNotExist:
         return restricted(request, status=404, message="The game you requested could not be found")
 
