@@ -1,4 +1,9 @@
-.profile_image {
-  max-width: 200px;
+.profile-image {
   background-color: blue;
+}
+
+.edit-button {
+  position: absolute;
+  right: 30px;
+  top: 60px;
 }

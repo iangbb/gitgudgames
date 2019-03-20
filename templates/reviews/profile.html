@@ -10,19 +10,18 @@
 {% endblock %}
 
 {% block body_block %}
-  <h1 style="position:relative;">{{ heading }}</h1>
+  <h1 class="position-relative">{{ heading }}</h1>
   {% if user == profile.user %}
-    <button class="btn btn-primary position-absolute" type="button"
-      style="position:absolute; right:30px; top:60px;"
+    <button class="btn btn-primary edit-button" type="button"
       onclick="window.location.href='{% url 'edit_profile' user.username %}'">Edit</button>
   {% endif %}
   <!-- User details and biography -->
   <h2>Details</h2>
   <div class="row w-75 mx-auto clearfix">
     <div class="col-sm-4">
-      <div class="container-fluid p-5">
+      <div class="container-fluid p-5 text-center">
         {% if profile.profile_image %}
-          <img class="profile_image mx-auto"
+          <img class="profile-image mx-auto img-fluid"
           src="{{ profile.profile_image.url }}"
           alt="profile image">
         {% else %}No image.{% endif %}
