@@ -563,7 +563,15 @@ def ajax_add_comment(request):
         review = Review.objects.get(id=int(review_id))
         comment = Comment(poster=request.user, review=review, comment_text=comment_text)
         comment.save()
-        return JsonResponse({'success': True, 'comment': comment.as_json()})
+
+        # Get user display name and image URL to render comment
+        user_profile = UserProfile.objects.get(user=request.user)
+        display_name = user_profile.display_name
+        if display_name is None:
+            display_name = comment.poster.username
+        profile_image_url = user_profile.profile_image.url
+        
+        return JsonResponse({'success': True, 'comment': comment.as_json(display_name, profile_image_url)})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)
 
