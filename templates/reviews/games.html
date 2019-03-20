@@ -12,9 +12,7 @@
 {% block body_block %}
   <!-- Set active tag -->
   <script type="text/javascript">
-    document.getElementById("homeTab").classList.remove("active");
-    document.getElementById("aboutTab").classList.remove("active");
-    document.getElementById("gamesTab").classList.add("active");
+    set_active_tab("gamesTab")
   </script>
 
   <h1>{{ heading }}</h1>
