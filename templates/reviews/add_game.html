@@ -109,6 +109,11 @@
                 &nbsp;
             {% endif %}
             </div>
+			{% if game_form.non_field_errors %}
+			  <div class="text-danger">
+                {{ game_form.non_field_errors|striptags }}
+			  </div>
+			{% endif %}
           </div>
         </fieldset>
       </div>
