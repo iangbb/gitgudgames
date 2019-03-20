@@ -10,6 +10,11 @@
 {% endblock %}
 
 {% block body_block %}
+  <!-- Set active tag -->
+  <script type="text/javascript">
+    set_active_tab("profile_tab")
+  </script>
+
   <h1 class="position-relative">{{ heading }}</h1>
   {% if user == profile.user %}
     <button class="btn btn-primary edit-button" type="button"

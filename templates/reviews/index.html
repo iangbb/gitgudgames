@@ -8,7 +8,7 @@
 {% block body_block %}
   <!-- Set active tag -->
   <script type="text/javascript">
-    set_active_tab("homeTab")
+    set_active_tab("home_tab")
   </script>
 
   <!-- Heading and welcome message -->
@@ -34,14 +34,4 @@
       <strong>There are no games present.</strong>
     {% endif %}
   </div>
-
-  <!-- Login/Register -->
-  {% if not user.is_authenticated %}
-    <div class="container w-50 mx-auto mt-5 px-0 clearfix">
-      <button class="float-left btn btn-primary" type="button"
-        onclick="window.location.href='{% url 'register' %}'">Register</button>
-      <button class="float-right btn btn-primary" type="button"
-        onclick="window.location.href='{% url 'login' %}'">Log In</button>
-    </div>
-  {% endif %}
 {% endblock %}

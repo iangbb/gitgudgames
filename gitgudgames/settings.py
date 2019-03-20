@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from django.contrib.messages import constants as messages
 
+# Developers
+DEVELOPERS = ['ian', 'charles', 'scott',]
+
 # Tags
 MESSAGE_TAGS = {
     messages.SUCCESS: "alert alert-success",

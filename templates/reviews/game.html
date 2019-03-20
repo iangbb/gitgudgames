@@ -40,18 +40,23 @@
                 <!-- boxArt -->
                 {% if pictures %}
                     {% for picture in pictures %}
-                        <div class="carousel-item active">
-                            <img class="d-block w-100"
-                              src="{{ picture.image.url }}"
-                              alt="box art">
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="{{ picture.image.url }}" alt="box art"
+                              id="{{ picture.image.name|slice:'12:' }}">
                         </div>
                     {% endfor %}
+
+                    <!-- Set first image to active -->
+                    <script type="text/javascript">
+                      set_active_image("{{ pictures.first.image.name|slice:'12:' }}");
+                    </script>
+
                     <!-- ExtraPictures -->
                     {% if extraPics %}
                         {% for pic in extraPics %}
-                            <div class="carousel-item">
+                            <!--<div class="carousel-item">
                                 <img class="d-block w-100" src="{{ pic }}">
-                            </div>
+                            </div>-->
                         {% endfor %}
                     {% endif %}
                     <!-- Carousel controls -->
@@ -138,37 +143,37 @@
                 </div>
             </div>
 
-    <!-- Reviews -->
-    {% if reviews %}
-    <br>
-    <div class="jumbotron reviews">
-        <div class="reviewContainer">
-          <h1 class="gameName">
-            Reviews
-            {% if user.is_authenticated %}
-              {% if is_journalist %}
-                <button class="float-right btn btn-secondary ml-5" type="button"
-                  onclick="window.location.href='{% url 'add_game_image' game.slug %}'">Add Image</button>
-              {% endif %}
-              <button class="float-right btn btn-secondary" type="button"
-                onclick="window.location.href='{% url 'add_review' game.slug %}'">Add Review</button>
-            {% endif %}
-          </h1>
-          </div>
-          <div class="getmorereviews">
-              <button type="button" data-csrftoken="{% csrf_token %}" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
-              data-postComment class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
-          </div>
-        {% else %}
-            {% if user.is_authenticated %}
-                <div>
-                <br>
-                <button type="button" class="btn btn-secondary btn-lg btn-block"
-                onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
-            {% endif %}
-        {% endif %}
+            <!-- Reviews -->
+            {% if reviews %}
+            <br>
+            <div class="jumbotron reviews">
+                <div class="reviewContainer">
+                  <h1 class="gameName">
+                    Reviews
+                    {% if user.is_authenticated %}
+                      {% if is_journalist %}
+                        <button class="float-right btn btn-secondary ml-5" type="button"
+                          onclick="window.location.href='{% url 'add_game_image' game.slug %}'">Add Image</button>
+                      {% endif %}
+                      <button class="float-right btn btn-secondary" type="button"
+                        onclick="window.location.href='{% url 'add_review' game.slug %}'">Add Review</button>
+                    {% endif %}
+                  </h1>
+                  </div>
+                  <div class="getmorereviews">
+                      <button type="button" data-csrftoken="{% csrf_token %}" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
+                      data-postComment class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
+                  </div>
+                {% else %}
+                    {% if user.is_authenticated %}
+                        <div>
+                        <br>
+                        <button type="button" class="btn btn-secondary btn-lg btn-block"
+                        onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+                    {% endif %}
+                {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-    </div>
     </div>
 {% endblock %}

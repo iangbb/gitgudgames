@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from reviews.models import Game, Review, Comment, User, UserProfile, Image, Comment, ReviewRating, CommentRating
 from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsForm, PasswordForm, BiographyForm,\
     ReviewForm, GameForm, ImageForm
+from gitgudgames.settings import DEVELOPERS
 import datetime
 
 
@@ -35,6 +36,8 @@ def index(request):
 
 def about(request):
     context_dict = init_context_dict(request, "About Us")
+        
+    context_dict['developers'] = DEVELOPERS
     return render(request, 'reviews/about.html', context=context_dict)
 
 
@@ -179,15 +182,15 @@ def add_game_image(request, game_slug):
             image.poster = request.user
 
             # Save the image if provided, or give an error if no image uploaded
-            #if 'image' in request.FILES:
-            image.image = request.FILES['image']
-            image.save()
+            if 'image' in request.FILES:
+                image.image = request.FILES['image']
+                image.save()
 
-            messages.success(request, "Image uploaded successfully")
-            return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
+                messages.success(request, "Image uploaded successfully")
+                return HttpResponseRedirect(reverse('game', kwargs={'game_slug': game_slug}))
 
-            #else:
-            #    messages.error(request, "You must upload an image")
+            else:
+                messages.error(request, "You must upload an image")
         else:
             messages.error(request, "Invalid image submitted")
     else:

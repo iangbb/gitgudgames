@@ -13,6 +13,7 @@
     <!-- Custom Stylesheets -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
     {% block stylesheets_block %}{% endblock %}
+    <!-- Custom JavaScript -->
     <script type="text/javascript" src="{% static 'js/template.js' %}"></script>
   </head>
   <body>
@@ -29,25 +30,28 @@
       <!-- Links -->
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item" id="homeTab">
+          <li class="nav-item" id="home_tab">
             <a href="{% url 'index' %}">Home</a></li>
-          <li class="nav-item" id="aboutTab">
+          <li class="nav-item" id="about_tab">
             <a href="{% url 'about' %}">About</a></li>
-          <li class="nav-item" id="gamesTab">
+          <li class="nav-item" id="games_tab">
             <a href="{% url 'games' %}">Games</a></li>
-          {% if user.is_authenticated %}
-            <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
-          {% endif %}
         </ul>
-        {% if user.is_authenticated %}
           <ul class="navbar-nav pull-md-right">
-            <li class="nav-item">
-              <a href="{% url 'profile' user %}">
-                <img src="{{ profile_image_url }}" alt="Profile">
-              </a>
-            </li>
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a href="{% url 'logout' %}">Logout</a></li>
+              <li class="nav-item" id="profile_tab">
+                <a href="{% url 'profile' user %}">
+                  <img src="{{ profile_image_url }}" alt="Profile"></a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a href="{% url 'login' %}">Login</a></li>
+              <li class="nav-item">
+                <a href="{% url 'register' %}">Register</a></li>
+            {% endif %}
           </ul>
-        {% endif %}
       </div>
     </nav>
 
