@@ -96,7 +96,7 @@ def games(request):
     context_dict['order'] = sorting_order
     context_dict['min_price'] = min_price
     context_dict['max_price'] = max_price
-    
+
     return render(request, 'reviews/games.html', context=context_dict)
 
 
@@ -479,12 +479,20 @@ def ajax_get_comments(request):
     # Retrieve comments for the given review, starting from index 'start'
     comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
 
-    # If comments have been found, generate the JSON to return to the client
     if len(comments) > 0:
         json['number'] = len(comments)
-        json['comments'] = [comment.as_json() for comment in comments[:3]]  # Send next 3
 
-        # If there are more comments to retrieve, then advise this to client
+        for comment in comments[:3]:
+            user_profile = UserProfile.objects.get(user=comment.poster)
+            display_name = user_profile.display_name
+            if display_name is None:
+                display_name = comment.poster.username
+            profile_image_url = user_profile.profile_image.url
+
+            # If comments have been found, generate the JSON to return to the client
+            json['comments'].append(comment.as_json(display_name, profile_image_url))
+
+            # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
             json['more'] = True
 
@@ -514,7 +522,10 @@ def ajax_get_reviews(request):
             try:
                 user_profile = UserProfile.objects.get(user=review.poster)
                 profile_image_url = user_profile.profile_image.url
-                json['reviews'].append(review.as_json(comments, profile_image_url))
+                display_name = user_profile.display_name
+                if display_name is None:
+                    display_name = review.poster.username
+                json['reviews'].append(review.as_json(display_name, comments, profile_image_url))
             except UserProfile.DoesNotExist:
                 print("No user profile found for " + review.poster)
                 json['reviews'].append(review.as_json(comments))
