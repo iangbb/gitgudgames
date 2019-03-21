@@ -111,8 +111,9 @@ class Review(models.Model):
     def save(self, *args, **kwargs):
         if len(self.review_text) > 2000:
             self.review_text = self.review_text[:2000]
-        if self.post_datetime > date.today():
-            self.post_datetime = date.today()
+        if self.post_datetime is not None:
+            if self.post_datetime > date.today():
+                self.post_datetime = date.today()
         if self.votes < 0:
             self.votes = 0
         super(Review, self).save(*args, **kwargs)
@@ -138,8 +139,9 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         if len(self.comment_text) > 200:
             self.comment_text = self.comment_text[:200]
-        if self.post_datetime > date.today():
-            self.post_datetime = date.today()
+        if self.post_datetime is not None:
+            if self.post_datetime > date.today():
+                self.post_datetime = date.today()
         if self.votes < 0:
             self.votes = 0
         super(Comment, self).save(*args, **kwargs)
