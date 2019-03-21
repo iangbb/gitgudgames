@@ -2,7 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from gitgudgames import settings
-
+from datetime import date
 
 class Game(models.Model):
     PC = 'PC'
@@ -51,6 +51,12 @@ class Game(models.Model):
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
+        if self.price < 0:
+            self.price = 0
+        if self.average_rating < 0:
+            self.average_rating = 0
+        if self.number_ratings < 0:
+            self.number_ratings = 0;
         self.slug = slugify(self.name)
         super(Game, self).save(*args, **kwargs)
 
@@ -67,6 +73,14 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     biography = models.CharField(max_length=1000, blank=True)
     is_journalist = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.date_of_birth is not None:
+            if self.date_of_birth > date.today():
+                self.date_of_birth = date.today()
+        if len(self.biography) > 2000:
+            self.biography = self.biography[:2000]
+        super(UserProfile, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.user.username
@@ -94,6 +108,15 @@ class Review(models.Model):
     post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
     votes = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        if len(self.review_text) > 2000:
+            self.review_text = self.review_text[:2000]
+        if self.post_datetime > date.today():
+            self.post_datetime = date.today()
+        if self.votes < 0:
+            self.votes = 0
+        super(Review, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.poster.username + " - " + self.game.name + " - " + str(self.post_datetime)
 
@@ -111,6 +134,15 @@ class Comment(models.Model):
     comment_text = models.CharField(max_length=200)
     post_datetime = models.DateTimeField(auto_now=False, auto_now_add=True)
     votes = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if len(self.comment_text) > 200:
+            self.comment_text = self.comment_text[:200]
+        if self.post_datetime > date.today():
+            self.post_datetime = date.today()
+        if self.votes < 0:
+            self.votes = 0
+        super(Comment, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.poster.username + " - " + self.review.game.name + " - " + str(self.post_datetime)
