@@ -13,7 +13,7 @@
 
   <!-- Heading and welcome message -->
   <h1>{{ heading }}</h1>
-  <div class="container-fluid text-center p-5">
+  <div class="container-fluid text-center p-5 w-75">
     {% if user.is_authenticated %}
     Greetings {{ user.username }}!
     {% else %}
@@ -23,11 +23,20 @@
 
   <!-- Show top 5 games -->
   <h2>Top 5 games:</h2>
-  <div class="container-fluid p-5">
+  <div class="container-fluid p-5 w-75">
     {% if games %}
       <ul>
         {% for game in games %}
-          <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a></li>
+        <div class="row">
+            <div class="col">
+                <li><a href="{% url 'game' game.slug %}">{{ game.name }}</a></li>
+            </div>
+            <div class="col">
+                <div class="stars-outer">
+                  <div gameScore='{{ game.average_rating }}'id="gameStars" class="stars-inner"></div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
       </ul>
     {% else %}
