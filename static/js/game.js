@@ -2,8 +2,6 @@ let reviewNo = 0;
 let commentNo = [];
 var noMoreReviews = 0;
 
-//document.getElementById("{{ game.average_rating }}").style.width = (({{game.average_rating}}* 20) + "%");
-
 $(document).ready(function() {
 
 $('.get-reviews').click(function() {
@@ -22,9 +20,10 @@ $('.get-reviews').click(function() {
             const domString = '<div class="jumbotron">\
                               <div class="row">\
                                   <div class="col">\
-                                      <h3 class="gameName">' + data.reviews[i].poster + '\
+                                      <a href="../../../profile/' + data.reviews[i].poster + '"><h3 class="gameName">' + data.reviews[i].poster + '\
                                       <img class="profilePicture" src="' + data.reviews[i].profile_image_url + '" alt="Profile Image">\
                                       </h3>\
+                                      </a>\
                                   </div>\
                                   <div class="col">\
                                       <div class="col">\
@@ -79,9 +78,6 @@ $('.get-reviews').click(function() {
         $(".get-comments").trigger("click");
     });
 });
-
-var gameScore = ($("#gameStars").attr('gameScore') * 20 + "%");
-$("#gameStars").width(gameScore);
 $(".get-reviews").trigger("click");
 
 $(document).on("click", ".get-comments" , function() {
@@ -99,9 +95,10 @@ $(document).on("click", ".get-comments" , function() {
                     const domString = '<div class="jumbotron comments ' + data.comments[i].id +'">\
                                       <div class="row">\
                                           <div class="col">\
-                                              <h3 class="gameName">' + data.comments[i].poster + '\
+                                              <a href="../../../profile/' + data.comments[i].username + '"><h3 class="gameName">' + data.comments[i].poster + '\
                                               <img class="profilePicture" src="' + data.comments[i].profile_image_url + '" alt="Profile Image">\
                                               </h3>\
+                                              </a>\
                                           </div>\
                                       </div>\
                                       <p>' + data.comments[i].comment_text + '</p>\

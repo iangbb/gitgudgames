@@ -17,7 +17,7 @@
 
   <h1>{{ heading }}</h1>
   <!-- Filtering options -->
-  <div class="container-fluid py-5">
+  <div class="container-fluid py-5 w-75">
     <form action="{% url 'games' %}" method="POST" id="searchCriteria">
       {% csrf_token %}
       <div class="row mb-5">
@@ -113,13 +113,26 @@
     <!-- Display list of games that meet search criteria -->
     {% if games %}
       {% for game in games %}
-        <a href="{% url 'game' game.slug %}">
-          <div class="container-fluid my-2">
-            <h3>{{ game.name }}</h3>
-            <div class="">{{ game.average_rating }}</div>
-            <p>{{ game.description }}</p>
-          </div>
-        </a>
+      <div class="container-fluid my-2 w-75">
+      <div class="row">
+          <div class="col">
+            <a href="{% url 'game' game.slug %}">
+                <h2>{{ game.name }}</h2>
+                <h3>
+                <div class="">Average Rating : {{ game.average_rating|floatformat:1 }} Stars</div>
+                <p>{{ game.description }}</p>
+                </h3>
+            </a>
+        </div>
+        <div class="col">
+            <h2>
+              <div class="stars-outer">
+                <div gameScore='{{ game.average_rating }}'id="gameStars" class="stars-inner"></div>
+                <h2>
+              </div>
+        </div>
+      </div>
+      </div>
       {% endfor %}
     {% else %}
       <strong>No games fit the search criteria.</strong>
