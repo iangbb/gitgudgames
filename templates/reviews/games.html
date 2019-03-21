@@ -113,26 +113,24 @@
     <!-- Display list of games that meet search criteria -->
     {% if games %}
       {% for game in games %}
-      <div class="container-fluid my-2 w-75">
-      <div class="row">
-          <div class="col">
-            <a href="{% url 'game' game.slug %}">
+        <div class="container-fluid my-2 w-75">
+          <a href="{% url 'game' game.slug %}">
+            <div class="row">
+              <div class="col-sm-8">
                 <h2>{{ game.name }}</h2>
-                <h3>
-                <div class="">Average Rating : {{ game.average_rating|floatformat:1 }} Stars</div>
+                <h3><div class="">Average Rating : {{ game.average_rating|floatformat:1 }} Stars</div></h3>
                 <p>{{ game.description }}</p>
-                </h3>
-            </a>
-        </div>
-        <div class="col">
-            <h2>
-              <div class="stars-outer">
-                <div gameScore='{{ game.average_rating }}'id="gameStars" class="stars-inner"></div>
-                <h2>
               </div>
+              <div class="col">
+                <h2>
+                  <div class="stars-outer">
+                    <div gameScore='{{ game.average_rating }}'id="gameStars" class="stars-inner"></div>
+                  </div>
+                </h2>
+              </div>
+            </div>
+          </a>
         </div>
-      </div>
-      </div>
       {% endfor %}
     {% else %}
       <strong>No games fit the search criteria.</strong>
