@@ -94,7 +94,8 @@ class ProfileImageForm(forms.ModelForm):
 class DetailsForm(forms.ModelForm):
     display_name = forms.CharField(max_length=16, help_text="Display Name (Optional)", required=False)
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'dd/mm/yyyy'}),
-                                    input_formats=settings.DATE_INPUT_FORMATS, help_text="Date of Birth (Optional)")
+                                    input_formats=settings.DATE_INPUT_FORMATS, help_text="Date of Birth (Optional)",
+                                    required=False)
     email = forms.EmailField(help_text="Email")
 
     class Meta:

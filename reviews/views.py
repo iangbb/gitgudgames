@@ -306,17 +306,19 @@ def edit_profile(request, username):
                 profile.display_name = request.POST.get('display_name')
                 user.email = request.POST.get('email')
 
-                date_of_birth = request.POST.get('date_of_birth').split('/')
-                if len(date_of_birth) != 3:
-                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
-                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                date_of_birth = request.POST.get('date_of_birth')
+                if len(date_of_birth) != 0:
+                    date_of_birth = date_of_birth.split('/')
+                    if len(date_of_birth) != 3:
+                        messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                        return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
-                try:
-                    profile.date_of_birth = datetime.date(int(date_of_birth[2]), int(date_of_birth[1]),
-                                                          int(date_of_birth[0]))
-                except ValueError:
-                    messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
-                    return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+                    try:
+                        profile.date_of_birth = datetime.date(int(date_of_birth[2]), int(date_of_birth[1]),
+                                                              int(date_of_birth[0]))
+                    except ValueError:
+                        messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
+                        return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
                 profile.save()
                 user.save()
@@ -491,12 +493,13 @@ def ajax_get_comments(request):
         for comment in comments[:3]:
             user_profile = UserProfile.objects.get(user=comment.poster)
             display_name = user_profile.display_name
+            username = comment.poster.username
             if display_name is None:
-                display_name = comment.poster.username
+                display_name = username
             profile_image_url = user_profile.profile_image.url
 
             # If comments have been found, generate the JSON to return to the client
-            json['comments'].append(comment.as_json(display_name, profile_image_url))
+            json['comments'].append(comment.as_json(username, display_name, profile_image_url))
 
             # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
@@ -529,9 +532,10 @@ def ajax_get_reviews(request):
                 user_profile = UserProfile.objects.get(user=review.poster)
                 profile_image_url = user_profile.profile_image.url
                 display_name = user_profile.display_name
+                username = review.poster.username
                 if display_name is None:
-                    display_name = review.poster.username
-                json['reviews'].append(review.as_json(display_name, comments, profile_image_url))
+                    display_name = username
+                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url))
             except UserProfile.DoesNotExist:
                 print("No user profile found for " + review.poster)
                 json['reviews'].append(review.as_json(comments))
