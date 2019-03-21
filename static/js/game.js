@@ -17,7 +17,14 @@ $('.get-reviews').click(function() {
         const parser = new DOMParser();
         for (i = 0; i < data.reviews.length; i++) {
             commentNo[data.reviews[i].id] = 0;
-            const domString = '<div class="jumbotron">\
+            var className = "jumbotron"
+            var journalString = "";
+            if (data.reviews[i].is_journalist) {
+                journalString = "[ This is a journalist review ]"
+                className = "jumbotron journalist-review"
+            }
+            const domString = '<div class="' + className +'">\
+                                <h5> ' + journalString + ' </h5>\
                               <div class="row">\
                                   <div class="col">\
                                       <a href="../../../profile/' + data.reviews[i].poster + '"><h3 class="gameName">' + data.reviews[i].poster + '\
@@ -61,6 +68,8 @@ $('.get-reviews').click(function() {
             const html = parser.parseFromString(domString, 'text/html');
 
             $('.reviewContainer').append(html.body.firstChild);
+
+            $('.journal')
 
             if (authenticated == false){
                 console.log("here");
