@@ -11,6 +11,7 @@ from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsFo
     ReviewForm, GameForm, ImageForm
 from gitgudgames.settings import DEVELOPERS
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 # Helper method to obtain user profile, if they're logged in.
@@ -115,6 +116,18 @@ def game(request, game_slug):
     context_dict = init_context_dict(request, "Game")
     try:
         game = Game.objects.get(slug=game_slug)
+
+        if game.age_rating:
+            if request.user.is_authenticated():
+                profile = UserProfile.objects.get(user=request.user)
+                if not profile.date_of_birth or \
+                   (profile.date_of_birth and relativedelta(datetime.datetime.now(), profile.date_of_birth).years < int(game.age_rating)):
+                    return restricted(request, message="This game is age restricted - you must be at least "
+                                      + game.age_rating + " to view this game.")
+            else:
+                messages.warning(request, "This game is age restricted - please log in")
+                return HttpResponseRedirect(reverse('login') + "?next=" + request.path)
+        
         pictures = Image.objects.filter(game=game)
         reviews = Review.objects.filter(game=game)
 
