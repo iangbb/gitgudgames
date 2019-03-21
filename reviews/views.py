@@ -506,6 +506,7 @@ def ajax_get_comments(request):
 
         for comment in comments[:3]:
             user_profile = UserProfile.objects.get(user=comment.poster)
+
             display_name = user_profile.display_name
             username = comment.poster.username
             if display_name is None or len(display_name) == 0:
@@ -544,12 +545,13 @@ def ajax_get_reviews(request):
             comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
             try:
                 user_profile = UserProfile.objects.get(user=review.poster)
+                is_journalist = user_profile.is_journalist
                 profile_image_url = user_profile.profile_image.url
                 display_name = user_profile.display_name
                 username = review.poster.username
                 if display_name is None or len(display_name) == 0:
                     display_name = username
-                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url))
+                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url, is_journalist))
             except UserProfile.DoesNotExist:
                 print("No user profile found for " + review.poster)
                 json['reviews'].append(review.as_json(comments))
