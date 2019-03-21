@@ -43,7 +43,8 @@
                 <a href="{% url 'logout' %}">Logout</a></li>
               <li class="nav-item" id="profile_tab">
                 <a href="{% url 'profile' user %}">
-                  <img src="{{ profile_image_url }}" alt="Profile"></a>
+                  <img src="{{ profile_image_url }}"
+                    class="profile-image" alt="Profile"></a>
               </li>
             {% else %}
               <li class="nav-item">
@@ -70,10 +71,11 @@
     </div>
 
     <!-- FOOTER -->
-    <div>
+    <div class="container-fluid text-center pb-4">
       <hr />
-      <h2><em>Footer</em></h2>
-      TODO: Links or something.
+      <h2>Gitgud Games</h2>
+      <button onclick="back_to_top()" type="button"
+        class="btn btn-secondary">Back To Top</button>
     </div>
 
     <!-- Bootstrap JavaScript -->

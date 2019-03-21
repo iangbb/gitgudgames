@@ -8,6 +8,12 @@ function set_active_tab(tab_name) {
   document.getElementById(tab_name).classList.add("active");
 }
 
+// Function to bring user to top of page
+function back_to_top() {
+    document.body.scrollTop = 0; // Safari
+    document.documentElement.scrollTop = 0; // Everything else
+}
+
 function populate_edit_profile(id_name, data_entry) {
     document.getElementById(id_name).value = data_entry;
 }

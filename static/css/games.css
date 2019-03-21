@@ -1,4 +1,4 @@
-li {
+.container-fluid li {
   list-style-type: none;
   margin-left: 50px;
 }
