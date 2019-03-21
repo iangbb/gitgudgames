@@ -294,6 +294,10 @@ def profile(request, username):
 
 @login_required
 def edit_profile(request, username):
+    # Don't allow users to edit others' profiles
+    if request.user.username != username:
+        return restricted(request)
+    
     if request.method == 'POST':
         user = User.objects.get(username=username)
         # Image form
@@ -321,7 +325,9 @@ def edit_profile(request, username):
                 user.email = request.POST.get('email')
 
                 date_of_birth = request.POST.get('date_of_birth')
-                if len(date_of_birth) != 0:
+                if len(date_of_birth) == 0:
+                    profile.date_of_birth = None
+                else:
                     date_of_birth = date_of_birth.split('/')
                     if len(date_of_birth) != 3:
                         messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
