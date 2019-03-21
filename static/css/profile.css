@@ -3,3 +3,8 @@
   right: 30px;
   top: 60px;
 }
+
+.container-fluid img {
+  max-width: 200px;
+  max-height: 200px;
+}
