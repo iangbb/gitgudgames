@@ -12,6 +12,7 @@ from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsFo
 from gitgudgames.settings import DEVELOPERS
 import datetime
 from dateutil.relativedelta import relativedelta
+from django.utils.http import is_safe_url
 
 
 # Helper method to obtain user profile, if they're logged in.
@@ -442,7 +443,7 @@ def user_login(request):
         next = request.POST.get('next')
 
         # For security, prevent cross-site redirection
-        if next[:1] != '/' or next[:2] == '//':
+        if not is_safe_url(next):
             next = False
 
         user = authenticate(username=username, password=password)
