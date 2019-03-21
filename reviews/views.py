@@ -507,7 +507,7 @@ def ajax_get_comments(request):
             user_profile = UserProfile.objects.get(user=comment.poster)
             display_name = user_profile.display_name
             username = comment.poster.username
-            if display_name is None:
+            if display_name is None or len(display_name) == 0:
                 display_name = username
             profile_image_url = user_profile.profile_image.url
 
@@ -546,7 +546,7 @@ def ajax_get_reviews(request):
                 profile_image_url = user_profile.profile_image.url
                 display_name = user_profile.display_name
                 username = review.poster.username
-                if display_name is None:
+                if display_name is None or len(display_name) == 0:
                     display_name = username
                 json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url))
             except UserProfile.DoesNotExist:
@@ -590,11 +590,12 @@ def ajax_add_comment(request):
         # Get user display name and image URL to render comment
         user_profile = UserProfile.objects.get(user=request.user)
         display_name = user_profile.display_name
-        if display_name is None:
-            display_name = comment.poster.username
+        username = request.user.username
+        if display_name is None or len(display_name) == 0:
+            display_name = username
         profile_image_url = user_profile.profile_image.url
 
-        return JsonResponse({'success': True, 'comment': comment.as_json(display_name, profile_image_url)})
+        return JsonResponse({'success': True, 'comment': comment.as_json(username, display_name, profile_image_url)})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)
 
