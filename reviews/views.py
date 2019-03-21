@@ -505,7 +505,7 @@ def ajax_get_comments(request):
     start = int(start)
     json = {'number': 0, 'comments': [], 'more': False}
     # Retrieve comments for the given review, starting from index 'start'
-    comments = Comment.objects.filter(review=review).order_by('-votes')[start:]
+    comments = Comment.objects.filter(review=review).order_by('-votes', '-post_datetime')[start:]
 
     if len(comments) > 0:
         json['number'] = len(comments)
@@ -541,14 +541,14 @@ def ajax_get_reviews(request):
     start = int(start)
     json = {'number': 0, 'reviews': [], 'more': False}
     # Retrieve reviews for the given game, starting from index 'start'
-    reviews = Review.objects.filter(game=game).order_by('-votes')[start:]
+    reviews = Review.objects.filter(game=game).order_by('-votes', '-post_datetime')[start:]
 
     # If reviews have been found, generate JSON
     if len(reviews) > 0:
         json['number'] = len(reviews)
 
         for review in reviews[:3]:
-            comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
+            comments = Comment.objects.filter(review=review).order_by('-votes', '-post_datetime')[:3]  # Get top 3 comments for review
             try:
                 user_profile = UserProfile.objects.get(user=review.poster)
                 is_journalist = user_profile.is_journalist
