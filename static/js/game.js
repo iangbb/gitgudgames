@@ -64,7 +64,10 @@ $('.get-reviews').click(function() {
             $('.reviewContainer').append(html.body.firstChild);
 
             if (authenticated == false){
+                console.log("here");
                 $('.add-comment').hide();
+                $(".form-control").hide();
+
             }
             if (data.more == false) {
                 $('.getmorereviews').hide();
@@ -90,7 +93,6 @@ $(document).on("click", ".get-comments" , function() {
                 commentNo[reviewid] = commentNo[reviewid] + 3;
                 noMoreComments = data['number'] - 3
                 $('.get-comments.review' + reviewid).html('Get more comments (' + noMoreComments + ')')
-                console.log(data);
                 const parser = new DOMParser();
                 for (i = 0; i < data.comments.length; i++) {
                     if (!($('.' + data.comments[i].id).length)){
@@ -111,7 +113,6 @@ $(document).on("click", ".get-comments" , function() {
                     }
                 }
                     if (data.more == false) {
-                        console.log('.get-comments.review' + reviewid);
                         $('.get-comments.review' + reviewid).hide();
                 }
         });
@@ -126,8 +127,6 @@ $(document).on("click", ".add-comment" , function() {
         data : { review : reviewid, comment_text : commentText},
 
         success : function(data) {
-            console.log("Success");
-            console.log(data);
             $('.add-comment').hide();
             $("#addcomment" + reviewid).hide();
             $('.error-' + reviewid).hide();
@@ -154,9 +153,6 @@ $(document).on("click", ".add-comment" , function() {
         },
 
         error : function(xhr, errmsg, err){
-            console.log(xhr.status);
-            console.log(errmsg);
-            console.log(err);
             $('.error-' + reviewid).html(JSON.parse(xhr.responseText).error);
         }
 
