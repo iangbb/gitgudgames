@@ -164,15 +164,22 @@
                       <button type="button" data-csrftoken="{% csrf_token %}" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
                       data-postComment class="get-reviews btn btn-secondary btn-lg btn-block">Get more reviews</button>
                   </div>
-                {% else %}
-                    {% if user.is_authenticated %}
-                        <div>
-                        <br>
-                        <button type="button" class="btn btn-secondary btn-lg btn-block"
-                        onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
-                    {% endif %}
+            {% else %}
+                {% if user.is_authenticated %}
+                    <div class="row>
+                       <br>
+                       {% if is_journalist %}
+                         <div class="col">
+                           <button class="btn btn-secondary btn-lg btn-block" type="button"
+                               onclick="window.location.href='{% url 'add_game_image' game.slug %}'">Add Image</button>
+                         </div>
+                       {% endif %}
+                         <div class="col">
+                         <button type="button" class="btn btn-secondary btn-lg btn-block"
+                              onclick="window.location.href='{% url 'add_review' game.slug %}'">Add review</button>
+                    </div>
                 {% endif %}
-                </div>
-            </div>
-
+            {% endif %}
+          </div>
+      </div>
 {% endblock %}
