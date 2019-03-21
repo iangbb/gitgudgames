@@ -14,7 +14,6 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
             <div class="row">
                 <div class="col">
@@ -31,10 +30,8 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Carousel-->
-    <div class="container-fluid">
         <div id="gamePics" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                 <!-- boxArt -->
@@ -75,10 +72,8 @@
                 {% endif %}
             </div>
         </div>
-    </div>
 
     <!-- Details box -->
-    <div class="container-fluid">
         <div class="jumbotron w-75">
             <h1 class="detailsName">Details</h1>
             <div class="row">
@@ -142,11 +137,11 @@
                     <div class="col">{{ game.number_ratings }}</div>
                 </div>
             </div>
+                </div>
 
             <!-- Reviews -->
             {% if reviews %}
-            <br>
-            <div class="jumbotron reviews">
+            <div class="jumbotron reviews w-75">
                 <div class="reviewContainer">
                   <h1 class="gameName">
                     Reviews
@@ -174,6 +169,5 @@
                 {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
+
 {% endblock %}
