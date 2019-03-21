@@ -142,17 +142,23 @@
             {% if reviews %}
             <div class="jumbotron reviews w-75">
                 <div class="reviewContainer">
+                    <div class="row">
+                        <div class="col">
                   <h1 class="gameName">
                     Reviews
+                    </h1>
+                    </div>
                     {% if user.is_authenticated %}
                       {% if is_journalist %}
+                      <div class="col">
                         <button class="float-right btn btn-secondary ml-5" type="button"
                           onclick="window.location.href='{% url 'add_game_image' game.slug %}'">Add Image</button>
                       {% endif %}
                       <button class="float-right btn btn-secondary" type="button"
                         onclick="window.location.href='{% url 'add_review' game.slug %}'">Add Review</button>
+                        </div>
                     {% endif %}
-                  </h1>
+                  </div>
                   </div>
                   <div class="getmorereviews">
                       <button type="button" data-csrftoken="{% csrf_token %}" data-gameid="{{ game.id }}" data-start="3" data-authenticated="{{user.is_authenticated|yesno:'true,false'}}"
