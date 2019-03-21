@@ -1,0 +1,7 @@
+certifi==2019.3.9
+Django==1.11.17
+Pillow==5.4.1
+python-dateutil==2.8.0
+pytz==2018.9
+six==1.12.0
+wincertstore==0.2
