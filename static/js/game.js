@@ -27,7 +27,7 @@ $('.get-reviews').click(function() {
                                 <h5> ' + journalString + ' </h5>\
                               <div class="row">\
                                   <div class="col">\
-                                      <a href="../../../profile/' + data.reviews[i].poster + '"><h3 class="gameName">' + data.reviews[i].poster + '\
+                                      <a href="../../../profile/' + data.reviews[i].username + '"><h3 class="gameName">' + data.reviews[i].poster + '\
                                       <img class="profilePicture" src="' + data.reviews[i].profile_image_url + '" alt="Profile Image">\
                                       </h3>\
                                       </a>\
