@@ -11,6 +11,8 @@ from reviews.forms import UserForm, UserProfileForm, ProfileImageForm, DetailsFo
     ReviewForm, GameForm, ImageForm
 from gitgudgames.settings import DEVELOPERS
 import datetime
+from dateutil.relativedelta import relativedelta
+from django.utils.http import is_safe_url
 
 
 # Helper method to obtain user profile, if they're logged in.
@@ -115,6 +117,18 @@ def game(request, game_slug):
     context_dict = init_context_dict(request, "Game")
     try:
         game = Game.objects.get(slug=game_slug)
+
+        if game.age_rating:
+            if request.user.is_authenticated():
+                profile = UserProfile.objects.get(user=request.user)
+                if not profile.date_of_birth or \
+                   (profile.date_of_birth and relativedelta(datetime.datetime.now(), profile.date_of_birth).years < int(game.age_rating)):
+                    return restricted(request, message="This game is age restricted - you must be at least "
+                                      + game.age_rating + " to view this game.")
+            else:
+                messages.warning(request, "This game is age restricted - please log in")
+                return HttpResponseRedirect(reverse('login') + "?next=" + request.path)
+        
         pictures = Image.objects.filter(game=game)
         reviews = Review.objects.filter(game=game)
 
@@ -429,7 +443,7 @@ def user_login(request):
         next = request.POST.get('next')
 
         # For security, prevent cross-site redirection
-        if next[:1] != '/' or next[:2] == '//':
+        if not is_safe_url(next):
             next = False
 
         user = authenticate(username=username, password=password)
@@ -492,9 +506,10 @@ def ajax_get_comments(request):
 
         for comment in comments[:3]:
             user_profile = UserProfile.objects.get(user=comment.poster)
+
             display_name = user_profile.display_name
             username = comment.poster.username
-            if display_name is None:
+            if display_name is None or len(display_name) == 0:
                 display_name = username
             profile_image_url = user_profile.profile_image.url
 
@@ -530,12 +545,13 @@ def ajax_get_reviews(request):
             comments = Comment.objects.filter(review=review).order_by('-votes')[:3]  # Get top 3 comments for review
             try:
                 user_profile = UserProfile.objects.get(user=review.poster)
+                is_journalist = user_profile.is_journalist
                 profile_image_url = user_profile.profile_image.url
                 display_name = user_profile.display_name
                 username = review.poster.username
-                if display_name is None:
+                if display_name is None or len(display_name) == 0:
                     display_name = username
-                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url))
+                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url, is_journalist))
             except UserProfile.DoesNotExist:
                 print("No user profile found for " + review.poster)
                 json['reviews'].append(review.as_json(comments))
@@ -577,11 +593,12 @@ def ajax_add_comment(request):
         # Get user display name and image URL to render comment
         user_profile = UserProfile.objects.get(user=request.user)
         display_name = user_profile.display_name
-        if display_name is None:
-            display_name = comment.poster.username
+        username = request.user.username
+        if display_name is None or len(display_name) == 0:
+            display_name = username
         profile_image_url = user_profile.profile_image.url
 
-        return JsonResponse({'success': True, 'comment': comment.as_json(display_name, profile_image_url)})
+        return JsonResponse({'success': True, 'comment': comment.as_json(username, display_name, profile_image_url)})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)
 

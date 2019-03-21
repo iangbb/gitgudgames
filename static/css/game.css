@@ -2,6 +2,7 @@
     color: #2d2d2d;
     text-align: left;
     padding: 10px 10px 10px;
+    word-wrap: break-word;
 }
 
 .detailsName {
@@ -16,7 +17,6 @@
 .container-fluid {
     padding: 20px 50px;
     margin: auto;
-    color: #2d2d2d;
 }
 
 .jumbotron {
@@ -99,4 +99,8 @@ img {
 
 .carousel {
     padding : 0px 0px 10px;
+}
+
+.journalist-review {
+    background-color: darkgoldenrod;
 }

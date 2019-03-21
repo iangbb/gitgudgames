@@ -24,3 +24,10 @@ function set_active_image(image_name) {
   image_div = document.getElementById(image_name).parentElement
   image_div.classList.add("active");
 }
+
+$(document).ready(function() {
+    $(".stars-inner").each(function(){
+        var gameScore = $(this).attr('gameScore') * 20 + "%";
+        $(this).width(gameScore);
+    });
+});
