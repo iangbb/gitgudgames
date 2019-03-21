@@ -13,12 +13,6 @@ class GameMethodTests(TestCase):
             publisher='test', developer='today', platform='test', genre='test',
             age_rating='13', price=1, average_rating=5, number_ratings=1, slug='test')
 
-    def test_ensure_release_date_is_not_future(self):
-        game = self.init_game("test")
-        game.releaseDate += timedelta(days=1)
-        game.save()
-        self.assertEqual((game.releaseDate <= date.today()), True)
-
     def test_ensure_numeric_fields_are_positive(self):
         game = self.init_game("test")
         game.price = -1

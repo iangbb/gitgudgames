@@ -51,8 +51,6 @@ class Game(models.Model):
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
-        if self.releaseDate > date.today():
-            self.releaseDate = date.today()
         if self.price < 0:
             self.price = 0
         if self.average_rating < 0:
@@ -77,8 +75,9 @@ class UserProfile(models.Model):
     is_journalist = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.date_of_birth > date.today():
-            self.date_of_birth = date.today();
+        if self.date_of_birth is not None:
+            if self.date_of_birth > date.today():
+                self.date_of_birth = date.today()
         if len(self.biography) > 2000:
             self.biography = self.biography[:2000]
         super(UserProfile, self).save(*args, **kwargs)
