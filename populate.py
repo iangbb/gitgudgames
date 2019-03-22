@@ -24,7 +24,7 @@ def populate():
             "developer": "Eidos Montréal",
             "platform": Game.PC,
             "genre": Game.ADVENTURE,
-            "average_rating": 3,
+            "average_rating": 3.5,
             "number_reviews": 2,
         },
         {

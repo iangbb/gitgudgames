@@ -18,21 +18,22 @@ $('.get-reviews').click(function() {
         noMoreReviews = data['number'] - 3; // Track how many more reviews are left to get
         $('.get-reviews').html('Get more reviews (' + noMoreReviews + ')');
         const parser = new DOMParser();
-		
+
 		// For each review returned by AJAX, generate the HTML
         for (i = 0; i < data.reviews.length; i++) {
             commentNo[data.reviews[i].id] = 0;
             var className = "jumbotron"
             var journalString = "";
-			
+
 			// If the poster is a journalist, then highlight their review
             if (data.reviews[i].is_journalist) {
                 journalString = "[ This is a journalist review ]"
                 className = "jumbotron journalist-review"
             }
-			
+
             const domString = '<div class="' + className +'">\
                                 <h5> ' + journalString + ' </h5>\
+                                <h5>' + data.reviews[i].post_datetime + '<h5>\
                               <div class="row">\
                                   <div class="col">\
                                       <a href="../../../profile/' + data.reviews[i].username + '"><h3 class="gameName">' + data.reviews[i].poster + '\
@@ -86,13 +87,13 @@ $('.get-reviews').click(function() {
                 $(".form-control").hide();
 
             }
-			
+
 			// If there are no more reviews to retrieve, hide the 'get more' button
             if (data.more == false) {
                 $('.getmorereviews').hide();
 
             }
-			
+
 			// Generate the visual star ratings on the reviews
             const starwidth = (data.reviews[i].rating * 20 + "%");
             $("#" + data.reviews[i].id + "").width(starwidth);
@@ -115,11 +116,12 @@ $(document).on("click", ".get-comments" , function() {
                 noMoreComments = data['number'] - 3
                 $('.get-comments.review' + reviewid).html('Get more comments (' + noMoreComments + ')')
                 const parser = new DOMParser();
-				
+
 				// For each comment, generate HTML
                 for (i = 0; i < data.comments.length; i++) {
                     if (!($('.' + data.comments[i].id).length)){
                     const domString = '<div class="jumbotron comments comment-' + data.comments[i].id +'">\
+                                        <h5>' + data.comments[i].post_datetime + '<h5>\
                                       <div class="row">\
                                           <div class="col">\
                                               <a href="../../../profile/' + data.comments[i].username + '"><h3 class="gameName">' + data.comments[i].poster + '\
@@ -136,7 +138,7 @@ $(document).on("click", ".get-comments" , function() {
 
                     }
                 }
-				
+
 				// If there are no more comments, hide the 'get comments' button
                 if (data.more == false) {
                     $('.get-comments.review' + reviewid).hide();
@@ -148,7 +150,7 @@ $(document).on("click", ".get-comments" , function() {
 $(document).on("click", ".add-comment" , function() {
     const reviewid = $(this).attr("data-reviewid");
     const commentText = $("#addcomment" + reviewid).val();
-	
+
 	// AJAX request structure for POST request
     $.ajax({
         url : '/ajax/add_comment/',
