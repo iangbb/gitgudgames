@@ -13,6 +13,9 @@ from gitgudgames.settings import DEVELOPERS
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.utils.http import is_safe_url
+from django.db.models import Q
+from functools import reduce
+import operator
 
 
 # Helper method to obtain user profile, if they're logged in.
@@ -88,12 +91,14 @@ def games(request):
         # Do different Query base on on search bar status
         if len(search_terms) == 0:
             games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
-                                    price__gte=min_price, price__lte=max_price).order_by(sorting_order)
+                                        price__gte=min_price, price__lte=max_price).order_by(sorting_order)
         else:
-            for word in search_terms:
-                games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
-                            price__gte=min_price, price__lte=max_price,
-                            name__icontains=word, description__icontains=word).order_by(sorting_order)
+            # First, filter by games whose names or descriptions contain words in the search terms
+            games = Game.objects.filter(reduce(operator.and_,
+                                               (Q(name__icontains=word) | Q(description__icontains=word) for word in search_terms)))
+            # Then filter and order by additional criteria
+            games = games.filter(genre__in=genre_options, platform__in=platform_options,
+                                        price__gte=min_price, price__lte=max_price).order_by(sorting_order)
 
     else:
         games = Game.objects.all().order_by('-average_rating')
@@ -108,7 +113,7 @@ def games(request):
     context_dict['order'] = sorting_order
     context_dict['min_price'] = min_price
     context_dict['max_price'] = max_price
-    context_dict['search'] = search
+    context_dict['search'] = " ".join(search_terms)  # Convert back to a single string
 
     return render(request, 'reviews/games.html', context=context_dict)
 
