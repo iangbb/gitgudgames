@@ -343,6 +343,9 @@ def edit_profile(request, username):
                         messages.error(request, "Date of birth must be of the form dd/mm/yyyy")
                         return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
 
+                if len(profile.display_name) == 0:
+                    profile.display_name = None
+
                 profile.save()
                 user.save()
                 messages.success(request, "Your profile has been edited")
