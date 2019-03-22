@@ -37,6 +37,7 @@ def populate():
             "genre": Game.SHOOTER,
             "average_rating": 3.75,
             "number_reviews": 4,
+            "age_rating": "15",
         },
         {
             "name": "Dark Souls",
@@ -300,6 +301,9 @@ def add_game(game):
                                              developer=game["developer"], platform=game["platform"],
                                              genre=game["genre"], average_rating=game["average_rating"],
                                              number_ratings=game["number_reviews"])
+    if game.get("age_rating"):
+        game_object.age_rating = game["age_rating"]
+
     game_object.save()
     return game_object
 
