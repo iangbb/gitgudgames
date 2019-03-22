@@ -17,96 +17,84 @@ def populate():
     # TODO: substitute some actual games in here
     games = [
         {
-            "name": "An Action Game",
-            "description": "This game has a lot of action",
-            "release_date": datetime.date(2019, 1, 1),
-            "publisher": "a game publisher",
-            "developer": "a game developer",
+            "name": "Shadow of the Tomb Raider",
+            "description": "As Lara Croft races to save the world from a Mayan apocalypse, she must become the Tomb Raider she is destined to be.",
+            "release_date": datetime.date(2019, 9, 14),
+            "publisher": "Square Enix",
+            "developer": "Eidos Montréal",
             "platform": Game.PC,
-            "genre": Game.ACTION,
-            "average_rating": 3.43,
-            "number_reviews": 7,
-        },
-        {
-            "name": "An Adventure Game",
-            "description": "This game has a lot of adventure",
-            "release_date": datetime.date(2018, 1, 1),
-            "publisher": "a different game publisher",
-            "developer": "a game developer",
-            "platform": Game.PS4,
             "genre": Game.ADVENTURE,
-            "average_rating": 4,
-            "number_reviews": 1,
-        },
-        {
-            "name": "A Shooter Game",
-            "description": "This game has a lot of shooting",
-            "release_date": datetime.date(2018, 6, 1),
-            "publisher": "a game publisher",
-            "developer": "a different game developer",
-            "platform": Game.XB1,
-            "genre": Game.SHOOTER,
-            "average_rating": 0,
-            "number_reviews": 0,
-        },
-        {
-            "name": "A Bad Game",
-            "description": "This game is really bad",
-            "release_date": datetime.date(2015, 6, 2),
-            "publisher": "a terrible publisher",
-            "developer": "an awful developer",
-            "platform": Game.SWI,
-            "genre": Game.SHOOTER,
-            "average_rating": 1,
-            "number_reviews": 1,
-        },
-        {
-            "name": "A Mediocre Game",
-            "description": "This game is quite average",
-            "release_date": datetime.date(2017, 9, 15),
-            "publisher": "a terrible publisher",
-            "developer": "an awful developer",
-            "platform": Game.PC,
-            "genre": Game.ACTION,
             "average_rating": 3,
-            "number_reviews": 1,
+            "number_reviews": 2,
+        },
+        {
+            "name": "Half Life 2",
+            "description": "Dr. Freeman is taken out of stasis by his 'employer' to help rid the planet of invading aliens forces known as the Combine that entered through the portals he helped create.",
+            "release_date": datetime.date(2004, 11, 16),
+            "publisher": "Valve",
+            "developer": "Valve",
+            "platform": Game.PC,
+            "genre": Game.SHOOTER,
+            "average_rating": 3.75,
+            "number_reviews": 4,
+        },
+        {
+            "name": "Dark Souls",
+            "description": "After escaping an asylum, an undead warrior treks through the dangerous kingdom of Lordran.",
+            "release_date": datetime.date(2012, 2, 24),
+            "publisher": "BANDAI NAMCO Entertainment",
+            "developer": "FromSoftware",
+            "platform": Game.PS4,
+            "genre": Game.ACTION,
+            "average_rating": 4,
+            "number_reviews": 3,
         },
     ]
 
     # Creates some users with randomly generated passwords
     users = [
         {
-            "username": "ireviewgames",
+            "username": "iMakeannoyingComments",
             "password": generate_password(),
             "journalist": False,
         },
         {
-            "username": "imajournalist",
+            "username": "imAJournalist",
             "password": generate_password(),
             "journalist": True,
         },
         {
-            "username": "ijustmakeannoyingcomments",
+            "username": "gabeNewell",
             "password": generate_password(),
             "journalist": False,
         },
         {
-            "username": "ihategames",
+            "username": "timSweeny",
             "password": generate_password(),
             "journalist": False,
         },
         {
-            "username": "ilovegames",
+            "username": "toddHoward",
+            "password": generate_password(),
+            "journalist": False,
+        },
+        {
+            "username": "angryJoe",
             "password": generate_password(),
             "journalist": True,
         },
         {
-            "username": "iamindifferenttowardsgames",
+            "username": "bigKeith",
             "password": generate_password(),
             "journalist": False,
         },
         {
-            "username": "big_keith",
+            "username": "zeroPunctuation",
+            "password": generate_password(),
+            "journalist": True,
+        },
+        {
+            "username": "pewDiePie",
             "password": generate_password(),
             "journalist": False,
         },
@@ -116,97 +104,160 @@ def populate():
     # TODO: actual review text
     reviews = [
         {
-            "poster": "ireviewgames",
-            "game": "An Action Game",
-            "review_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc convallis mauris a tortor luctus venenatis. Vivamus ultricies ante lectus. Integer placerat tellus orci, nec cursus dolor finibus posuere.",
-            "rating": Review.FIVE_STARS,
-        },
-        {
-            "poster": "imajournalist",
-            "game": "An Action Game",
-            "review_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed magna vel metus eleifend vehicula in id turpis. In neque neque, fringilla in lectus a, ultricies rutrum ante. Donec aliquet in quam quis mollis. Maecenas vestibulum purus ligula, at venenatis nibh finibus ut. In nec lacinia quam. Donec dictum lorem a dui accumsan hendrerit. Phasellus rutrum nisi erat, ut volutpat nibh viverra et. Nulla elementum nibh mattis blandit finibus. Vestibulum eget porta odio. Suspendisse vitae elit nullam.",
+            "poster": "bigKeith",
+            "game": "Dark Souls",
+            "review_text": "Almost as hard as the brexit I want!",
             "rating": Review.FOUR_STARS,
         },
         {
-            "poster": "ireviewgames",
-            "game": "An Adventure Game",
-            "review_text": "something that isn't lorem ipsum",
-            "rating": Review.ONE_STAR,
-        },
-        {
-            "poster": "ireviewgames",
-            "game": "A Bad Game",
-            "review_text": "bad",
-            "rating": Review.ONE_STAR,
-        },
-        {
-            "poster": "ireviewgames",
-            "game": "A Mediocre Game",
-            "review_text": "it's okay",
-            "rating": Review.THREE_STARS,
-        },
-        {
-            "poster": "ihategames",
-            "game": "An Action Game",
-            "review_text": "this game sucks big time",
-            "rating": Review.ONE_STAR,
-        },
-        {
-            "poster": "ilovegames",
-            "game": "An Action Game",
-            "review_text": "This game is great and I wasn't paid to say this",
+            "poster": "gabeNewell",
+            "game": "Half Life 2",
+            "review_text": "Doesn't need a sequel",
             "rating": Review.FIVE_STARS,
         },
         {
-            "poster": "iamindifferenttowardsgames",
-            "game": "An Action Game",
-            "review_text": "It was alright",
+            "poster": "zeroPunctuation",
+            "game": "Half Life 2",
+            "review_text": "This game was excellent however it had an unsatisfying ending",
+            "rating": Review.FOUR_STARS,
+        },
+        {
+            "poster": "toddHoward",
+            "game": "Half Life 2",
+            "review_text": "Not as good as Fallout 76",
+            "rating": Review.ONE_STAR,
+        },
+        {
+            "poster": "bigKeith",
+            "game": "Half Life 2",
+            "review_text": "Would've done better if set in Britain",
+            "rating": Review.FOUR_STARS,
+        },
+        {
+            "poster": "pewDiePie",
+            "game": "Dark Souls",
+            "review_text": "IT'S JUST LIKE DARK SOULS",
+            "rating": Review.FOUR_STARS,
+        },
+        {
+            "poster": "angryJoe",
+            "game": "Dark Souls",
+            "review_text": "This game makes me angry 😡",
             "rating": Review.THREE_STARS,
         },
         {
-            "poster": "ilovegames",
-            "game": "An Action Game",
-            "review_text": "Absolutly fantastic game, still wasn't paid to say this",
+            "poster": "timSweeny",
+            "game": "Dark Souls",
+            "review_text": "Would've done better if it was on the Epic Games Store",
+            "rating": Review.ONE_STAR,
+        },
+        {
+            "poster": "imAJournalist",
+            "game": "Shadow of the Tomb Raider",
+            "review_text": "This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This isa good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is agood game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good gameThis is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game This is a good game",
             "rating": Review.FIVE_STARS,
         },
         {
-            "poster": "ihategames",
-            "game": "An Action Game",
-            "review_text": "bad rats is a better game",
-            "rating": Review.ONE_STAR,
+            "poster": "bigKeith",
+            "game": "Shadow of the Tomb Raider",
+            "review_text": "I love that lara is a proud British Lass but game would've been better if set in Britain",
+            "rating": Review.TWO_STARS,
         }
 
     ]
 
     # TODO: at least add some images when populating - should be easier to add than comments
+    images = [
+    {
+        "poster" : "imAJournalist",
+        "game" : "Shadow of the Tomb Raider",
+        "image" : "/game_images/shadow_of_the_tomb_raider_1.jpg",
+    },
+    {
+        "poster" : "imAJournalist",
+        "game" : "Shadow of the Tomb Raider",
+        "image" : "/game_images/shadow_of_the_tomb_raider_2.jpg",
+    },
+    {
+        "poster" : "imAJournalist",
+        "game" : "Shadow of the Tomb Raider",
+        "image" : "/game_images/shadow_of_the_tomb_raider_3.jpg",
+    },
+    {
+        "poster" : "imAJournalist",
+        "game" : "Shadow of the Tomb Raider",
+        "image" : "/game_images/shadow_of_the_tomb_raider_4.jpg",
+    },
+    {
+        "poster" : "angryJoe",
+        "game" : "Dark Souls",
+        "image" : "/game_images/darksouls_1.jpg",
+    },
+    {
+        "poster" : "angryJoe",
+        "game" : "Dark Souls",
+        "image" : "/game_images/darksouls_2.jpg",
+    },
+    {
+        "poster" : "angryJoe",
+        "game" : "Dark Souls",
+        "image" : "/game_images/darksouls_3.jpg",
+    },
+    {
+        "poster" : "angryJoe",
+        "game" : "Dark Souls",
+        "image" : "/game_images/darksouls_4.jpg",
+    },
+    {
+        "poster" : "zeroPunctuation",
+        "game" : "Half Life 2",
+        "image" : "/game_images/half_life_1.jpg",
+    },
+    {
+        "poster" : "zeroPunctuation",
+        "game" : "Half Life 2",
+        "image" : "/game_images/half_life_2.jpg",
+    },
+    {
+        "poster" : "zeroPunctuation",
+        "game" : "Half Life 2",
+        "image" : "/game_images/half_life_3.jpg",
+    },
+    {
+        "poster" : "zeroPunctuation",
+        "game" : "Half Life 2",
+        "image" : "/game_images/half_life_4.jpg",
+    },
+    ]
+
     comments = [
     {
-        "poster": "big_keith",
-        "review": 1,
-        "comment_text": "Brexit",
+        "poster": "bigKeith",
+        "review": 2,
+        "comment_text": "You are wrong Gabe",
     },
     {
-        "poster": "ihategames",
-        "review": 1,
-        "comment_text": "I hate this review",
+        "poster": "zeroPunctuation",
+        "review": 2,
+        "comment_text": "The people need to know Gabe",
     },
     {
-        "poster": "ilovegames",
-        "review": 1,
-        "comment_text": "I love this review",
+        "poster": "imAJournalist",
+        "review": 2,
+        "comment_text": "As a journalist you are wrong",
     },
     {
-        "poster": "iamindifferenttowardsgames",
+        "poster": "angryJoe",
         "review": 2,
         "comment_text": "I am i am indifferent towards this review",
     },
     {
-        "poster": "big_keith",
-        "review": 2,
-        "comment_text": "down with bercow",
+        "poster": "pewDiePie",
+        "review": 8,
+        "comment_text": "Please subscribe",
     },
+
 ]
-    images = []
 
     for game in games:
         add_game(game)
@@ -220,13 +271,16 @@ def populate():
     for comment in comments:
         add_comment(comment)
 
+    for image in images:
+        add_image(image)
+
 
 def add_game(game):
-    game_object = Game.objects.get_or_create(name=game["name"], description=game["description"],
+    game_object = Game(name=game["name"], description=game["description"],
                                              releaseDate=game["release_date"], publisher=game["publisher"],
                                              developer=game["developer"], platform=game["platform"],
                                              genre=game["genre"], average_rating=game["average_rating"],
-                                             number_ratings=game["number_reviews"])[0]
+                                             number_ratings=game["number_reviews"])
     game_object.save()
     return game_object
 
@@ -264,6 +318,14 @@ def add_comment(comment):
     comment.save()
 
     return comment
+
+def add_image(image):
+    game = Game.objects.get(name=image['game'])
+    image = Image(game=game,image=image['image'])
+
+    image.save()
+
+    return image
 
 
 # Randomly generates 16 character passwords
