@@ -60,7 +60,8 @@ def games(request):
         platform_options = []
         genre_options = []
 
-        sorting_order = request.POST.get('order')
+        # Get user provided options, or set default arguments
+        sorting_order = request.POST.get('order', '-average_rating')
         min_price = request.POST.get('min_price', 0)
         max_price = request.POST.get('max_price', 100)
         search_terms = request.POST.get('search').split(" ")
@@ -84,10 +85,6 @@ def games(request):
         if len(genre_options) == 0:
             genre_options = [genre[0] for genre in Game.GENRE]
 
-        # Default sorting order is highest rated first
-        if not sorting_order:
-            sorting_order = '-average_rating'
-
         # Do different Query base on on search bar status
         if len(search_terms) == 0:
             games = Game.objects.filter(genre__in=genre_options, platform__in=platform_options,
@@ -99,6 +96,7 @@ def games(request):
             # Then filter and order by additional criteria
             games = games.filter(genre__in=genre_options, platform__in=platform_options,
                                         price__gte=min_price, price__lte=max_price).order_by(sorting_order)
+            search = " ".join(search_terms)  # Convert search terms back to a single string
 
     else:
         games = Game.objects.all().order_by('-average_rating')
@@ -113,7 +111,7 @@ def games(request):
     context_dict['order'] = sorting_order
     context_dict['min_price'] = min_price
     context_dict['max_price'] = max_price
-    context_dict['search'] = " ".join(search_terms)  # Convert back to a single string
+    context_dict['search'] = search
 
     return render(request, 'reviews/games.html', context=context_dict)
 
