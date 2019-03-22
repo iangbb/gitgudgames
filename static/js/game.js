@@ -54,7 +54,7 @@ $('.get-reviews').click(function() {
                               </div>\
                               <br>\
                               <p>' + data.reviews[i].review_text + '</p>\
-                                <div class="' + data.reviews[i].id + '"></div>\
+                                <div id="review-' + data.reviews[i].id + '"></div>\
                               <div class="reviewFooter' + data.reviews[i].id + '">\
                               <div class="row">\
                               <div class="col">\
@@ -96,8 +96,8 @@ $('.get-reviews').click(function() {
 			// Generate the visual star ratings on the reviews
             const starwidth = (data.reviews[i].rating * 20 + "%");
             $("#" + data.reviews[i].id + "").width(starwidth);
+			$("button.review" + data.reviews[i].id).trigger("click"); // Retrieve first 3 comments
         }
-        $(".get-comments").trigger("click"); // Retrieve first 3 comments
     });
 });
 $(".get-reviews").trigger("click");
@@ -119,7 +119,7 @@ $(document).on("click", ".get-comments" , function() {
 				// For each comment, generate HTML
                 for (i = 0; i < data.comments.length; i++) {
                     if (!($('.' + data.comments[i].id).length)){
-                    const domString = '<div class="jumbotron comments ' + data.comments[i].id +'">\
+                    const domString = '<div class="jumbotron comments comment-' + data.comments[i].id +'">\
                                       <div class="row">\
                                           <div class="col">\
                                               <a href="../../../profile/' + data.comments[i].username + '"><h3 class="gameName">' + data.comments[i].poster + '\
@@ -132,7 +132,7 @@ $(document).on("click", ".get-comments" , function() {
                                   </div>';
                     const html = parser.parseFromString(domString, 'text/html');
 
-                    $('.' + reviewid).append(html.body.firstChild);
+                    $('#review-' + reviewid).append(html.body.firstChild);
 
                     }
                 }
