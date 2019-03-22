@@ -348,7 +348,7 @@ def edit_profile(request, username):
                 messages.success(request, "Your profile has been edited")
                 return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
             else:
-                messages.error(request, "Some fields contain errors.")
+                messages.error(request, "Some fields contain errors - make sure your date of birth is of the form dd/mm/yyyy and you have provided an email.")
                 return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Password form
@@ -362,7 +362,7 @@ def edit_profile(request, username):
                 messages.success(request, "Your password has been changed")
                 return HttpResponseRedirect(reverse('login'))
             else:
-                messages.error(request, "Some fields contain errors.")
+                messages.error(request, "Your new password was not valid or the fields did not match - make sure it is 8 characters long and has at least one letter and one number.")
                 return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
         # Biography form
@@ -376,7 +376,7 @@ def edit_profile(request, username):
                 messages.success(request, "Your biography has been updated.")
                 return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
             else:
-                messages.error(request, "Some fields contain errors.")
+                messages.error(request, "Your biography is not valid - please make sure it is no more than 2000 characters long.")
                 return HttpResponseRedirect(reverse('edit_profile', kwargs={'username': username}))
 
 
@@ -514,16 +514,11 @@ def ajax_get_comments(request):
         json['number'] = len(comments)
 
         for comment in comments[:3]:
-            user_profile = UserProfile.objects.get(user=comment.poster)
-
-            display_name = user_profile.display_name
-            username = comment.poster.username
-            if display_name is None or len(display_name) == 0:
-                display_name = username
-            profile_image_url = user_profile.profile_image.url
+            user_data = get_user_profile_data_for_ajax(comment.poster)
 
             # If comments have been found, generate the JSON to return to the client
-            json['comments'].append(comment.as_json(username, display_name, profile_image_url))
+            json['comments'].append(comment.as_json(user_data["username"], user_data["display_name"],
+                                                    user_data["profile_image_url"]))
 
             # If there are more comments to retrieve, then advise this to client
         if len(comments) > 3:
@@ -552,15 +547,11 @@ def ajax_get_reviews(request):
 
         for review in reviews[:3]:
             comments = Comment.objects.filter(review=review).order_by('-votes', '-post_datetime')[:3]  # Get top 3 comments for review
+            
             try:
-                user_profile = UserProfile.objects.get(user=review.poster)
-                is_journalist = user_profile.is_journalist
-                profile_image_url = user_profile.profile_image.url
-                display_name = user_profile.display_name
-                username = review.poster.username
-                if display_name is None or len(display_name) == 0:
-                    display_name = username
-                json['reviews'].append(review.as_json(username, display_name, comments, profile_image_url, is_journalist))
+                user_data = get_user_profile_data_for_ajax(review.poster)
+                json['reviews'].append(review.as_json(user_data["username"], user_data["display_name"],
+                                                      comments, user_data["profile_image_url"], user_data["is_journalist"]))
             except UserProfile.DoesNotExist:
                 print("No user profile found for " + review.poster)
                 json['reviews'].append(review.as_json(comments))
@@ -600,14 +591,10 @@ def ajax_add_comment(request):
         comment.save()
 
         # Get user display name and image URL to render comment
-        user_profile = UserProfile.objects.get(user=request.user)
-        display_name = user_profile.display_name
-        username = request.user.username
-        if display_name is None or len(display_name) == 0:
-            display_name = username
-        profile_image_url = user_profile.profile_image.url
+        user_data = get_user_profile_data_for_ajax(request.user)
 
-        return JsonResponse({'success': True, 'comment': comment.as_json(username, display_name, profile_image_url)})
+        return JsonResponse({'success': True, 'comment': comment.as_json(user_data["username"], user_data["display_name"],
+                                                                         user_data["profile_image_url"])})
     except Review.DoesNotExist:
         return ajax_error(message="Review does not exist", status=404)
 
@@ -707,3 +694,17 @@ def ajax_rate_review(request):
 # Returns an error as a JSON-encoded message with the given status code, defaulting to bad request
 def ajax_error(message="Bad AJAX request data", status=400):
     return JsonResponse({'error': message}, status=status)
+
+
+# Helper method to get user profile data for AJAX requests
+def get_user_profile_data_for_ajax(user):
+    user_profile = UserProfile.objects.get(user=user)
+    display_name = user_profile.display_name
+    username = user.username
+    if display_name is None or len(display_name) == 0:
+        display_name = username
+    profile_image_url = user_profile.profile_image.url
+    is_journalist = user_profile.is_journalist
+
+    return dict(user_profile=user_profile, display_name=display_name, username=username,
+                profile_image_url=profile_image_url, is_journalist=is_journalist)
