@@ -35,10 +35,10 @@
     <div class="col">
       <div class="container-fluid w-100 p-5">
         <ul>
-          <li>Name: {{ profile.display_name }}</li>
-          <li>Email: {{ profile.user.email }}</li>
-          <li>Date Of Birth: {{ profile.date_of_birth }}</li>
-          <li>Journalist: {{ profile.is_journalist }}</li><br />
+          <li>Name: {% if profile.display_name %} {{ profile.display_name }} {% else %} {{ profile.user.username }} {% endif %}</li>
+          <li>Email: {% if profile.user.email %} {{ profile.user.email }} {% else %} User hasn't provided an email address. {% endif %}</li>
+          <li>Date of Birth: {% if profile.date_of_bith %} {{ profile.date_of_birth }} {% else %} User hasn't provided a date of birth. {% endif %}</li>
+          <li>Journalist: {% if profile.is_journalist %} Yes {% else %} No {% endif %}</li><br />
           <li>Joined: {{ profile.user.date_joined }}</li>
           <li>Last Login: {{ profile.user.last_login }}</li>
         </ul>
