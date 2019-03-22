@@ -98,7 +98,26 @@ def populate():
             "password": generate_password(),
             "journalist": False,
         },
-
+        {
+            "username": "ian",
+            "password": generate_password(),
+            "journalist" : False,
+        },
+        {
+            "username": "charles",
+            "password": generate_password(),
+            "journalist" : False,
+        },
+        {
+            "username": "scott",
+            "password": generate_password(),
+            "journalist" : False,
+        },
+        {
+            "username": "matthew",
+            "password": generate_password(),
+            "journalist" : False,
+        },
     ]
 
     # TODO: actual review text
