@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from reviews.models import Game, UserProfile, Review, Comment, Image, CommentRating, ReviewRating
 from datetime import date, timedelta
 
@@ -51,12 +52,6 @@ class ReviewMethodTests(TestCase):
         return Review(poster=user, game=game, review_text='test',
             rating=1, post_datetime=date.today(), votes=1)
 
-    def test_ensure_post_datetime_is_not_future(self):
-        review = self.init_review('test', 'test')
-        review.post_datetime += timedelta(days=1)
-        review.save()
-        self.assertEqual((review.post_datetime.date() <= date.today()), True)
-
     def test_ensure_numeric_fields_are_positive(self):
         review = self.init_review('test', 'test')
         review.votes = -1
@@ -76,14 +71,16 @@ class CommentMethodTests(TestCase):
         return Comment(poster=comment_user, review=review, comment_text='test',
             post_datetime=date.today(), votes=1)
 
-    def test_ensure_post_datetime_is_not_future(self):
-        comment = self.init_comment('test1', 'test2', 'test')
-        comment.post_datetime += timedelta(days=1)
-        comment.save()
-        self.assertEqual((comment.post_datetime.date() <= date.today()), True)
-
     def test_ensure_numeric_fields_are_positive(self):
         comment = self.init_comment('test1', 'test2', 'test')
         comment.votes = -1
         comment.save()
         self.assertEqual((comment.votes >= 0), True)
+
+# Views
+class IndexViewTests(TestCase):
+    def test_index_view_with_no_games(self):
+        response = self.client.get.reverse(('index'))
+        self.assertEqual(response.server_code, 200)
+        self.assertContains(response, "There are no games present.")
+        self.assertQuerysetEqual(response.context['games'], [])
